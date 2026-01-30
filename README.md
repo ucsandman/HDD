@@ -1,123 +1,89 @@
-# HDD Review Request Generator
+# HDD Marketing Tools
 
-A standalone web application that generates personalized review request messages for Hickory Dickory Decks franchisees. Creates ready-to-copy SMS messages, emails, and thank you card text based on project and customer details.
+Marketing and customer feedback tools for Hickory Dickory Decks franchisees.
 
-## Features
+## Projects
 
+### 1. Sentiment Router (`hdd-sentiment-router/`)
+
+A lightweight, static landing page that routes customers based on their satisfaction level. Happy customers go directly to Google Reviews. Unhappy customers are redirected to a private feedback form, protecting the franchise's public rating.
+
+**Stack**: Pure HTML, CSS, JavaScript (no build step)
+
+**Features**:
+- Two-button sentiment check (Great! / Could be better)
+- Private feedback form for unhappy customers
+- Redirects happy customers to Google Reviews
+- Mobile-first responsive design
+- Configurable for multiple franchise locations
+- Supports Formspree, mailto, or Google Forms
+
+**Quick Start**:
+```bash
+cd hdd-sentiment-router
+# Edit config.js with your franchise settings
+# Open index.html in browser to test
+# Deploy to any static host
+```
+
+[Full documentation](hdd-sentiment-router/README.md)
+
+---
+
+### 2. Review Request Generator (`hdd-review-generator/`)
+
+A React web application that generates personalized review request messages for franchisees. Creates ready-to-copy SMS messages, emails, and thank you card text based on project and customer details.
+
+**Stack**: React 19, TypeScript, Tailwind CSS v4, Vite 7
+
+**Features**:
 - Generate Day 3 SMS, Day 7 Email, and Day 14 Thank You Card messages
 - One-click copy to clipboard with visual feedback
 - Form validation with inline error messages
 - Form data persistence (franchisee name and review link saved to localStorage)
-- Mobile responsive design
-- SMS character count with segment warnings (1 segment: ≤160, 2 segments: ≤320)
+- SMS character count with segment warnings
 
-## Tech Stack
-
-- React 19 with TypeScript
-- Tailwind CSS v4
-- Vite 7
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- npm
-
-### Installation
-
+**Quick Start**:
 ```bash
 cd hdd-review-generator
 npm install
-```
-
-### Development
-
-```bash
 npm run dev
 ```
 
-Opens at http://localhost:5173
+[Full documentation](hdd-review-generator/README.md)
 
-### Build
-
-```bash
-npm run build
-```
-
-Output is in the `dist/` directory, ready for static hosting.
-
-### Preview Production Build
-
-```bash
-npm run preview
-```
-
-### Lint
-
-```bash
-npm run lint
-```
-
-## Usage
-
-1. Fill out the form with customer and project details:
-   - Customer First Name
-   - Customer Last Name
-   - Project Type (Custom Deck, Deck Replacement, Pergola, etc.)
-   - City
-   - Franchisee First Name
-   - Google Review Link
-
-2. Click "Generate Messages" to create all three touchpoints
-
-3. Use the Copy buttons to copy each message to your clipboard
-
-4. Paste into your SMS app, email client, or card template
-
-## Project Types
-
-- Custom Deck
-- Deck Replacement
-- Deck Repair
-- Deck Resurfacing
-- Pergola
-- Porch
-- Gazebo
-- Railings
-- Stairs
-- Screen Room
-- Sunroom
-- Other
+---
 
 ## Deployment
 
-This is a static site with no backend. Deploy the `dist/` folder to any static host:
-
+Both projects are static and can be deployed to any static hosting:
 - Vercel
 - Netlify
 - GitHub Pages
 - AWS S3 + CloudFront
+- Franchise's existing web hosting
 
-No environment variables required.
+No backend or environment variables required for either project.
 
 ## Project Structure
 
 ```
-src/
-├── components/
-│   ├── CopyButton.tsx      # Copy to clipboard with feedback
-│   ├── Header.tsx          # App header with logo
-│   ├── InputForm.tsx       # Form with validation and persistence
-│   ├── MessageCard.tsx     # Reusable message display card
-│   └── OutputSection.tsx   # Container for generated messages
-├── hooks/
-│   └── useCopyToClipboard.ts  # Clipboard API wrapper
-├── types/
-│   └── index.ts            # TypeScript interfaces
-├── utils/
-│   └── generateMessages.ts # Message template logic
-├── App.tsx                 # Main application component
-├── main.tsx                # Entry point
-└── index.css               # Tailwind CSS import
+HDD/
+├── hdd-sentiment-router/      # Static sentiment routing page
+│   ├── index.html             # Main landing page
+│   ├── feedback.html          # Private feedback form
+│   ├── thank-you.html         # Confirmation page
+│   ├── styles.css             # Styling
+│   ├── script.js              # Routing logic
+│   ├── config.js              # Franchise settings
+│   └── README.md              # Setup instructions
+│
+├── hdd-review-generator/      # React message generator
+│   ├── src/                   # React source code
+│   ├── package.json           # Dependencies
+│   └── README.md              # Setup instructions
+│
+├── hdd-sentiment-router-spec.md   # Build specification
+├── hdd-review-generator-spec.md   # Build specification
+└── hickory-dickory-decks-marketing-plan.md  # Marketing strategy
 ```

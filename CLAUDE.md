@@ -1,17 +1,66 @@
-# HDD Review Request Generator
+# HDD Marketing Tools
 
 ## Overview
 
-Static React app for generating personalized review request messages for Hickory Dickory Decks franchisees.
+Marketing and customer feedback tools for Hickory Dickory Decks franchisees. Two standalone projects:
+
+1. **Sentiment Router** - Static HTML page for routing customer feedback
+2. **Review Generator** - React app for generating review request messages
 
 ## Architecture
 
-- **Frontend only**: No backend, all logic runs client-side
-- **State**: React useState for form data and generated messages
-- **Persistence**: localStorage for franchisee name and review link (survives page reload)
-- **Styling**: Tailwind CSS v4 via @tailwindcss/postcss
+Both projects are frontend-only with no backend dependencies.
 
-## Key Files
+---
+
+## Project 1: Sentiment Router (`hdd-sentiment-router/`)
+
+### Purpose
+Intercepts customer feedback to protect public Google ratings. Happy customers → Google Reviews, unhappy → private feedback form.
+
+### Stack
+- Pure HTML, CSS, JavaScript
+- No build step required
+- No external dependencies
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `index.html` | Sentiment check page with Great!/Could be better buttons |
+| `feedback.html` | Private feedback form with validation |
+| `thank-you.html` | Confirmation page after feedback submission |
+| `styles.css` | Mobile-first responsive styling |
+| `script.js` | Routing logic, form validation, analytics hooks |
+| `config.js` | Franchise-specific settings (Google Review URL, email, colors) |
+
+### Configuration
+
+Edit `config.js` to customize:
+- `googleReviewUrl` - Google Business review link (required)
+- `feedbackEmail` - Fallback email for mailto
+- `formspreeId` - Formspree form ID for reliable delivery
+- `websiteUrl` - Return link on thank you page
+- `colors` - Custom brand colors
+
+### Form Submission Options
+1. **Formspree** (recommended) - Set `formspreeId` in config
+2. **mailto** fallback - Set `feedbackEmail` in config
+3. **Google Forms** - Replace form with embed code
+
+---
+
+## Project 2: Review Generator (`hdd-review-generator/`)
+
+### Purpose
+Generate personalized review request messages (SMS, email, thank you card) from customer/project details.
+
+### Stack
+- React 19 with TypeScript
+- Tailwind CSS v4 via @tailwindcss/postcss
+- Vite 7 build tool
+
+### Key Files
 
 | File | Purpose |
 |------|---------|
@@ -19,9 +68,9 @@ Static React app for generating personalized review request messages for Hickory
 | `src/components/InputForm.tsx` | Form with validation and localStorage persistence |
 | `src/components/MessageCard.tsx` | Reusable card with copy buttons and character count |
 | `src/hooks/useCopyToClipboard.ts` | Clipboard API wrapper with error handling |
-| `src/types/index.ts` | FormData, GeneratedMessages interfaces, PROJECT_TYPES constant |
+| `src/types/index.ts` | FormData, GeneratedMessages interfaces, PROJECT_TYPES |
 
-## Commands
+### Commands
 
 ```bash
 npm run dev     # Development server at localhost:5173
@@ -30,41 +79,20 @@ npm run lint    # ESLint check
 npm run preview # Preview production build
 ```
 
-## Message Templates
+### Message Templates
 
-Three touchpoints generated from single form submission:
+Three touchpoints from single form submission:
 
-1. **Day 3: SMS** (max 320 chars)
-   - Uses shorter fallback template if primary exceeds limit
-   - Shows character count and segment indicator
+1. **Day 3: SMS** (max 320 chars) - Short with review link
+2. **Day 7: Email** - Subject line + body with city references
+3. **Day 14: Thank You Card** - Full name, no link (physical card)
 
-2. **Day 7: Email**
-   - Subject line with project type and customer name
-   - Body with city references and review link
+### Form Persistence
 
-3. **Day 14: Thank You Card**
-   - Uses full customer name (first + last)
-   - No review link (meant for physical card)
+Franchisee name and Google Review link saved to localStorage.
 
-## Form Fields
-
-| Field | Validation | Persisted |
-|-------|------------|-----------|
-| Customer First Name | Required, min 1 char | No |
-| Customer Last Name | Required, min 1 char | No |
-| Project Type | Required, dropdown selection | No |
-| City | Required, min 2 chars | No |
-| Franchisee First Name | Required, min 1 char | Yes |
-| Google Review Link | Required, valid URL | Yes |
-
-## Data Flow
-
-1. User fills form → validation on blur and submit
-2. Submit triggers `generateMessages(formData)`
-3. Returns `GeneratedMessages` object with all 4 strings
-4. OutputSection renders MessageCard for each
-5. Copy buttons use `navigator.clipboard.writeText()`
+---
 
 ## No Backend
 
-This project intentionally has no backend, API keys, or environment variables. All functionality is client-side JavaScript.
+Neither project requires a backend, API keys, or environment variables. All functionality is client-side.
