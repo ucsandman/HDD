@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Share your experience with Hickory Dickory Decks">
+  <title>How was your experience? | Hickory Dickory Decks</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="sentiment">
+  <main class="container">
+    <!-- Logo placeholder - replace src with actual logo -->
+    <div class="logo" aria-hidden="true">
+      HDD Logo
+    </div>
+
+    <h1>How was your experience with Hickory Dickory Decks?</h1>
+    <p class="subtitle">We'd love to hear from you</p>
+
+    <div class="button-group" role="group" aria-label="Rate your experience">
+      <button type="button" id="btn-positive" class="btn btn-positive" aria-label="Great experience - leave a Google review">
+        <span class="btn-emoji" aria-hidden="true">&#128522;</span>
+        <span class="btn-text">Great!</span>
+      </button>
+
+      <button type="button" id="btn-negative" class="btn btn-negative" aria-label="Could be better - share private feedback">
+        <span class="btn-emoji" aria-hidden="true">&#128528;</span>
+        <span class="btn-text">Could be better</span>
+      </button>
+    </div>
+
+    <p class="footer-text">Your feedback helps us serve you better</p>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

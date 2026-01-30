@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Share your feedback with Hickory Dickory Decks">
+  <title>Share Your Feedback | Hickory Dickory Decks</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="feedback">
+  <main class="container">
+    <!-- Logo placeholder - replace src with actual logo -->
+    <div class="logo" aria-hidden="true">
+      HDD Logo
+    </div>
+
+    <h1>We'd love to hear from you</h1>
+    <p class="description">
+      Your feedback goes directly to our team and helps us improve.
+      We'll personally follow up to make things right.
+    </p>
+
+    <div id="error-message" class="error-message" role="alert" aria-live="polite"></div>
+
+    <!--
+      FORM SUBMISSION OPTIONS:
+
+      Option A (Recommended): Formspree
+      - Sign up at https://formspree.io
+      - Create a form and get your form ID
+      - Add the ID to config.js (formspreeId)
+      - Form will automatically submit to Formspree
+
+      Option B: mailto fallback
+      - Set feedbackEmail in config.js
+      - Form will open user's email client
+      - Less reliable but works without any service
+
+      Option C: Google Forms
+      - Create a Google Form
+      - Replace this form with Google Forms embed code
+    -->
+    <form id="feedback-form" action="thank-you.html" method="GET">
+      <div class="form-group">
+        <label for="feedback">What could we have done better?</label>
+        <textarea
+          id="feedback"
+          name="feedback"
+          class="form-control"
+          placeholder="Please share your experience..."
+          required
+          minlength="10"
+          aria-describedby="feedback-hint"
+        ></textarea>
+        <span id="feedback-hint" class="visually-hidden">Minimum 10 characters required</span>
+      </div>
+
+      <div class="form-group">
+        <label for="name">Name <span class="optional">(optional)</span></label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          class="form-control"
+          placeholder="Your name"
+          autocomplete="name"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="contact">Email or Phone <span class="optional">(so we can follow up)</span></label>
+        <input
+          type="text"
+          id="contact"
+          name="contact"
+          class="form-control"
+          placeholder="Email or phone number"
+          required
+          autocomplete="email tel"
+        >
+      </div>
+
+      <!-- Hidden field for Formspree redirect -->
+      <input type="hidden" name="_next" value="thank-you.html">
+
+      <!-- Honeypot field for spam protection (Formspree) -->
+      <input type="text" name="_gotcha" style="display:none">
+
+      <button type="submit" class="btn-submit">Submit Feedback</button>
+    </form>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
