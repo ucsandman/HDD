@@ -3,6 +3,7 @@ import { PrismaAdapter } from '@auth/prisma-adapter'
 import Resend from 'next-auth/providers/resend'
 import prisma from './db'
 import type { SessionUser, UserRole } from '@/types'
+import { isDemoMode, DEMO_SESSION } from './demo'
 
 declare module 'next-auth' {
   interface Session {
@@ -10,7 +11,7 @@ declare module 'next-auth' {
   }
 }
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const { handlers, signIn, signOut, auth: nextAuth } = NextAuth({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   adapter: PrismaAdapter(prisma) as any,
   providers: [
@@ -68,6 +69,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: 'database',
   },
 })
+
+/**
+ * Auth wrapper that returns demo session in demo mode
+ */
+export async function auth() {
+  if (isDemoMode) {
+    // Return a mock session for demo mode
+    return DEMO_SESSION as Awaited<ReturnType<typeof nextAuth>>
+  }
+  return nextAuth()
+}
 
 export async function getSession() {
   return await auth()

@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
-import { createGooglePost, getValidAccessToken } from '@/lib/google/client'
+import { isDemoMode, demoDelay, generateDemoGooglePostId, generateDemoGooglePostUrl } from '@/lib/demo'
 
+/**
+ * Publish Scheduled Posts Cron Job
+ *
+ * Runs: Every 15 minutes
+ * Purpose: Publishes posts scheduled for the current time or earlier to Google Business Profile.
+ *
+ * In demo mode, this simulates publishing without actually calling Google APIs.
+ */
 export async function POST(request: NextRequest) {
   try {
     // Verify cron secret (middleware handles this, but double-check)
@@ -38,11 +46,12 @@ export async function POST(request: NextRequest) {
     const results = []
 
     for (const post of posts) {
-      // Skip if Google not connected
+      // Skip if Google not connected (except in demo mode where it's mocked)
       if (
-        !post.franchise.googleAccountId ||
-        !post.franchise.googleLocationId ||
-        !post.franchise.googleRefreshToken
+        !isDemoMode &&
+        (!post.franchise.googleAccountId ||
+          !post.franchise.googleLocationId ||
+          !post.franchise.googleRefreshToken)
       ) {
         await prisma.post.update({
           where: { id: post.id },
@@ -51,25 +60,46 @@ export async function POST(request: NextRequest) {
             publishError: 'Google account not connected',
           },
         })
-        results.push({ id: post.id, status: 'failed', error: 'Google not connected' })
+        results.push({
+          id: post.id,
+          status: 'failed',
+          error: 'Google not connected',
+        })
         continue
       }
 
       try {
-        // Ensure we have a valid access token
-        await getValidAccessToken(post.franchise.id)
+        let result: { postId: string; postUrl: string }
 
-        // Publish to Google
-        const result = await createGooglePost(post.franchise.id, {
-          body: post.body,
-          callToAction: post.callToAction
-            ? {
-                type: post.callToAction,
-                url: post.callToActionUrl || undefined,
-              }
-            : undefined,
-          imageUrls: post.postImages.map((pi) => pi.image.url),
-        })
+        if (isDemoMode) {
+          // Demo mode: simulate publishing
+          await demoDelay(500)
+          const demoPostId = generateDemoGooglePostId()
+          result = {
+            postId: demoPostId,
+            postUrl: generateDemoGooglePostUrl(post.id),
+          }
+        } else {
+          // Production mode: publish to Google
+          const { createGooglePost, getValidAccessToken } = await import(
+            '@/lib/google/client'
+          )
+
+          // Ensure we have a valid access token
+          await getValidAccessToken(post.franchise.id)
+
+          // Publish to Google
+          result = await createGooglePost(post.franchise.id, {
+            body: post.body,
+            callToAction: post.callToAction
+              ? {
+                  type: post.callToAction,
+                  url: post.callToActionUrl || undefined,
+                }
+              : undefined,
+            imageUrls: post.postImages.map((pi) => pi.image.url),
+          })
+        }
 
         // Update post status
         await prisma.post.update({
@@ -83,9 +113,14 @@ export async function POST(request: NextRequest) {
           },
         })
 
-        results.push({ id: post.id, status: 'published', googlePostId: result.postId })
+        results.push({
+          id: post.id,
+          status: 'published',
+          googlePostId: result.postId,
+        })
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error'
 
         await prisma.post.update({
           where: { id: post.id },
@@ -105,9 +140,6 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('Error in publish-scheduled cron:', error)
-    return NextResponse.json(
-      { error: 'Cron job failed' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Cron job failed' }, { status: 500 })
   }
 }

@@ -10,7 +10,10 @@
     "postinstall": "prisma generate",
     "auth": "node authenticate.js",
     "gbp-list": "node list-accounts.js",
-    "gbp-post": "node post-update.js"
+    "gbp-post": "node post-update.js",
+    "demo": "node scripts/demo-setup.js",
+    "demo:reset": "node scripts/demo-reset.js",
+    "demo:seed": "npx tsx prisma/seed-demo.ts"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"

@@ -1,27 +1,9 @@
 import { useState, useEffect } from 'react'
+import CreateDraftModal from './components/CreateDraftModal'
+import Toast from './components/Toast'
+import { isConfigured, getGBPPosterUrl } from './lib/gbpApi'
+import type { WeatherData, ForecastDay, ContentSuggestion, ToastState } from './types'
 import './App.css'
-
-interface WeatherData {
-  temperature: number
-  condition: string
-  forecast: ForecastDay[]
-}
-
-interface ForecastDay {
-  date: string
-  day: string
-  high: number
-  low: number
-  condition: string
-}
-
-interface ContentSuggestion {
-  type: 'gbp' | 'social' | 'email'
-  title: string
-  content: string
-  bestTime: string
-  tags: string[]
-}
 
 // Cincinnati coordinates
 const CINCINNATI_LAT = 39.1031
@@ -33,6 +15,9 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   const [suggestions, setSuggestions] = useState<ContentSuggestion[]>([])
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
+  const [selectedSuggestion, setSelectedSuggestion] = useState<ContentSuggestion | null>(null)
+  const [toast, setToast] = useState<ToastState>(null)
+  const gbpConfigured = isConfigured()
 
   useEffect(() => {
     fetchWeather()
@@ -268,6 +253,33 @@ Whether it's morning coffee, evening cookouts, or just watching the kids play - 
     setTimeout(() => setCopiedIndex(null), 2000)
   }
 
+  const handleCreateDraft = (suggestion: ContentSuggestion) => {
+    if (!gbpConfigured) {
+      setToast({
+        type: 'error',
+        message: 'GBP integration not configured. Check .env file.',
+      })
+      return
+    }
+    setSelectedSuggestion(suggestion)
+  }
+
+  const handleDraftSuccess = (_postId: string, editUrl: string) => {
+    setToast({
+      type: 'success',
+      message: 'Draft created successfully!',
+    })
+    // Open the edit page in a new tab
+    window.open(getGBPPosterUrl(editUrl), '_blank')
+  }
+
+  const handleDraftError = (message: string) => {
+    setToast({
+      type: 'error',
+      message,
+    })
+  }
+
   const getWeatherEmoji = (condition: string) => {
     const c = condition.toLowerCase()
     if (c.includes('sun') || c.includes('clear')) return '☀️'
@@ -326,12 +338,24 @@ Whether it's morning coffee, evening cookouts, or just watching the kids play - 
                     {suggestion.tags.map(tag => <span key={tag} className="tag">#{tag}</span>)}
                   </div>
                 </div>
-                <button 
-                  className={`copy-btn ${copiedIndex === i ? 'copied' : ''}`}
-                  onClick={() => copyContent(suggestion.content, i)}
-                >
-                  {copiedIndex === i ? '✓ Copied!' : '📋 Copy Content'}
-                </button>
+                <div className="suggestion-actions">
+                  {suggestion.type === 'gbp' && (
+                    <button
+                      className="create-draft-btn"
+                      onClick={() => handleCreateDraft(suggestion)}
+                      disabled={!gbpConfigured}
+                      title={!gbpConfigured ? 'Configure GBP integration in .env' : ''}
+                    >
+                      ✨ Create GBP Draft
+                    </button>
+                  )}
+                  <button
+                    className={`copy-btn ${copiedIndex === i ? 'copied' : ''}`}
+                    onClick={() => copyContent(suggestion.content, i)}
+                  >
+                    {copiedIndex === i ? '✓ Copied!' : '📋 Copy Content'}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -341,7 +365,29 @@ Whether it's morning coffee, evening cookouts, or just watching the kids play - 
       <footer className="footer">
         <button onClick={fetchWeather} className="refresh-btn">🔄 Refresh Weather</button>
         <p>Weather data from NWS (National Weather Service)</p>
+        {!gbpConfigured && (
+          <p className="config-warning">
+            ⚠️ GBP integration not configured. Set up .env to enable draft creation.
+          </p>
+        )}
       </footer>
+
+      {selectedSuggestion && (
+        <CreateDraftModal
+          suggestion={selectedSuggestion}
+          onClose={() => setSelectedSuggestion(null)}
+          onSuccess={handleDraftSuccess}
+          onError={handleDraftError}
+        />
+      )}
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   )
 }

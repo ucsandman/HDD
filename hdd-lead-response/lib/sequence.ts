@@ -40,6 +40,10 @@ export async function processInstantResponse(leadId: string): Promise<void> {
     return
   }
 
+  // Set sequence expiration (30 days from now)
+  const expiresAt = new Date()
+  expiresAt.setDate(expiresAt.getDate() + 30)
+
   // Get the first sequence step (step 0 = instant)
   const step = await prisma.sequenceStep.findUnique({
     where: { stepNumber: 0 },
@@ -47,7 +51,11 @@ export async function processInstantResponse(leadId: string): Promise<void> {
 
   if (!step || !step.isActive) {
     console.log('No active instant step configured')
-    // Still schedule the next step
+    // Still schedule the next step and set expiration
+    await prisma.lead.update({
+      where: { id: lead.id },
+      data: { sequenceExpiresAt: expiresAt },
+    })
     await scheduleNextStep(lead, 0)
     return
   }
@@ -82,12 +90,13 @@ export async function processInstantResponse(leadId: string): Promise<void> {
     }
   }
 
-  // Update lead status and schedule next step
+  // Update lead status, set expiration, and schedule next step
   await prisma.lead.update({
     where: { id: lead.id },
     data: {
       status: 'contacted',
       sequenceStep: 0,
+      sequenceExpiresAt: expiresAt,
     },
   })
 
@@ -149,6 +158,22 @@ export async function processFollowup(leadId: string): Promise<void> {
   // Check skip conditions
   if (lead.sequenceStatus !== 'active') {
     console.log(`Skipping lead ${leadId}: sequence status is ${lead.sequenceStatus}`)
+    return
+  }
+
+  // Check sequence expiration
+  if (lead.sequenceExpiresAt && new Date() > lead.sequenceExpiresAt) {
+    console.log(`Sequence expired for lead ${leadId}`)
+    await prisma.lead.update({
+      where: { id: leadId },
+      data: {
+        sequenceStatus: 'completed',
+        status: 'lost',
+        nextFollowupAt: null,
+        closedAt: new Date(),
+        closedReason: 'Sequence expired (30 days)',
+      },
+    })
     return
   }
 
@@ -265,6 +290,45 @@ export async function processAllFollowups(maxLeads = 20): Promise<number> {
   }
 
   return leads.length
+}
+
+/**
+ * Close all expired sequences
+ * Called by cron job to clean up leads past their 30-day sequence window
+ */
+export async function closeExpiredSequences(maxLeads = 50): Promise<number> {
+  const now = new Date()
+
+  // Find active leads whose sequence has expired
+  const expiredLeads = await prisma.lead.findMany({
+    where: {
+      sequenceStatus: 'active',
+      sequenceExpiresAt: { lte: now },
+    },
+    take: maxLeads,
+    orderBy: { sequenceExpiresAt: 'asc' },
+  })
+
+  console.log(`Closing ${expiredLeads.length} expired sequences`)
+
+  for (const lead of expiredLeads) {
+    try {
+      await prisma.lead.update({
+        where: { id: lead.id },
+        data: {
+          sequenceStatus: 'completed',
+          status: 'lost',
+          nextFollowupAt: null,
+          closedAt: now,
+          closedReason: 'Sequence expired (30 days)',
+        },
+      })
+    } catch (error) {
+      console.error(`Error closing expired sequence for lead ${lead.id}:`, error)
+    }
+  }
+
+  return expiredLeads.length
 }
 
 /**

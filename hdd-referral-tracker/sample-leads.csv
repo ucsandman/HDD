@@ -1,0 +1,11 @@
+name,phone,email,source,referralCode,status,value,createdAt,notes
+John Smith,555-0101,john.smith@email.com,Customer Referral,RICK123,contacted,,2026-01-15,Wants quote for deck replacement
+Sarah Johnson,555-0102,sarah.j@email.com,Google Business Profile,,new,,2026-01-20,Interested in new deck build
+Mike Williams,555-0103,mike.w@email.com,Facebook,,quoted,8500,2026-01-10,Quote sent for 400 sq ft deck
+Emily Brown,555-0104,emily.brown@email.com,Customer Referral,JOHN456,qualified,12000,2026-01-05,Ready to sign contract
+David Jones,555-0105,david.jones@email.com,Yard Sign,,sold,15000,2025-12-20,Project completed successfully
+Lisa Davis,555-0106,lisa.d@email.com,Nextdoor,,contacted,,2026-01-25,Wants to see samples
+Robert Miller,555-0107,robert.m@email.com,Google Search,,new,,2026-02-01,Just submitted contact form
+Jennifer Wilson,555-0108,jennifer.w@email.com,Customer Referral,RICK123,quoted,9800,2026-01-18,Quote for deck repair
+Michael Taylor,555-0109,michael.t@email.com,Instagram,,lost,,2026-01-12,Went with another company
+Amanda Anderson,555-0110,amanda.a@email.com,Home Show,,qualified,11500,2026-01-22,Met at Cincinnati Home Show

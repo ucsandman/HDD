@@ -1,0 +1,127 @@
+// Demo mode schema using SQLite for local development without external dependencies
+// This is a modified version of schema.prisma for demo mode only
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./demo.db"
+}
+
+model Franchise {
+  id                    String    @id @default(uuid())
+  name                  String
+  slug                  String    @unique
+  googleAccountId       String?   @map("google_account_id")
+  googleLocationId      String?   @map("google_location_id")
+  googleAccessToken     String?   @map("google_access_token")
+  googleRefreshToken    String?   @map("google_refresh_token")
+  googleTokenExpiresAt  DateTime? @map("google_token_expires_at")
+  postsPerWeek          Int       @default(3) @map("posts_per_week")
+  preferredPostDays     String    @default("mon,wed,fri") @map("preferred_post_days")
+  preferredPostTime     String    @default("09:00") @map("preferred_post_time")
+  timezone              String    @default("America/New_York")
+  contextInfo           String?   @map("context_info")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  users           User[]
+  images          Image[]
+  posts           Post[]
+  generationQueue GenerationQueue[]
+
+  @@map("franchises")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  name        String?
+  franchiseId String   @map("franchise_id")
+  role        String   @default("editor")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  franchise      Franchise @relation(fields: [franchiseId], references: [id])
+  uploadedImages Image[]   @relation("UploadedBy")
+  createdPosts   Post[]    @relation("CreatedBy")
+  approvedPosts  Post[]    @relation("ApprovedBy")
+
+  @@map("users")
+}
+
+model Image {
+  id          String   @id @default(uuid())
+  franchiseId String   @map("franchise_id")
+  url         String
+  filename    String?
+  altText     String?  @map("alt_text")
+  projectType String?  @map("project_type")
+  tags        String   @default("[]") // JSON array stored as string for SQLite compatibility
+  uploadedBy  String?  @map("uploaded_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  franchise  Franchise   @relation(fields: [franchiseId], references: [id])
+  uploader   User?       @relation("UploadedBy", fields: [uploadedBy], references: [id])
+  postImages PostImage[]
+
+  @@map("images")
+}
+
+model Post {
+  id                String    @id @default(uuid())
+  franchiseId       String    @map("franchise_id")
+  postType          String    @map("post_type")
+  title             String?
+  body              String
+  callToAction      String?   @map("call_to_action")
+  callToActionUrl   String?   @map("call_to_action_url")
+  status            String    @default("draft")
+  scheduledFor      DateTime? @map("scheduled_for")
+  publishedAt       DateTime? @map("published_at")
+  googlePostId      String?   @map("google_post_id")
+  googlePostUrl     String?   @map("google_post_url")
+  publishError      String?   @map("publish_error")
+  generatedBy       String?   @map("generated_by")
+  generationPrompt  String?   @map("generation_prompt")
+  createdById       String?   @map("created_by")
+  approvedById      String?   @map("approved_by")
+  approvedAt        DateTime? @map("approved_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  franchise  Franchise   @relation(fields: [franchiseId], references: [id])
+  createdBy  User?       @relation("CreatedBy", fields: [createdById], references: [id])
+  approvedBy User?       @relation("ApprovedBy", fields: [approvedById], references: [id])
+  postImages PostImage[]
+
+  @@map("posts")
+}
+
+model PostImage {
+  postId       String @map("post_id")
+  imageId      String @map("image_id")
+  displayOrder Int    @default(0) @map("display_order")
+
+  post  Post  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  image Image @relation(fields: [imageId], references: [id])
+
+  @@id([postId, imageId])
+  @@map("post_images")
+}
+
+model GenerationQueue {
+  id              String    @id @default(uuid())
+  franchiseId     String    @map("franchise_id")
+  postType        String    @map("post_type")
+  generateForDate DateTime  @map("generate_for_date")
+  status          String    @default("pending")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  completedAt     DateTime? @map("completed_at")
+
+  franchise Franchise @relation(fields: [franchiseId], references: [id])
+
+  @@map("generation_queue")
+}

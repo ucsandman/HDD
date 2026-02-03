@@ -20,19 +20,27 @@ const navigation = [
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
+// Demo mode indicator (read from environment at build time)
+const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true'
+
 export function Sidebar() {
   const pathname = usePathname()
 
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
       <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
-        <div className="flex h-16 shrink-0 items-center">
+        <div className="flex h-16 shrink-0 items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg bg-gray-900 flex items-center justify-center">
               <span className="text-white font-bold text-sm">HD</span>
             </div>
             <span className="font-semibold text-gray-900">GBP Poster</span>
           </Link>
+          {isDemoMode && (
+            <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+              Demo
+            </span>
+          )}
         </div>
         <nav className="flex flex-1 flex-col">
           <ul role="list" className="flex flex-1 flex-col gap-y-7">

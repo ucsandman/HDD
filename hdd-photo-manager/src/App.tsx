@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import { uploadToBlob, deleteFromBlob, isBlobUrl } from './utils/blobStorage'
+import { useMigrateToBlob } from './hooks/useMigrateToBlob'
 
 interface Project {
   id: string
@@ -32,6 +34,10 @@ function App() {
     beforePhotos: [],
     afterPhotos: []
   })
+  const [uploading, setUploading] = useState(false)
+
+  // Migrate legacy base64 photos to Blob storage
+  const migrationStatus = useMigrateToBlob(projects, setProjects)
 
   useEffect(() => {
     localStorage.setItem('hdd-projects', JSON.stringify(projects))
@@ -62,31 +68,72 @@ function App() {
     setShowForm(false)
   }
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'before' | 'after') => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'before' | 'after') => {
     const files = e.target.files
     if (!files) return
-    
-    Array.from(files).forEach(file => {
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        const dataUrl = event.target?.result as string
-        setNewProject(prev => ({
-          ...prev,
-          [type === 'before' ? 'beforePhotos' : 'afterPhotos']: [
-            ...(type === 'before' ? prev.beforePhotos || [] : prev.afterPhotos || []),
-            dataUrl
-          ]
-        }))
-      }
-      reader.readAsDataURL(file)
-    })
+
+    setUploading(true)
+    const photoKey = type === 'before' ? 'beforePhotos' : 'afterPhotos'
+
+    try {
+      // Upload all files to Blob storage
+      const uploadPromises = Array.from(files).map(file => uploadToBlob(file))
+      const blobUrls = await Promise.all(uploadPromises)
+
+      setNewProject(prev => ({
+        ...prev,
+        [photoKey]: [
+          ...(prev[photoKey] || []),
+          ...blobUrls
+        ]
+      }))
+    } catch (error) {
+      console.error('Upload failed:', error)
+      alert('Failed to upload photos. Please try again.')
+    } finally {
+      setUploading(false)
+    }
   }
 
-  const deleteProject = (id: string) => {
-    if (confirm('Delete this project?')) {
-      setProjects(projects.filter(p => p.id !== id))
-      setSelectedProject(null)
+  const deleteProject = async (id: string) => {
+    if (!confirm('Delete this project?')) return
+
+    const project = projects.find(p => p.id === id)
+    if (!project) return
+
+    // Delete blob photos from storage
+    const blobPhotos = [
+      ...project.beforePhotos.filter(isBlobUrl),
+      ...project.afterPhotos.filter(isBlobUrl)
+    ]
+
+    try {
+      await Promise.all(blobPhotos.map(url => deleteFromBlob(url)))
+    } catch (error) {
+      console.error('Failed to delete some photos from blob storage:', error)
+      // Continue with project deletion even if blob deletion fails
     }
+
+    setProjects(projects.filter(p => p.id !== id))
+    setSelectedProject(null)
+  }
+
+  const removePhotoFromNewProject = async (photoUrl: string, type: 'before' | 'after') => {
+    const photoKey = type === 'before' ? 'beforePhotos' : 'afterPhotos'
+
+    // Delete from blob if it's a blob URL
+    if (isBlobUrl(photoUrl)) {
+      try {
+        await deleteFromBlob(photoUrl)
+      } catch (error) {
+        console.error('Failed to delete photo:', error)
+      }
+    }
+
+    setNewProject(prev => ({
+      ...prev,
+      [photoKey]: (prev[photoKey] || []).filter(url => url !== photoUrl)
+    }))
   }
 
   return (
@@ -95,6 +142,20 @@ function App() {
         <h1>📸 Project Photo Manager</h1>
         <p>Hickory Dickory Decks Cincinnati</p>
       </header>
+
+      {migrationStatus.isRunning && (
+        <div className="migration-banner">
+          <p>
+            Migrating photos to cloud storage... {migrationStatus.progress} of {migrationStatus.total}
+          </p>
+        </div>
+      )}
+
+      {uploading && (
+        <div className="upload-banner">
+          <p>Uploading photos...</p>
+        </div>
+      )}
 
       <div className="toolbar">
         <button className="btn-primary" onClick={() => setShowForm(true)}>+ Add Project</button>
@@ -164,16 +225,52 @@ function App() {
               </div>
               <div className="form-group">
                 <label>Before Photos</label>
-                <input type="file" accept="image/*" multiple onChange={e => handleFileUpload(e, 'before')} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={e => handleFileUpload(e, 'before')}
+                  disabled={uploading}
+                />
                 <div className="photo-preview">
-                  {newProject.beforePhotos?.map((p, i) => <img key={i} src={p} alt="before" />)}
+                  {newProject.beforePhotos?.map((p, i) => (
+                    <div key={i} className="photo-preview-item">
+                      <img src={p} alt="before" />
+                      <button
+                        type="button"
+                        className="photo-remove-btn"
+                        onClick={() => removePhotoFromNewProject(p, 'before')}
+                        disabled={uploading}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
                 </div>
               </div>
               <div className="form-group">
                 <label>After Photos</label>
-                <input type="file" accept="image/*" multiple onChange={e => handleFileUpload(e, 'after')} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={e => handleFileUpload(e, 'after')}
+                  disabled={uploading}
+                />
                 <div className="photo-preview">
-                  {newProject.afterPhotos?.map((p, i) => <img key={i} src={p} alt="after" />)}
+                  {newProject.afterPhotos?.map((p, i) => (
+                    <div key={i} className="photo-preview-item">
+                      <img src={p} alt="after" />
+                      <button
+                        type="button"
+                        className="photo-remove-btn"
+                        onClick={() => removePhotoFromNewProject(p, 'after')}
+                        disabled={uploading}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

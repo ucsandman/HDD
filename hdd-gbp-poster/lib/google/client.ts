@@ -103,11 +103,16 @@ export async function getValidAccessToken(franchiseId: string): Promise<string> 
       googleAccessToken: true,
       googleRefreshToken: true,
       googleTokenExpiresAt: true,
+      googleAuthValid: true,
     },
   })
 
   if (!franchise?.googleRefreshToken) {
     throw new Error('Google account not connected')
+  }
+
+  if (franchise.googleAuthValid === false) {
+    throw new Error('Google authentication requires re-authorization')
   }
 
   const refreshToken = decrypt(franchise.googleRefreshToken)
@@ -118,19 +123,32 @@ export async function getValidAccessToken(franchiseId: string): Promise<string> 
   const needsRefresh = !expiresAt || expiresAt.getTime() - now.getTime() < 5 * 60 * 1000
 
   if (needsRefresh) {
-    const tokens = await refreshAccessToken(refreshToken)
+    try {
+      const tokens = await refreshAccessToken(refreshToken)
 
-    // Update tokens in database
-    await prisma.franchise.update({
-      where: { id: franchiseId },
-      data: {
-        googleAccessToken: encrypt(tokens.accessToken),
-        googleRefreshToken: encrypt(tokens.refreshToken),
-        googleTokenExpiresAt: tokens.expiresAt,
-      },
-    })
+      // Update tokens in database and mark auth as valid
+      await prisma.franchise.update({
+        where: { id: franchiseId },
+        data: {
+          googleAccessToken: encrypt(tokens.accessToken),
+          googleRefreshToken: encrypt(tokens.refreshToken),
+          googleTokenExpiresAt: tokens.expiresAt,
+          googleAuthValid: true,
+        },
+      })
 
-    return tokens.accessToken
+      return tokens.accessToken
+    } catch (error) {
+      // Mark auth as invalid if refresh fails
+      await prisma.franchise.update({
+        where: { id: franchiseId },
+        data: {
+          googleAuthValid: false,
+        },
+      })
+
+      throw new Error(`Token refresh failed - re-authorization required: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
   }
 
   return decrypt(franchise.googleAccessToken!)
@@ -146,6 +164,7 @@ export async function storeGoogleTokens(
       googleAccessToken: encrypt(tokens.accessToken),
       googleRefreshToken: encrypt(tokens.refreshToken),
       googleTokenExpiresAt: tokens.expiresAt,
+      googleAuthValid: true,
     },
   })
 }
@@ -213,6 +232,7 @@ export async function disconnectGoogle(franchiseId: string): Promise<void> {
       googleAccessToken: null,
       googleRefreshToken: null,
       googleTokenExpiresAt: null,
+      googleAuthValid: true, // Reset to true for next connection
     },
   })
 }

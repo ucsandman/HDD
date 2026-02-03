@@ -17,6 +17,7 @@ model Franchise {
   googleAccessToken     String?   @map("google_access_token") @db.Text
   googleRefreshToken    String?   @map("google_refresh_token") @db.Text
   googleTokenExpiresAt  DateTime? @map("google_token_expires_at")
+  googleAuthValid       Boolean   @default(true) @map("google_auth_valid")
   postsPerWeek          Int       @default(3) @map("posts_per_week")
   preferredPostDays     String    @default("mon,wed,fri") @map("preferred_post_days") @db.VarChar(50)
   preferredPostTime     String    @default("09:00") @map("preferred_post_time") @db.VarChar(10)
@@ -79,6 +80,7 @@ model Post {
   status            String    @default("draft") @db.VarChar(50)
   scheduledFor      DateTime? @map("scheduled_for")
   publishedAt       DateTime? @map("published_at")
+  publishingAt      DateTime? @map("publishing_at")
   googlePostId      String?   @map("google_post_id") @db.VarChar(255)
   googlePostUrl     String?   @map("google_post_url") @db.VarChar(500)
   publishError      String?   @map("publish_error") @db.Text

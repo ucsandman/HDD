@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import prisma from '@/lib/db'
-import { createGooglePost } from '@/lib/google/client'
+import { isDemoMode, demoDelay, generateDemoGooglePostId, generateDemoGooglePostUrl } from '@/lib/demo'
 
 interface RouteParams {
   params: Promise<{ id: string }>
@@ -59,17 +59,31 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }
 
     try {
-      // Publish to Google
-      const result = await createGooglePost(session.user.franchiseId, {
-        body: post.body,
-        callToAction: post.callToAction
-          ? {
-              type: post.callToAction,
-              url: post.callToActionUrl || undefined,
-            }
-          : undefined,
-        imageUrls: post.postImages.map((pi) => pi.image.url),
-      })
+      let result: { postId: string; postUrl: string }
+
+      if (isDemoMode) {
+        // Demo mode: simulate publishing with delay
+        await demoDelay(2000)
+
+        const demoPostId = generateDemoGooglePostId()
+        result = {
+          postId: demoPostId,
+          postUrl: generateDemoGooglePostUrl(id),
+        }
+      } else {
+        // Production mode: publish to Google
+        const { createGooglePost } = await import('@/lib/google/client')
+        result = await createGooglePost(session.user.franchiseId, {
+          body: post.body,
+          callToAction: post.callToAction
+            ? {
+                type: post.callToAction,
+                url: post.callToActionUrl || undefined,
+              }
+            : undefined,
+          imageUrls: post.postImages.map((pi) => pi.image.url),
+        })
+      }
 
       // Update post status
       const updatedPost = await prisma.post.update({

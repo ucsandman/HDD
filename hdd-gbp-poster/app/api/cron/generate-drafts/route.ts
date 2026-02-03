@@ -1,11 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
-import anthropic from '@/lib/anthropic/client'
-import { getSystemPrompt, getPromptForPostType } from '@/lib/anthropic/prompts'
-import { EDUCATIONAL_TOPICS } from '@/types'
 
 const POST_TYPE_ROTATION = ['project_showcase', 'educational', 'seasonal'] as const
 
+/**
+ * Generate Drafts Cron Job
+ *
+ * Runs: Weekly on Sundays at 5:00 UTC
+ * Purpose: Determines how many posts each franchise needs for the upcoming week
+ *          and adds them to the generation queue.
+ *
+ * Flow:
+ * 1. For each franchise, calculate needed posts (postsPerWeek - existing drafts)
+ * 2. Add queue entries with post types in rotation (project/educational/seasonal)
+ * 3. Queue entries are processed by the process-generation-queue cron
+ *
+ * Note: This endpoint does NOT generate content. It only creates queue entries.
+ *       Actual AI generation happens in /api/cron/process-generation-queue
+ */
 export async function POST(request: NextRequest) {
   try {
     // Verify cron secret
@@ -86,94 +98,11 @@ export async function POST(request: NextRequest) {
         data: queueEntries,
       })
 
-      // Process pending queue items for this franchise
-      const pendingItems = await prisma.generationQueue.findMany({
-        where: {
-          franchiseId: franchise.id,
-          status: 'pending',
-        },
-        take: 3, // Process max 3 per franchise per run
-      })
-
-      let generated = 0
-      for (const item of pendingItems) {
-        try {
-          const systemPrompt = getSystemPrompt(franchise.contextInfo)
-
-          // Generate appropriate params based on post type
-          let params: { topic?: string; season?: string; projectTypeName?: string } = {}
-          if (item.postType === 'educational') {
-            // Pick a random educational topic
-            const randomTopic = EDUCATIONAL_TOPICS[Math.floor(Math.random() * EDUCATIONAL_TOPICS.length)]
-            params = { topic: randomTopic }
-          } else if (item.postType === 'seasonal') {
-            const month = new Date().getMonth()
-            if (month >= 2 && month <= 4) params = { season: 'Spring' }
-            else if (month >= 5 && month <= 7) params = { season: 'Summer' }
-            else if (month >= 8 && month <= 10) params = { season: 'Fall' }
-            else params = { season: 'Winter' }
-          } else {
-            params = { projectTypeName: 'composite deck' }
-          }
-
-          const postType = item.postType as 'project_showcase' | 'educational' | 'seasonal'
-          const userPrompt = getPromptForPostType(postType, params)
-
-          // Call Claude API
-          const message = await anthropic.messages.create({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 1024,
-            system: systemPrompt,
-            messages: [{ role: 'user', content: userPrompt }],
-          })
-
-          const textBlock = message.content.find((block) => block.type === 'text')
-          if (!textBlock || textBlock.type !== 'text') {
-            throw new Error('No text in response')
-          }
-
-          let body = textBlock.text.trim()
-          if (body.length > 1500) {
-            body = body.slice(0, 1497) + '...'
-          }
-
-          // Create post
-          await prisma.post.create({
-            data: {
-              franchiseId: franchise.id,
-              postType: item.postType,
-              body,
-              status: 'draft',
-              generatedBy: 'ai',
-              generationPrompt: userPrompt,
-            },
-          })
-
-          // Mark queue item complete
-          await prisma.generationQueue.update({
-            where: { id: item.id },
-            data: {
-              status: 'completed',
-              completedAt: new Date(),
-            },
-          })
-
-          generated++
-        } catch (error) {
-          console.error(`Failed to generate draft for queue item ${item.id}:`, error)
-
-          await prisma.generationQueue.update({
-            where: { id: item.id },
-            data: { status: 'failed' },
-          })
-        }
-      }
-
       results.push({
         franchiseId: franchise.id,
         name: franchise.name,
-        generated,
         queued: queueEntries.length,
+        message: `Added ${queueEntries.length} items to generation queue`,
       })
     }
 

@@ -28,10 +28,13 @@ Lead response automation system for Hickory Dickory Decks Cincinnati. Sends inst
 | `lib/db.ts` | Prisma client singleton |
 | `lib/phone.ts` | E.164 phone normalization |
 | `lib/templates.ts` | Message template rendering with {{variables}} |
-| `lib/sequence.ts` | Sequence processing logic |
-| `lib/twilio/send-sms.ts` | SMS sending + logging |
+| `lib/sequence.ts` | Sequence processing logic + expiration |
+| `lib/twilio/send-sms.ts` | SMS sending + logging + rate limiting |
 | `lib/resend/client.ts` | Email sending + logging |
+| `lib/idempotency.ts` | Webhook deduplication tracking |
+| `lib/rate-limit.ts` | SMS rate limiting (1 min interval, 5/day limit) |
 | `middleware.ts` | Route protection, webhook paths, cron auth |
+| `docs/HARDENING.md` | Production hardening documentation |
 
 ## Commands
 
@@ -46,14 +49,20 @@ npx prisma db seed   # Seed default sequence + settings
 
 ## Database Schema
 
-Five main tables:
+Six main tables:
 - `users` - auth users (admin, editor roles)
-- `leads` - contact info, status, sequence tracking
+- `leads` - contact info, status, sequence tracking, rate limiting
 - `messages` - communication log (SMS/email, in/out)
 - `sequence_steps` - configurable follow-up templates
 - `settings` - key-value business config
+- `processed_webhooks` - webhook idempotency tracking (24hr TTL)
 
 Lead status workflow: new → contacted → engaged → qualified → booked → won/lost
+
+**Hardening features**:
+- Webhook idempotency prevents duplicate processing (tracked by MessageSid)
+- SMS rate limiting: 1 minute minimum between sends, 5 SMS/day max per lead
+- Sequence expiration: Auto-close sequences after 30 days
 
 ## Authentication Flow
 
@@ -83,7 +92,10 @@ Sequence stops when:
 
 ## Cron Jobs
 
-- `/api/cron/process-followups`: Every 5 minutes (processes pending followups)
+- `/api/cron/process-followups`: Every 5 minutes
+  - Processes pending followups (up to 20 per run)
+  - Closes expired sequences (up to 50 per run)
+  - Cleans up expired webhook records (24hr TTL)
 
 Requires `Authorization: Bearer {CRON_SECRET}` header.
 

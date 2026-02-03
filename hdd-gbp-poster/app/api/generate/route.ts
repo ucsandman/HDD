@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import prisma from '@/lib/db'
-import anthropic from '@/lib/anthropic/client'
 import { getSystemPrompt, getPromptForPostType } from '@/lib/anthropic/prompts'
 import { generatePostSchema } from '@/schemas/generate'
+import { isDemoMode, demoDelay } from '@/lib/demo'
+import { getDemoPost } from '@/lib/anthropic/demo-posts'
 
 // Rate limiting: track generations per user
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
@@ -66,6 +67,28 @@ export async function POST(request: NextRequest) {
     }
 
     const { postType, ...params } = validation.data
+
+    // Check if we should use demo mode or if Anthropic API key is missing
+    const hasAnthropicKey = !!process.env.ANTHROPIC_API_KEY
+    const useDemoGeneration = isDemoMode && !hasAnthropicKey
+
+    if (useDemoGeneration) {
+      // Use demo posts with simulated delay
+      await demoDelay(1500)
+
+      const demoPost = getDemoPost(postType)
+
+      return NextResponse.json({
+        body: demoPost.body,
+        postType: demoPost.postType,
+        generationPrompt: demoPost.generationPrompt,
+        characterCount: demoPost.body.length,
+      })
+    }
+
+    // Production mode: use real Claude API
+    // Dynamic import to avoid loading Anthropic SDK when not needed
+    const anthropic = (await import('@/lib/anthropic/client')).default
 
     // Get franchise context info
     const franchise = await prisma.franchise.findUnique({

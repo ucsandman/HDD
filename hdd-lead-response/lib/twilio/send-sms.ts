@@ -1,5 +1,6 @@
 import prisma from '@/lib/db'
 import twilioClient, { getTwilioPhoneNumber } from './client'
+import { checkSmsRateLimit, recordSmsSent } from '@/lib/rate-limit'
 
 interface SendSmsOptions {
   leadId: string
@@ -7,6 +8,7 @@ interface SendSmsOptions {
   body: string
   sequenceStep?: number
   sentById?: string
+  bypassRateLimit?: boolean // Allow manual sends to bypass rate limit
 }
 
 interface SendSmsResult {
@@ -19,15 +21,48 @@ interface SendSmsResult {
  * Send an SMS and log it to the messages table
  */
 export async function sendSms(options: SendSmsOptions): Promise<SendSmsResult> {
-  const { leadId, to, body, sequenceStep, sentById } = options
+  const { leadId, to, body, sequenceStep, sentById, bypassRateLimit = false } = options
 
   try {
+    // Check rate limit (unless bypassed for manual sends)
+    if (!bypassRateLimit) {
+      const rateLimitCheck = await checkSmsRateLimit(leadId)
+      if (!rateLimitCheck.allowed) {
+        const errorMessage = `Rate limit exceeded: ${rateLimitCheck.reason}`
+        console.warn(`SMS rate limit for lead ${leadId}: ${rateLimitCheck.reason}`)
+
+        // Log blocked attempt
+        await prisma.message.create({
+          data: {
+            leadId,
+            channel: 'sms',
+            direction: 'outbound',
+            body,
+            status: 'blocked',
+            errorMessage,
+            sequenceStep,
+            sentById,
+          },
+        })
+
+        return {
+          success: false,
+          error: errorMessage,
+        }
+      }
+    }
+
     // Send via Twilio
     const message = await twilioClient.messages.create({
       from: getTwilioPhoneNumber(),
       to,
       body,
     })
+
+    // Record SMS sent for rate limiting
+    if (!bypassRateLimit) {
+      await recordSmsSent(leadId)
+    }
 
     // Log to database
     await prisma.message.create({

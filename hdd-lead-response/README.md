@@ -38,6 +38,14 @@ npm run dev
 - **Dashboard**: View all leads, message history, sequence status
 - **Manual Controls**: Pause, resume, skip, or close leads manually
 
+### Production Hardening
+
+- **Webhook Idempotency**: Prevents duplicate processing from retried webhooks
+- **SMS Rate Limiting**: 1 minute minimum between SMS, 5/day limit per lead
+- **Sequence Expiration**: Auto-close sequences after 30 days
+
+See [docs/HARDENING.md](docs/HARDENING.md) for details.
+
 ## Tech Stack
 
 - Next.js 14 (App Router)
@@ -67,7 +75,7 @@ npm run dev
 - `POST /api/webhooks/cal` - Booking notifications
 
 ### Cron
-- `POST /api/cron/process-followups` - Process pending followups (every 5 min)
+- `POST /api/cron/process-followups` - Process followups, close expired sequences, clean webhooks (every 5 min)
 
 ## Configuration
 

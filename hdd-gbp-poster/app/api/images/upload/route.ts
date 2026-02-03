@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import prisma from '@/lib/db'
-import { uploadImage, validateImageFile } from '@/lib/blob'
+import { validateImageFile } from '@/lib/blob'
+import { isDemoMode } from '@/lib/demo'
+import { writeFile, mkdir } from 'fs/promises'
+import path from 'path'
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,17 +28,47 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validation.error }, { status: 400 })
     }
 
-    // Upload to Vercel Blob
-    const result = await uploadImage(file, file.name)
+    let imageUrl: string
+
+    if (isDemoMode) {
+      // Demo mode: save to local public/demo-uploads directory
+      const uploadDir = path.join(process.cwd(), 'public', 'demo-uploads')
+
+      // Ensure directory exists
+      try {
+        await mkdir(uploadDir, { recursive: true })
+      } catch {
+        // Directory may already exist
+      }
+
+      // Generate unique filename
+      const timestamp = Date.now()
+      const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
+      const filename = `${timestamp}-${sanitizedName}`
+      const filepath = path.join(uploadDir, filename)
+
+      // Write file
+      const buffer = Buffer.from(await file.arrayBuffer())
+      await writeFile(filepath, buffer)
+
+      // URL for local serving
+      imageUrl = `/demo-uploads/${filename}`
+    } else {
+      // Production mode: upload to Vercel Blob
+      const { uploadImage } = await import('@/lib/blob')
+      const result = await uploadImage(file, file.name)
+      imageUrl = result.url
+    }
 
     // Create database record
+    // Note: In demo mode with SQLite, tags is stored as JSON string
     const image = await prisma.image.create({
       data: {
-        url: result.url,
+        url: imageUrl,
         filename: file.name,
         altText: altText || null,
         projectType: projectType || null,
-        tags: [],
+        tags: isDemoMode ? JSON.stringify([]) : [],
         franchiseId: session.user.franchiseId,
         uploadedBy: session.user.id,
       },

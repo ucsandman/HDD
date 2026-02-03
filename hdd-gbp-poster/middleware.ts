@@ -2,12 +2,37 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'
 
+// Check for demo mode at edge runtime
+const isDemoMode = process.env.DEMO_MODE === 'true'
+
 export async function middleware(request: NextRequest) {
-  const session = await auth()
   const { pathname } = request.nextUrl
 
+  // In demo mode, bypass all auth checks (except cron secret)
+  if (isDemoMode) {
+    // Cron endpoints still require CRON_SECRET header even in demo mode
+    if (pathname.startsWith('/api/cron')) {
+      const authHeader = request.headers.get('authorization')
+      const expectedToken = `Bearer ${process.env.CRON_SECRET}`
+
+      if (authHeader !== expectedToken) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+    }
+
+    // Redirect login page to dashboard in demo mode
+    if (pathname === '/login') {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+
+    return NextResponse.next()
+  }
+
+  // Production mode: standard auth flow
+  const session = await auth()
+
   // Public paths that don't require authentication
-  const publicPaths = ['/login', '/api/auth']
+  const publicPaths = ['/login', '/api/auth', '/api/health']
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path))
 
   // Cron endpoints require CRON_SECRET header

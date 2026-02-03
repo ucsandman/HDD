@@ -94,10 +94,15 @@ model Lead {
   sequenceStatus        String    @default("active") @map("sequence_status") @db.VarChar(50)
   sequenceStep          Int       @default(0) @map("sequence_step")
   nextFollowupAt        DateTime? @map("next_followup_at")
+  sequenceExpiresAt     DateTime? @map("sequence_expires_at")
   // Engagement tracking
   lastContactedAt       DateTime? @map("last_contacted_at")
   lastRespondedAt       DateTime? @map("last_responded_at")
   consultationBookedAt  DateTime? @map("consultation_booked_at")
+  // Rate limiting
+  lastSmsAt             DateTime? @map("last_sms_at")
+  smsCountToday         Int       @default(0) @map("sms_count_today")
+  smsCountResetAt       DateTime? @map("sms_count_reset_at")
   // Outcome
   closedAt              DateTime? @map("closed_at")
   closedReason          String?   @map("closed_reason") @db.VarChar(100)
@@ -114,6 +119,7 @@ model Lead {
   @@index([status])
   @@index([sequenceStatus])
   @@index([nextFollowupAt])
+  @@index([sequenceExpiresAt])
   @@index([phoneNormalized])
   @@index([email])
   @@index([externalId])
@@ -178,4 +184,16 @@ model Setting {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("settings")
+}
+
+model ProcessedWebhook {
+  id            String   @id @default(uuid()) @db.Uuid
+  webhookId     String   @unique @map("webhook_id") @db.VarChar(255)
+  webhookType   String   @map("webhook_type") @db.VarChar(50)
+  processedAt   DateTime @default(now()) @map("processed_at")
+  expiresAt     DateTime @map("expires_at")
+
+  @@index([webhookId])
+  @@index([expiresAt])
+  @@map("processed_webhooks")
 }

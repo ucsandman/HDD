@@ -4,8 +4,8 @@ Marketing, customer feedback, and automation platform for Hickory Dickory Decks 
 
 ## Overview
 
-**11 total tools** in 3 categories:
-- **4 Production Tools**: Sentiment Router, Review Generator, GBP Post Scheduler, Lead Response
+**13 total tools** in 3 categories:
+- **6 Production Tools**: Sentiment Router, Review Generator, GBP Post Scheduler, Lead Response, Quote Tracker, Project Messenger
 - **2 Infrastructure Tools**: Dashboard, Quote Calculator
 - **5 Development Tools**: Photo Manager, Referral Tracker, Warranty Tracker, Weather Content, Competitor Monitor
 
@@ -35,6 +35,8 @@ Marketing, customer feedback, and automation platform for Hickory Dickory Decks 
 | Warranty Tracker | `hdd-warranty-tracker/` | 5176 | Track warranties |
 | Weather Content | `hdd-weather-content/` | 5177 | Weather-based suggestions |
 | Competitor Monitor | `hdd-competitor-monitor/` | 5178 | Track competitor ratings |
+| Quote Tracker | `hdd-quote-tracker/` | 5179 | Track quotes and follow-ups |
+| Project Messenger | `hdd-project-messenger/` | 5180 | Automated project milestone communications |
 
 **Stack**: React 19, TypeScript, Tailwind CSS v4, Vite 7
 
@@ -158,10 +160,11 @@ generation_queue - AI draft generation queue
 - `/api/generate` - AI draft generation
 - `/api/images/*` - Upload/manage
 - `/api/franchise` - Settings
+- `/api/external/create-draft` - External draft creation (Weather Content)
 - `/api/cron/generate-drafts` - Weekly (Sundays 5:00 UTC)
 - `/api/cron/publish-scheduled` - Every 15 minutes
 
-**Environment Variables** (12):
+**Environment Variables** (13):
 ```
 DATABASE_URL, DATABASE_URL_UNPOOLED
 NEXTAUTH_SECRET, NEXTAUTH_URL
@@ -169,8 +172,11 @@ RESEND_API_KEY, EMAIL_FROM
 ANTHROPIC_API_KEY
 GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 BLOB_READ_WRITE_TOKEN
-CRON_SECRET, ENCRYPTION_KEY
+CRON_SECRET, ENCRYPTION_KEY, EXTERNAL_API_KEY
 ```
+
+**External API Integration**:
+Weather Content tool can create drafts via `/api/external/create-draft`. Requires API key authentication and franchise ID header. See Weather Content `INTEGRATION.md` for setup.
 
 ---
 
@@ -234,7 +240,94 @@ CRON_SECRET, WEBHOOK_SECRET
 
 ---
 
-### 5. Quote Calculator (`hdd-quote-calculator/`)
+### 5. Quote Tracker (`hdd-quote-tracker/`)
+
+Track quotes from Quote Calculator and automate follow-up sequences.
+
+| File | Purpose |
+|------|---------|
+| `src/types/index.ts` | TypeScript interfaces, status enums |
+| `src/utils/templates.ts` | Follow-up message templates |
+| `src/utils/dateUtils.ts` | Date calculations, next follow-up logic |
+| `src/utils/storage.ts` | localStorage persistence, CSV export |
+| `src/hooks/useQuotes.ts` | Quote CRUD operations |
+| `src/components/Dashboard.tsx` | Stats cards |
+| `src/components/QuoteList.tsx` | Table view with status badges |
+| `src/components/QuoteDetail.tsx` | Detail modal with tabs |
+
+**Follow-Up Sequence**:
+1. **24 hours** - SMS check-in
+2. **72 hours** - Email with full quote details
+3. **7 days** - Final SMS
+4. **14 days** - Auto-close as lost
+
+**Status Workflow**: `sent` → `viewed` → `followup1` → `followup2` → `followup3` → `closed_won/closed_lost`
+
+**Features**:
+- Dashboard with metrics (total quotes, pending follow-ups, conversion rate, avg value)
+- Conversion funnel visualization
+- Quote management with search and filters
+- Follow-up templates (SMS/email) with variable substitution
+- CSV export for reporting
+- localStorage persistence (no backend)
+
+---
+
+### 6. Project Messenger (`hdd-project-messenger/`)
+
+Automated milestone communication for active deck construction projects.
+
+| File | Purpose |
+|------|---------|
+| `src/types/index.ts` | TypeScript interfaces, status enums, constants |
+| `src/hooks/useProjects.ts` | Project CRUD operations, status management |
+| `src/hooks/useCopyToClipboard.ts` | Clipboard API wrapper |
+| `src/utils/messageTemplates.ts` | Auto-generated message templates |
+| `src/utils/storage.ts` | localStorage persistence layer |
+| `src/utils/helpers.ts` | Utility functions, validation, stats |
+| `src/components/Header.tsx` | App header with branding |
+| `src/components/StatsBar.tsx` | Dashboard statistics (5 cards) |
+| `src/components/ProjectCard.tsx` | Project list item with status badge |
+| `src/components/ProjectForm.tsx` | Create project form with validation |
+| `src/components/ProjectDetail.tsx` | Detail modal with status updates |
+| `src/components/MessageCard.tsx` | Reusable message display with copy |
+
+**Project Status Workflow**: `quoted` → `sold` → `materials_ordered` → `materials_received` → `scheduled` → `in_progress` → `inspection_scheduled` → `complete`
+
+**Auto-Generated Messages**:
+- **Sold**: Project confirmed, next steps coming
+- **Materials Ordered**: Materials on order with arrival date
+- **Materials Received**: Materials arrived, scheduling build
+- **Scheduled**: Build date confirmed, crew arrival time
+- **In Progress**: Work underway, progress updates
+- **Inspection Scheduled**: Build complete, inspection date
+- **Complete**: Project ready, thank you, review request
+
+Each status change generates:
+1. SMS message (short, mobile-friendly)
+2. Email message (subject + detailed body)
+
+**Features**:
+- Dashboard with stats (total, active, starting/completing this week, pending notifications)
+- Filter projects by status
+- Project management (create, view, update, delete)
+- Status update interface with date parameters
+- Pending notifications queue with copy buttons
+- Mark sent tracking (SMS/email/both)
+- Full status history timeline
+- Customer info management
+- Project notes and dates
+- localStorage persistence
+
+**Data Model**:
+- Projects with customer info, status, dates, photos
+- Status history with notification tracking
+- Message templates with variable substitution
+- Stats calculations (active, weekly counts)
+
+---
+
+### 7. Quote Calculator (`hdd-quote-calculator/`)
 
 Customer-facing deck estimate tool.
 
@@ -252,7 +345,7 @@ Total = (SqFt × BasePrice × MaterialMultiplier) + HeightAdjustment + Features
 
 ---
 
-### 6. Dashboard (`hdd-dashboard/`)
+### 8. Dashboard (`hdd-dashboard/`)
 
 Central hub for all tools.
 
@@ -264,19 +357,78 @@ Central hub for all tools.
 
 ---
 
-## Development Tools (Scaffolded)
+## Development Tools (Enhanced)
 
-These Vite/React projects have basic scaffolding but need feature implementation:
+These Vite/React projects were enhanced with production features:
 
 | Tool | Purpose | Status |
 |------|---------|--------|
-| Photo Manager | Organize before/after photos | Scaffolded |
-| Referral Tracker | Track leads and referral codes | Scaffolded |
-| Warranty Tracker | Track warranties, schedule checkups | Scaffolded |
-| Weather Content | Weather-based content suggestions | Scaffolded |
+| Photo Manager | Organize before/after photos | **Production** - Vercel Blob cloud storage |
+| Referral Tracker | Track leads and referral codes | **Production** - CSV import/export, rewards, analytics |
+| Warranty Tracker | Track warranties, schedule checkups | **Production** - Resend email, anniversary engine |
+| Weather Content | Weather-based content suggestions + GBP integration | Ready |
 | Competitor Monitor | Track competitor Google ratings | Scaffolded |
 
 All share: React 19, TypeScript, Tailwind CSS v4, Vite 7
+
+### Recent Enhancements (2026-02-03)
+
+**Photo Manager** - Cloud storage upgrade:
+- Vercel Blob integration (unlimited storage vs 5MB localStorage)
+- Automatic migration from base64 to cloud URLs
+- Upload/delete API endpoints
+
+**Referral Tracker** - Full feature completion:
+- CSV import/export with validation
+- Referral Reward Manager (configurable tiers, payout tracking)
+- Enhanced analytics (date filters, conversion funnel)
+- Duplicate detection
+- Lead Response JSON integration ready
+
+**Warranty Tracker** - Email + lifecycle marketing:
+- Resend API integration for email delivery
+- Customer Anniversary Engine (4 milestones)
+- 30-day review, 6-month maintenance, 1-year anniversary, annual check-in
+- Email history tracking per customer
+
+**Lead Response** - Production hardening:
+- Webhook idempotency (24hr MessageSid dedup)
+- SMS rate limiting (1min interval, 5/day per lead)
+- Sequence expiration (30-day auto-close)
+
+#### Weather Content Details
+
+Generates smart content suggestions based on Cincinnati weather (NWS API).
+
+**Features**:
+- Real-time weather data from National Weather Service
+- 7-day forecast display
+- Context-aware content generation (temperature, conditions, season)
+- Suggestion types: GBP posts, social media, email campaigns
+- **GBP Post Scheduler integration** - Create drafts with one click
+
+**Weather-Triggered Content**:
+- Perfect weather (65-85°F, sunny) → Deck weather posts
+- Nice weekend ahead → Weekend preview posts
+- Rainy days → Planning/indoor activity posts
+- Cold weather (<45°F) → Winter planning campaigns
+- Hot weather (>85°F) → Composite decking benefits
+- Spring/Fall seasons → Seasonal booking pushes
+
+**GBP Integration**:
+- "Create GBP Draft" button on GBP-type suggestions
+- Modal to review/edit before sending
+- Direct creation in GBP Post Scheduler as draft
+- Auto-opens edit page in new tab
+- Requires `.env` configuration (see `INTEGRATION.md`)
+
+**Files**:
+- `src/App.tsx` - Main component with weather fetching
+- `src/lib/gbpApi.ts` - GBP Post Scheduler API client
+- `src/components/CreateDraftModal.tsx` - Draft creation modal
+- `src/components/Toast.tsx` - Toast notifications
+- `src/types/index.ts` - TypeScript types
+- `INTEGRATION.md` - Setup and usage guide
 
 ---
 
@@ -291,9 +443,9 @@ python launcher.py
 ```
 
 Features:
-- 11 tools organized by type (Static/Vite/Next.js)
+- 12 tools organized by type (Static/Vite/Next.js)
 - Launch individual, groups, or all
-- **Production mode** (`P`) - launches only 4 essential tools
+- **Production mode** (`P`) - launches only 5 essential tools
 - **Resource warnings** - confirms before launching all 8 servers
 - **Staggered startup** - waits for each server to be ready
 - **Browser toggle** (`B`) - option to start servers without opening tabs
@@ -319,6 +471,13 @@ Windows batch file launcher (minimal).
 | Vercel Blob | Image storage |
 | Vercel Cron | Scheduled publishing |
 
+### Weather Content
+
+| Service | Purpose |
+|---------|---------|
+| NWS API | Real-time weather data (no API key needed) |
+| GBP Post Scheduler | Draft creation via internal API |
+
 ### Lead Response
 
 | Service | Purpose |
@@ -339,10 +498,12 @@ Windows batch file launcher (minimal).
 | Sentiment Router | Ready | Static HTML |
 | Quote Calculator | Ready | Static HTML |
 | Review Generator | Ready | Dependencies installed |
+| Quote Tracker | Ready | Dependencies installed, fully functional |
+| Project Messenger | Ready | Dependencies installed, fully functional |
 | Photo Manager | Ready | Dependencies installed, localStorage-based |
 | Referral Tracker | Ready | Dependencies installed, scaffolded |
 | Warranty Tracker | Ready | Dependencies installed, scaffolded |
-| Weather Content | Ready | Dependencies installed, scaffolded |
+| Weather Content | Ready | Fully functional, GBP integration ready |
 | Competitor Monitor | Ready | Dependencies installed, scaffolded |
 | GBP Post Scheduler | Needs Setup | Requires .env configuration |
 | Lead Response | Needs Setup | Requires .env configuration |
@@ -359,6 +520,8 @@ hdd-quote-calculator/index.html
 
 # React tools
 cd hdd-review-generator && npm run dev  # :5173
+cd hdd-quote-tracker && npm run dev     # :5179
+cd hdd-project-messenger && npm run dev # :5180
 
 # Next.js tools
 cd hdd-gbp-poster && npm run dev        # :3000

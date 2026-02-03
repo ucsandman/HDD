@@ -1,73 +1,83 @@
-# React + TypeScript + Vite
+# HDD Photo Manager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Project photo organization tool for Hickory Dickory Decks Cincinnati.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Upload and organize before/after project photos
+- Cloud storage via Vercel Blob (no localStorage limits)
+- Filter projects by type, material, and neighborhood
+- Project metadata: customer name, date, type, material, notes
+- Automatic migration from base64 to cloud storage
+- Delete photos from cloud when removing projects
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19
+- TypeScript
+- Vite 7
+- Tailwind CSS v4
+- Vercel Blob Storage
 
-## Expanding the ESLint configuration
+## Setup
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Install dependencies:
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. Create `.env` file:
+```bash
+cp .env.example .env
 ```
+
+3. Get Vercel Blob token:
+   - Go to https://vercel.com/dashboard/stores
+   - Create or select a Blob store
+   - Copy the `BLOB_READ_WRITE_TOKEN`
+   - Add to `.env`
+
+4. Start dev server:
+```bash
+npm run dev
+```
+
+## Commands
+
+```bash
+npm run dev      # Start dev server (port 5174)
+npm run build    # Production build
+npm run preview  # Preview production build
+npm run lint     # Run ESLint
+```
+
+## Storage
+
+- **Cloud**: Photos stored in Vercel Blob
+- **Local**: Project metadata (name, date, type, etc.) in localStorage
+- **Migration**: Existing base64 photos auto-migrated on first load
+
+## Deployment
+
+This app includes Vercel serverless functions in `/api`:
+- `/api/upload.ts` - Upload photos to Blob
+- `/api/delete.ts` - Delete photos from Blob
+
+Deploy to Vercel for full functionality. Add `BLOB_READ_WRITE_TOKEN` to environment variables.
+
+## Project Data
+
+Projects include:
+- Customer name/address
+- Completion date
+- Project type (Deck, Pergola, etc.)
+- Material (Trex Select, TimberTech, etc.)
+- Neighborhood
+- Before/after photos (cloud URLs)
+- Notes
+
+## Security
+
+- `.env` never committed (listed in `.gitignore`)
+- Blob storage uses public access (safe for customer photos)
+- Photos organized in `/hdd-photos` folder with timestamps

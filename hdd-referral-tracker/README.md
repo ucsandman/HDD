@@ -1,73 +1,233 @@
-# React + TypeScript + Vite
+# HDD Referral Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Lead tracking and referral management system for Hickory Dickory Decks Cincinnati.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Lead Management
+- Track leads from multiple sources
+- Status workflow: New → Contacted → Quoted → Qualified → Sold/Lost
+- Referral code tracking and attribution
+- Contact information and notes
+- **CSV bulk import** with duplicate detection
+- **JSON import** from Lead Response system
+- **CSV export** for backup/analysis
+- **Duplicate detection** by phone/email
 
-## React Compiler
+### Referrer Management
+- Auto-generate unique referral codes
+- Track referral counts and total value
+- Automatic value updates when leads close
+- Contact information storage
+- **CSV export** for reporting
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Analytics (Enhanced)
+- **Date range filtering**: Week/Month/Quarter/All Time
+- **Conversion funnel**: Visual pipeline from new to sold
+- **Average time to close**: Per source and overall
+- **Enhanced metrics**: Conversion rates, revenue tracking
+- Lead source performance comparison
+- Real-time calculations
 
-## Expanding the ESLint configuration
+## Quick Start
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open [http://localhost:5173](http://localhost:5173)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Documentation
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **[FEATURES.md](FEATURES.md)** - Detailed feature documentation
+- **[INTEGRATION.md](INTEGRATION.md)** - Lead Response integration guide
+- **[sample-leads.csv](sample-leads.csv)** - Sample data for testing imports
+
+## How It Works
+
+### Creating Referrers
+
+1. Go to **Referrers** tab
+2. Click **+ Add Referrer**
+3. Enter customer name (phone/email optional)
+4. System generates unique code (e.g., JOHN123)
+5. Share code with customer
+
+### Adding Leads
+
+**Manual Entry**:
+1. Go to **Leads** tab
+2. Click **+ Add Lead**
+3. Fill in details
+4. Optional: Enter referral code
+5. System links to referrer automatically
+
+**CSV Import**:
+1. Click **Import CSV**
+2. Select CSV file (see format in FEATURES.md)
+3. Preview and confirm
+4. Review import results
+
+**Lead Response Sync**:
+1. Click **Sync from Lead Response**
+2. Paste JSON payload
+3. System imports and links referrers
+4. Skips duplicates automatically
+
+### Tracking Workflow
+
+1. **New lead arrives** → Status: New
+2. **Make contact** → Status: Contacted
+3. **Send quote** → Status: Quoted
+4. **Lead qualified** → Status: Qualified
+5. **Project sold** → Status: Sold (enter value)
+   - Referrer's totalValue updates
+6. **Lost deal** → Status: Lost
+
+### Referral Attribution
+
+When lead has referral code:
+- System finds matching referrer
+- Increments referrer's count
+- Shows notification
+- Updates sold count when closed
+- Adds to referrer's total value
+
+## Data Storage
+
+All data stored in browser localStorage:
+- `hdd-leads`: Lead records
+- `hdd-referrers`: Referrer records
+
+**Important**: Data is browser-specific. Regular CSV exports recommended for backup.
+
+## Import/Export
+
+### CSV Import Format
+
+```csv
+name,phone,email,source,referralCode,status,value,createdAt,notes
+John Doe,555-1234,john@email.com,Google Search,JOHN123,new,,2026-02-03,Notes here
 ```
+
+Only `name` is required. See FEATURES.md for full documentation.
+
+### JSON Import Format
+
+```json
+{
+  "name": "John Doe",
+  "phone": "555-1234",
+  "email": "john@email.com",
+  "source": "Google Search",
+  "referralCode": "JOHN123"
+}
+```
+
+See INTEGRATION.md for Lead Response integration details.
+
+### Duplicate Detection
+
+System automatically checks:
+- Phone numbers (exact match)
+- Email addresses (case-insensitive)
+
+**Behavior**:
+- Manual add: Prompts user to confirm
+- CSV/JSON import: Skips with reason in report
+
+## Tabs
+
+### Analytics
+- **Date range filter**: Week, Month, Quarter, All Time
+- **Conversion funnel**: Visual pipeline from lead to sale
+- **Key metrics**: Total leads, sold, revenue, conversion rate, avg close time
+- **Source performance**: Compare all lead sources with metrics
+- **Referral tracking**: Count and value from referrals
+
+### Leads
+- Complete lead list with color-coded status
+- Quick status updates with dropdown
+- Contact information display
+- **Import CSV**: Bulk upload leads from spreadsheet
+- **Sync from Lead Response**: JSON import for integration
+- **Export CSV**: Download all leads for backup
+- Automatic referrer linking via codes
+
+### Referrers
+- Referrer cards with unique codes
+- Referral counts and total value tracking
+- Sold count per referrer
+- Copy code to clipboard
+- **Export CSV**: Download all referrers
+
+## Lead Sources
+
+Valid sources (must match exactly for CSV import):
+- Google Search
+- Google Business Profile
+- Facebook
+- Instagram
+- Nextdoor
+- Yard Sign
+- Customer Referral
+- Home Show
+- Angi/HomeAdvisor
+- Thumbtack
+- Direct Mail
+- Other
+
+Analytics tracks performance for each source.
+
+## Tech Stack
+
+- React 19
+- TypeScript
+- Vite 7
+- Tailwind CSS v4
+
+## Commands
+
+```bash
+npm run dev      # Development server (port 5173)
+npm run build    # Production build
+npm run preview  # Preview production build
+npm run lint     # Run ESLint
+```
+
+## Testing
+
+Use provided `sample-leads.csv` to test CSV import:
+- 10 sample leads
+- Various sources and statuses
+- Some with referral codes
+- Mix of data for analytics testing
+
+## Status Colors
+
+- **Blue**: New lead
+- **Orange**: Contacted
+- **Purple**: Quoted
+- **Green**: Qualified
+- **Brown**: Sold
+- **Red**: Lost
+
+## Browser Compatibility
+
+- Chrome/Edge: Full support
+- Firefox: Full support
+- Safari: Full support (14+)
+- Mobile: Responsive design, all features work
+
+## Future Enhancements
+
+Potential additions:
+- Real-time webhook integration with Lead Response
+- Email notifications for referrers
+- Advanced filtering and search
+- Bulk operations
+- API integration
+- Referral reward tracking system
+
+See INTEGRATION.md for integration roadmap.

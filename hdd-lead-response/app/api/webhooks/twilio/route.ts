@@ -3,6 +3,7 @@ import prisma from '@/lib/db'
 import { validateTwilioSignature } from '@/lib/twilio/client'
 import { logInboundSms } from '@/lib/twilio/send-sms'
 import { normalizePhone } from '@/lib/phone'
+import { isWebhookProcessed, markWebhookProcessed } from '@/lib/idempotency'
 
 export async function POST(request: Request) {
   try {
@@ -30,12 +31,24 @@ export async function POST(request: Request) {
     const body = params.Body
     const messageSid = params.MessageSid
 
-    if (!from || !body) {
+    if (!from || !body || !messageSid) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       )
     }
+
+    // Check for duplicate webhook (idempotency)
+    const alreadyProcessed = await isWebhookProcessed(messageSid, 'twilio_sms')
+    if (alreadyProcessed) {
+      console.log(`Webhook already processed: ${messageSid}`)
+      return new Response('<?xml version="1.0" encoding="UTF-8"?><Response></Response>', {
+        headers: { 'Content-Type': 'text/xml' },
+      })
+    }
+
+    // Mark webhook as processed immediately
+    await markWebhookProcessed(messageSid, 'twilio_sms')
 
     // Normalize phone number and find matching lead
     const normalizedPhone = normalizePhone(from)

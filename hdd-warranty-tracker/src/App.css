@@ -27,7 +27,7 @@ body {
 
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -164,10 +164,48 @@ body {
 .warning-text { color: var(--warning); font-weight: 600; }
 .alert-text { color: var(--alert); font-weight: 600; }
 
+.email-history {
+  padding: 12px;
+  background: var(--bg);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+.email-history .label {
+  color: var(--muted);
+  display: block;
+  margin-bottom: 8px;
+}
+.history-entries {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.history-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 11px;
+}
+.history-badge.sent {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.history-badge.failed {
+  border-color: var(--alert);
+  color: var(--alert);
+}
+
 .customer-actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+.action-group {
+  display: flex;
+  gap: 4px;
 }
 .customer-actions button {
   padding: 6px 12px;
@@ -178,10 +216,53 @@ body {
   cursor: pointer;
   transition: all 0.2s;
 }
-.customer-actions button:hover {
+.customer-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.customer-actions button:not(:disabled):hover {
   background: var(--primary);
   color: white;
   border-color: var(--primary);
+}
+.btn-copy {
+  padding: 6px 10px !important;
+  min-width: 32px;
+}
+
+.email-toast {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  text-align: center;
+  animation: slideIn 0.3s ease-out;
+}
+.email-toast.success {
+  background: #D1FAE5;
+  color: #065F46;
+  border: 1px solid #34D399;
+}
+.email-toast.error {
+  background: #FEE2E2;
+  color: #991B1B;
+  border: 1px solid #F87171;
+}
+.email-toast.info {
+  background: #DBEAFE;
+  color: #1E40AF;
+  border: 1px solid #60A5FA;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modal-overlay {
@@ -248,8 +329,116 @@ body {
   font-size: 14px;
 }
 
+/* Anniversary Styles */
+.anniversary-summary {
+  background: var(--card);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-left: 4px solid var(--primary);
+}
+.anniversary-summary h3 {
+  font-size: 18px;
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+.anniversary-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+}
+.anniversary-stats span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.anniversary-alerts {
+  padding: 12px;
+  background: #FFF7ED;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #FED7AA;
+}
+.anniversary-alerts .label {
+  color: var(--muted);
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.anniversary-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.anniversary-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.anniversary-badge.day30 {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+.anniversary-badge.month6 {
+  background: #FEF3C7;
+  color: #92400E;
+}
+.anniversary-badge.year1 {
+  background: #D1FAE5;
+  color: #065F46;
+}
+.anniversary-badge.yearly {
+  background: #FCE7F3;
+  color: #9F1239;
+}
+
+.anniversary-actions {
+  margin-top: 16px;
+  padding: 12px;
+  background: #F9FAFB;
+  border-radius: 8px;
+}
+.anniversary-actions .label {
+  color: var(--muted);
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.action-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.anniversary-action {
+  padding: 8px 16px;
+  background: white;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.anniversary-action:hover {
+  background: var(--primary);
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .stats-row { grid-template-columns: 1fr 1fr; }
+}
+
 @media (max-width: 640px) {
   .stats-row { grid-template-columns: 1fr; }
   .toolbar { flex-direction: column; }
   .customer-status { flex-direction: column; gap: 8px; }
+  .filter-tabs { flex-wrap: wrap; }
 }

@@ -23,6 +23,9 @@ const navigation = [
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
+// Demo mode indicator (read from environment at build time)
+const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true'
+
 interface HeaderProps {
   user?: {
     name: string | null
@@ -50,10 +53,15 @@ export function Header({ user }: HeaderProps) {
       <div className="h-6 w-px bg-gray-200 lg:hidden" />
 
       <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-        <div className="flex flex-1 items-center">
+        <div className="flex flex-1 items-center gap-x-2">
           <h1 className="text-lg font-semibold text-gray-900 lg:hidden">
             GBP Poster
           </h1>
+          {isDemoMode && (
+            <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 lg:hidden">
+              Demo
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-x-4 lg:gap-x-6">
           {user && (

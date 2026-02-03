@@ -148,6 +148,31 @@ body {
   color: var(--muted);
 }
 
+.suggestion-actions {
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+}
+
+.create-draft-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--gbp);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.create-draft-btn:hover:not(:disabled) {
+  background: #357ae8;
+}
+.create-draft-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .copy-btn {
   width: 100%;
   padding: 12px;
@@ -179,6 +204,11 @@ body {
   margin-bottom: 12px;
 }
 .refresh-btn:hover { background: var(--bg); }
+.config-warning {
+  color: #F59E0B;
+  font-weight: 500;
+  margin-top: 8px;
+}
 
 @media (max-width: 640px) {
   .current-weather { flex-direction: column; text-align: center; }
