@@ -37,7 +37,8 @@
       "Bash(dir:*)",
       "Bash(start hdd-dashboard/index.html)",
       "Bash(openssl rand:*)",
-      "Bash(start hdd-gbp-poster/SETUP_GUIDE.md)"
+      "Bash(start hdd-gbp-poster/SETUP_GUIDE.md)",
+      "Bash(git rm:*)"
     ]
   }
 }
