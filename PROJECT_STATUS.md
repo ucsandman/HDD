@@ -1,8 +1,18 @@
 # HDD Marketing Tools - Project Status
 
-**Generated:** 2026-02-01
-**Total Projects:** 5 (4 tools + 1 dashboard)
-**Overall Status:** 4 complete, 1 needs dependency install
+**Generated:** 2026-02-03
+**Total Projects:** 11 (6 complete, 5 scaffolded)
+**Overall Status:** Production tools ready, supplementary tools scaffolded
+
+---
+
+## Summary
+
+| Category | Tools | Status |
+|----------|-------|--------|
+| Production | Sentiment Router, Review Generator, GBP Post Scheduler, Lead Response | 4/4 Complete |
+| Infrastructure | Dashboard, Quote Calculator | 2/2 Complete |
+| Development | Photo Manager, Referral Tracker, Warranty Tracker, Weather Content, Competitor Monitor | 0/5 Implemented |
 
 ---
 
@@ -10,6 +20,14 @@
 
 ```
 HDD/
+├── launcher.py               # Python CLI launcher
+├── launch.bat                # Windows batch launcher
+├── README.md                 # Main documentation
+├── CLAUDE.md                 # Architecture for AI
+├── PROJECT_STATUS.md         # This file
+├── IMPLEMENTATION_GUIDE.md   # Testing checklists
+├── EXTERNAL_SERVICES_SETUP.md # Nathan's setup guide
+│
 ├── hdd-dashboard/            # Dashboard: Static HTML (COMPLETE)
 │   ├── index.html
 │   ├── styles.css
@@ -21,86 +39,64 @@ HDD/
 │   ├── thank-you.html
 │   ├── styles.css
 │   ├── script.js
-│   ├── config.js
-│   └── README.md
+│   └── config.js
 │
-├── hdd-review-generator/     # Tool 2: React/Vite (COMPLETE)
+├── hdd-quote-calculator/     # Tool 2: Static HTML (COMPLETE)
+│   ├── index.html
+│   ├── styles.css
+│   ├── config.js
+│   └── calculator.js
+│
+├── hdd-review-generator/     # Tool 3: React/Vite (COMPLETE)
 │   ├── src/
 │   │   ├── App.tsx
 │   │   ├── components/
-│   │   │   ├── InputForm.tsx
-│   │   │   ├── OutputSection.tsx
-│   │   │   ├── MessageCard.tsx
-│   │   │   ├── CopyButton.tsx
-│   │   │   └── Header.tsx
 │   │   ├── utils/
-│   │   │   └── generateMessages.ts
 │   │   ├── hooks/
-│   │   │   └── useCopyToClipboard.ts
 │   │   └── types/
-│   │       └── index.ts
 │   ├── dist/                 # Production build exists
+│   └── node_modules/         # Dependencies installed
+│
+├── hdd-gbp-poster/           # Tool 4: Next.js (COMPLETE - needs env)
+│   ├── app/
+│   │   ├── (auth)/login/
+│   │   ├── (dashboard)/
+│   │   └── api/
+│   ├── lib/
+│   ├── prisma/schema.prisma
 │   ├── node_modules/         # Dependencies installed
-│   └── package.json
+│   └── .env.example
 │
-├── hdd-gbp-poster/           # Tool 3: Next.js (COMPLETE - needs env)
+├── hdd-lead-response/        # Tool 5: Next.js (COMPLETE - needs npm install + env)
 │   ├── app/
 │   │   ├── (auth)/login/
 │   │   ├── (dashboard)/
-│   │   │   ├── page.tsx         # Dashboard
-│   │   │   ├── posts/           # Posts CRUD
-│   │   │   ├── images/          # Image library
-│   │   │   ├── calendar/        # Calendar view
-│   │   │   └── settings/        # Franchise settings
 │   │   └── api/
-│   │       ├── auth/            # NextAuth + Google OAuth
-│   │       ├── posts/           # Posts CRUD + approve/publish
-│   │       ├── generate/        # AI draft generation
-│   │       ├── images/          # Image upload/manage
-│   │       ├── franchise/       # Settings
-│   │       ├── users/           # User management
-│   │       └── cron/            # Scheduled jobs
 │   ├── lib/
-│   │   ├── auth.ts
-│   │   ├── db.ts
-│   │   ├── anthropic/           # Claude API
-│   │   ├── google/              # GBP API
-│   │   └── crypto.ts            # Token encryption
 │   ├── prisma/schema.prisma
-│   ├── node_modules/            # Dependencies installed
-│   ├── .next/                   # Build cache exists
 │   └── .env.example
 │
-├── hdd-lead-response/        # Tool 4: Next.js (NEEDS npm install)
-│   ├── app/
-│   │   ├── (auth)/login/
-│   │   ├── (dashboard)/
-│   │   │   ├── page.tsx         # Dashboard
-│   │   │   ├── leads/           # Leads CRUD
-│   │   │   ├── messages/        # Message inbox
-│   │   │   ├── sequences/       # Sequence editor
-│   │   │   └── settings/        # Settings
-│   │   └── api/
-│   │       ├── auth/            # NextAuth
-│   │       ├── leads/           # Leads CRUD + webhook
-│   │       ├── messages/        # Message sending
-│   │       ├── sequences/       # Sequence config
-│   │       ├── settings/        # Settings
-│   │       ├── webhooks/        # Twilio + Cal.com
-│   │       └── cron/            # Follow-up processing
-│   ├── lib/
-│   │   ├── auth.ts
-│   │   ├── db.ts
-│   │   ├── phone.ts             # E.164 normalization
-│   │   ├── templates.ts         # Message rendering
-│   │   ├── sequence.ts          # Sequence engine
-│   │   ├── twilio/              # SMS client
-│   │   └── resend/              # Email client
-│   ├── prisma/schema.prisma
-│   ├── node_modules/            # NOT INSTALLED
-│   └── .env.example
+├── hdd-photo-manager/        # Tool 6: React/Vite (SCAFFOLDED)
+│   ├── src/App.tsx           # Placeholder content
+│   └── node_modules/         # Dependencies installed
 │
-└── Spec files (root)
+├── hdd-referral-tracker/     # Tool 7: React/Vite (SCAFFOLDED)
+│   ├── src/App.tsx           # Placeholder content
+│   └── node_modules/         # Dependencies installed
+│
+├── hdd-warranty-tracker/     # Tool 8: React/Vite (SCAFFOLDED)
+│   ├── src/App.tsx           # Placeholder content
+│   └── node_modules/         # Dependencies installed
+│
+├── hdd-weather-content/      # Tool 9: React/Vite (SCAFFOLDED)
+│   ├── src/App.tsx           # Placeholder content
+│   └── node_modules/         # Dependencies installed
+│
+├── hdd-competitor-monitor/   # Tool 10: React/Vite (SCAFFOLDED)
+│   ├── src/App.tsx           # Placeholder content
+│   └── node_modules/         # Dependencies installed
+│
+└── Spec files
     ├── hdd-sentiment-router-spec.md
     ├── hdd-review-generator-spec.md
     ├── hdd-gbp-poster-spec.md
@@ -109,41 +105,13 @@ HDD/
 
 ---
 
-## Dashboard
+## Production Tools
 
-**Path:** `hdd-dashboard/`
-**Stack:** Pure HTML, CSS, JavaScript (no build step)
-**Status:** ✅ COMPLETE
-
-### Files
-
-| File | Purpose |
-|------|---------|
-| `index.html` | Dashboard page with tool cards |
-| `styles.css` | All styling |
-| `config.js` | Tool definitions and status |
-
-### Entry Point
-
-Open `hdd-dashboard/index.html` directly in browser. No server required.
-
-### Features
-
-- Shows all 4 tools with status badges (Ready/Needs Setup/Needs Install)
-- Launch buttons open each tool's URL
-- Setup Info panels expand with commands, env vars, and service requirements
-- Responsive 2-column grid (single column on mobile)
-- All content driven by `config.js` for easy updates
-
----
-
-## Tool 1: Sentiment Router
+### Tool 1: Sentiment Router
 
 **Path:** `hdd-sentiment-router/`
 **Stack:** Pure HTML, CSS, JavaScript (no build step)
 **Status:** ✅ COMPLETE
-
-### Components Built
 
 | File | Purpose | Status |
 |------|---------|--------|
@@ -151,111 +119,95 @@ Open `hdd-dashboard/index.html` directly in browser. No server required.
 | `feedback.html` | Private feedback form | ✅ Complete |
 | `thank-you.html` | Confirmation page | ✅ Complete |
 | `styles.css` | Mobile-first responsive styling | ✅ Complete |
-| `script.js` | Routing logic, validation, analytics hooks | ✅ Complete |
-| `config.js` | Franchise-specific settings | ✅ Complete (placeholder values) |
-| `README.md` | Setup instructions | ✅ Complete |
+| `script.js` | Routing logic, validation | ✅ Complete |
+| `config.js` | Franchise settings | ✅ Complete (placeholder values) |
 
-### Functional vs Stubbed
+**Entry Point:** Open `index.html` in browser
+**Dependencies:** None
 
-- **Functional:** All core functionality complete
-- **Stubbed:** Logo shows "HDD Logo" placeholder text
-
-### Missing vs Spec
-
-Nothing missing. All spec requirements implemented.
-
-### Entry Point
-
-Open `index.html` directly in browser. No server required.
-
-### Dependencies
-
-None. Zero external dependencies.
-
-### Configuration Required
-
-Edit `config.js` before use:
+**Configuration Required:**
 ```javascript
 googleReviewUrl: "https://g.page/r/YOUR-REVIEW-LINK/review"  // REQUIRED
-feedbackEmail: "feedback@example.com"                        // For mailto fallback
-formspreeId: "your-formspree-id"                            // For form submission
-websiteUrl: "https://www.hickorydickorydecks.com/location"  // Return link
+feedbackEmail: "feedback@example.com"
+formspreeId: "your-formspree-id"
+websiteUrl: "https://www.hickorydickorydecks.com/location"
 ```
 
 ---
 
-## Tool 2: Review Generator
+### Tool 2: Quote Calculator
+
+**Path:** `hdd-quote-calculator/`
+**Stack:** Pure HTML, CSS, JavaScript (no build step)
+**Status:** ✅ COMPLETE
+
+| File | Purpose | Status |
+|------|---------|--------|
+| `index.html` | Calculator page | ✅ Complete |
+| `styles.css` | All styling | ✅ Complete |
+| `config.js` | Pricing configuration | ✅ Complete |
+| `calculator.js` | Calculation logic | ✅ Complete |
+
+**Entry Point:** Open `index.html` in browser
+**Dependencies:** None
+
+**Features:**
+- Dimension input with live sqft calculation
+- Material selection (Trex, TimberTech grades)
+- Feature add-ons (railing, stairs, lighting, pergola)
+- Height adjustment pricing
+- Low-high range estimates
+
+---
+
+### Tool 3: Review Generator
 
 **Path:** `hdd-review-generator/`
 **Stack:** React 19, TypeScript, Vite 7, Tailwind CSS v4
 **Status:** ✅ COMPLETE
 
-### Components Built
-
 | File | Purpose | Status |
 |------|---------|--------|
 | `src/App.tsx` | Main app with state | ✅ Complete |
 | `src/components/InputForm.tsx` | Form with validation + localStorage | ✅ Complete |
-| `src/components/OutputSection.tsx` | Container for message cards | ✅ Complete |
-| `src/components/MessageCard.tsx` | Reusable card with copy button | ✅ Complete |
-| `src/components/CopyButton.tsx` | Clipboard with "Copied!" feedback | ✅ Complete |
-| `src/components/Header.tsx` | App header | ✅ Complete |
-| `src/utils/generateMessages.ts` | Template generation logic | ✅ Complete |
+| `src/components/OutputSection.tsx` | Messages container | ✅ Complete |
+| `src/components/MessageCard.tsx` | Card with copy button | ✅ Complete |
+| `src/components/CopyButton.tsx` | Clipboard feedback | ✅ Complete |
+| `src/utils/generateMessages.ts` | Template generation | ✅ Complete |
 | `src/hooks/useCopyToClipboard.ts` | Clipboard API wrapper | ✅ Complete |
 | `src/types/index.ts` | TypeScript interfaces | ✅ Complete |
 
-### Functional vs Stubbed
-
-- **Functional:** All core functionality complete
-- **Production build exists** in `dist/` folder
-
-### Missing vs Spec
-
-Nothing missing. All spec requirements implemented including:
-- SMS character limit with fallback template
-- localStorage persistence for franchisee fields
-- Auto-scroll to output on generation
-
-### Entry Point
-
+**Entry Point:**
 ```bash
 cd hdd-review-generator
-npm run dev     # Dev server at http://localhost:5173
-npm run build   # Production build
-npm run preview # Preview production
+npm run dev     # http://localhost:5173
 ```
 
-### Dependencies
-
-```bash
-cd hdd-review-generator
-npm install     # Already done - node_modules exists
-```
-
-No environment variables required.
+**Dependencies:** ✅ Installed (`node_modules/` exists)
+**Production Build:** ✅ Exists (`dist/` folder)
 
 ---
 
-## Tool 3: GBP Post Scheduler
+### Tool 4: GBP Post Scheduler
 
 **Path:** `hdd-gbp-poster/`
-**Stack:** Next.js 14, Prisma, Neon PostgreSQL, NextAuth, Claude API, Google Business Profile API
+**Stack:** Next.js 14, Prisma, Neon PostgreSQL, NextAuth, Claude AI, GBP API
 **Status:** ✅ STRUCTURE COMPLETE - Needs Environment Setup
 
-### Pages Built
+#### Pages Built
 
 | Route | Purpose | Status |
 |-------|---------|--------|
 | `/login` | Magic link authentication | ✅ Complete |
 | `/` | Dashboard with stats | ✅ Complete |
 | `/posts` | Posts list with filters | ✅ Complete |
-| `/posts/new` | Create/generate new post | ✅ Complete |
+| `/posts/new` | Create/generate post | ✅ Complete |
 | `/posts/[id]` | Edit post | ✅ Complete |
 | `/images` | Image library | ✅ Complete |
 | `/calendar` | Calendar view | ✅ Complete |
 | `/settings` | Franchise settings | ✅ Complete |
 
-### API Routes Built
+#### API Routes Built
 
 | Route | Purpose | Status |
 |-------|---------|--------|
@@ -268,69 +220,49 @@ No environment variables required.
 | `/api/posts/[id]/publish` | Publish now | ✅ Complete |
 | `/api/generate` | AI draft generation | ✅ Complete |
 | `/api/images` | List/Upload images | ✅ Complete |
-| `/api/images/upload` | Upload handler | ✅ Complete |
 | `/api/images/[id]` | Update/Delete | ✅ Complete |
 | `/api/franchise` | Get/Update settings | ✅ Complete |
 | `/api/users` | List/Invite users | ✅ Complete |
-| `/api/users/[id]` | Delete user | ✅ Complete |
 | `/api/cron/generate-drafts` | Weekly draft generation | ✅ Complete |
 | `/api/cron/publish-scheduled` | 15-min publish check | ✅ Complete |
 
-### Database Schema
-
-6 tables defined in `prisma/schema.prisma`:
-- `franchises` - Multi-franchise support
-- `users` - Auth with roles
-- `images` - Image library
-- `posts` - Post content + status workflow
-- `post_images` - Many-to-many
-- `generation_queue` - AI draft queue
-
-### Entry Point
-
+**Entry Point:**
 ```bash
 cd hdd-gbp-poster
-npm install              # Already done
-cp .env.example .env     # Create .env
-# Fill in env vars
-npx prisma db push       # Create tables
-npx prisma db seed       # Seed Cincinnati franchise
-npm run dev              # http://localhost:3000
+cp .env.example .env   # Fill in values
+npx prisma db push
+npx prisma db seed
+npm run dev            # http://localhost:3000
 ```
 
-### Dependencies
+**Dependencies:** ✅ Installed
 
-```bash
-cd hdd-gbp-poster
-npm install     # Already done - node_modules exists
-```
+#### Environment Variables Required
 
-### Environment Variables Required
-
-| Variable | Purpose | Required |
-|----------|---------|----------|
-| `DATABASE_URL` | Neon PostgreSQL connection | Yes |
-| `DATABASE_URL_UNPOOLED` | Direct connection | Yes |
-| `NEXTAUTH_SECRET` | Session encryption | Yes |
-| `NEXTAUTH_URL` | App URL | Yes |
-| `RESEND_API_KEY` | Magic link emails | Yes |
-| `EMAIL_FROM` | Sender address | Yes |
-| `ANTHROPIC_API_KEY` | Claude AI | Yes |
-| `GOOGLE_CLIENT_ID` | GBP OAuth | Yes |
-| `GOOGLE_CLIENT_SECRET` | GBP OAuth | Yes |
-| `BLOB_READ_WRITE_TOKEN` | Vercel Blob storage | Yes |
-| `CRON_SECRET` | Cron authentication | Yes |
-| `ENCRYPTION_KEY` | Token encryption | Yes |
+| Variable | Purpose | Status |
+|----------|---------|--------|
+| `DATABASE_URL` | Neon PostgreSQL connection | ⚠️ Placeholder |
+| `DATABASE_URL_UNPOOLED` | Direct connection | ⚠️ Placeholder |
+| `NEXTAUTH_SECRET` | Session encryption | ✅ Set |
+| `NEXTAUTH_URL` | App URL | ✅ Set |
+| `RESEND_API_KEY` | Magic link emails | ⚠️ Placeholder |
+| `EMAIL_FROM` | Sender address | ✅ Set |
+| `ANTHROPIC_API_KEY` | Claude AI | ⚠️ Placeholder |
+| `GOOGLE_CLIENT_ID` | GBP OAuth | ⚠️ Placeholder |
+| `GOOGLE_CLIENT_SECRET` | GBP OAuth | ⚠️ Placeholder |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob storage | ⚠️ Empty |
+| `CRON_SECRET` | Cron authentication | ✅ Set |
+| `ENCRYPTION_KEY` | Token encryption | ✅ Set |
 
 ---
 
-## Tool 4: Lead Response
+### Tool 5: Lead Response
 
 **Path:** `hdd-lead-response/`
 **Stack:** Next.js 14, Prisma, Neon PostgreSQL, NextAuth, Twilio, Resend, Cal.com
 **Status:** ⚠️ STRUCTURE COMPLETE - Needs `npm install` + Environment Setup
 
-### Pages Built
+#### Pages Built
 
 | Route | Purpose | Status |
 |-------|---------|--------|
@@ -343,7 +275,7 @@ npm install     # Already done - node_modules exists
 | `/sequences` | Sequence template editor | ✅ Complete |
 | `/settings` | Business settings | ✅ Complete |
 
-### API Routes Built
+#### API Routes Built
 
 | Route | Purpose | Status |
 |-------|---------|--------|
@@ -354,7 +286,6 @@ npm install     # Already done - node_modules exists
 | `/api/leads/[id]/messages` | Lead messages | ✅ Complete |
 | `/api/leads/[id]/pause` | Pause sequence | ✅ Complete |
 | `/api/leads/[id]/resume` | Resume sequence | ✅ Complete |
-| `/api/leads/[id]/skip` | Skip to next step | ✅ Complete |
 | `/api/leads/[id]/close` | Close lead | ✅ Complete |
 | `/api/messages` | List/Send messages | ✅ Complete |
 | `/api/sequences` | Get/Update sequence | ✅ Complete |
@@ -363,36 +294,19 @@ npm install     # Already done - node_modules exists
 | `/api/webhooks/cal` | Cal.com bookings | ✅ Complete |
 | `/api/cron/process-followups` | 5-min followup check | ✅ Complete |
 
-### Database Schema
-
-5 tables + 3 NextAuth tables in `prisma/schema.prisma`:
-- `users` - Auth with roles
-- `leads` - Contact info + sequence tracking
-- `messages` - Communication log
-- `sequence_steps` - Followup templates
-- `settings` - Key-value config
-- `accounts`, `sessions`, `verification_tokens` - NextAuth
-
-### Entry Point
-
+**Entry Point:**
 ```bash
 cd hdd-lead-response
 npm install              # REQUIRED - not yet done
-cp .env.example .env     # Create .env
-# Fill in env vars
-npx prisma db push       # Create tables
-npx prisma db seed       # Seed default sequence
+cp .env.example .env     # Fill in values
+npx prisma db push
+npx prisma db seed
 npm run dev              # http://localhost:3000
 ```
 
-### Dependencies
+**Dependencies:** ❌ NOT INSTALLED (`node_modules/` missing)
 
-```bash
-cd hdd-lead-response
-npm install     # REQUIRED - node_modules NOT present
-```
-
-### Environment Variables Required
+#### Environment Variables Required
 
 | Variable | Purpose | Required |
 |----------|---------|----------|
@@ -412,196 +326,124 @@ npm install     # REQUIRED - node_modules NOT present
 
 ---
 
-## Red Flags / Issues
+## Infrastructure Tools
+
+### Dashboard
+
+**Path:** `hdd-dashboard/`
+**Stack:** Pure HTML, CSS, JavaScript
+**Status:** ✅ COMPLETE
+
+| File | Purpose | Status |
+|------|---------|--------|
+| `index.html` | Dashboard page with tool cards | ✅ Complete |
+| `styles.css` | Responsive grid styling | ✅ Complete |
+| `config.js` | Tool definitions and status | ✅ Complete |
+
+**Features:**
+- 10 tool cards with status badges
+- Launch buttons (URLs or disabled with tooltip)
+- Expandable Setup Info panels
+- Responsive 2-column grid
+
+---
+
+## Development Tools (Scaffolded)
+
+All share: React 19, TypeScript, Tailwind CSS v4, Vite 7
+
+| Tool | Path | Port | Purpose | Status |
+|------|------|------|---------|--------|
+| Photo Manager | `hdd-photo-manager/` | 5174 | Organize project photos | Scaffolded |
+| Referral Tracker | `hdd-referral-tracker/` | 5175 | Track leads and referral codes | Scaffolded |
+| Warranty Tracker | `hdd-warranty-tracker/` | 5176 | Track warranties | Scaffolded |
+| Weather Content | `hdd-weather-content/` | 5177 | Weather-based suggestions | Scaffolded |
+| Competitor Monitor | `hdd-competitor-monitor/` | 5178 | Track competitor ratings | Scaffolded |
+
+**Dependencies:** ✅ All installed (`node_modules/` exists)
+**Feature Implementation:** ❌ App.tsx has placeholder content only
+
+---
+
+## Action Items
 
 ### Critical
 
 1. **Lead Response missing `node_modules`**
-   - Run `cd hdd-lead-response && npm install`
+   ```bash
+   cd hdd-lead-response && npm install
+   ```
 
-### Configuration Placeholders
+### Configuration Required
 
 2. **Sentiment Router `config.js`** has placeholder values:
-   - `googleReviewUrl` = `"https://g.page/r/YOUR-REVIEW-LINK/review"`
-   - `feedbackEmail` = `"feedback@example.com"`
-   - `formspreeId` = `"your-formspree-id"`
-   - `franchiseName` = `"Hickory Dickory Decks - [Location]"`
+   - `googleReviewUrl` needs real Google Review link
+   - `feedbackEmail` needs real email
+   - `formspreeId` needs Formspree form ID
 
-### Missing Assets
+3. **GBP Post Scheduler** needs external services:
+   - See [EXTERNAL_SERVICES_SETUP.md](EXTERNAL_SERVICES_SETUP.md)
 
-3. **Logo placeholders** in Sentiment Router show "HDD Logo" text instead of image
+4. **Lead Response** needs external services:
+   - See [EXTERNAL_SERVICES_SETUP.md](EXTERNAL_SERVICES_SETUP.md)
 
-### No Critical Code Issues
+### Future Development
 
-- No broken imports detected
-- No TODO/FIXME comments in code
-- No hardcoded secrets (all use env vars)
-
----
-
-## Test Checklists
-
-### Dashboard
-
-**Happy Path**
-- [ ] Open `hdd-dashboard/index.html` in browser
-- [ ] Page loads with "HDD Marketing Tools" heading
-- [ ] Four tool cards visible in 2-column grid
-- [ ] Status badges show correct colors (green/amber/red)
-- [ ] Click "Launch" on Sentiment Router → opens `../hdd-sentiment-router/index.html`
-- [ ] Click "Setup Info" → panel expands below card
-- [ ] Click "Setup Info" again → panel collapses
-- [ ] Click different "Setup Info" → previous panel closes, new one opens
-- [ ] Lead Response "Launch" button is disabled with tooltip
-- [ ] Footer shows "4 tools · 3 ready · Built for Cincinnati"
-
-**Edge Cases**
-- [ ] Resize to mobile width → cards stack to single column
-- [ ] GBP Poster and Lead Response show env vars tables
-- [ ] Commands show comments in italic/muted style
-
-### Tool 1: Sentiment Router
-
-**Happy Path**
-- [ ] Open `index.html` in browser
-- [ ] Page loads with "How was your experience?" heading
-- [ ] Two buttons visible: "Great!" and "Could be better"
-- [ ] Click "Great!" → redirects (will fail without valid Google URL in config)
-- [ ] Return to index, click "Could be better" → goes to feedback.html
-- [ ] Fill feedback form (10+ chars in feedback, contact info)
-- [ ] Submit → goes to thank-you.html
-- [ ] Click "Return to our website" link
-
-**Edge Cases**
-- [ ] Submit feedback with < 10 characters → shows error
-- [ ] Submit without contact info → shows error
-- [ ] Test on mobile device → responsive layout works
-- [ ] Test with custom colors in config → colors apply
-
-### Tool 2: Review Generator
-
-**Happy Path**
-- [ ] Run `npm run dev` → opens at localhost:5173
-- [ ] Form shows all 6 fields
-- [ ] Fill all fields with valid data
-- [ ] Click "Generate Messages" → output section appears
-- [ ] Three message cards appear: SMS, Email, Thank You Card
-- [ ] SMS shows character count
-- [ ] Click "Copy" on SMS → shows "Copied!" feedback
-- [ ] Paste in text editor → content matches
-- [ ] Refresh page → Franchisee name and Review link persist
-
-**Edge Cases**
-- [ ] Submit with empty required field → shows validation error
-- [ ] Enter very long Google Review URL → SMS uses fallback template
-- [ ] Test all 12 project types from dropdown
-- [ ] Mobile: form stacks vertically, cards readable
-
-### Tool 3: GBP Post Scheduler
-
-**Prerequisites**
-- [ ] `.env` file created with all variables
-- [ ] Database pushed: `npx prisma db push`
-- [ ] Seeded: `npx prisma db seed`
-- [ ] User email added to database
-
-**Happy Path**
-- [ ] Run `npm run dev` → opens at localhost:3000
-- [ ] Redirects to /login
-- [ ] Enter valid email → magic link sent
-- [ ] Click magic link → redirected to dashboard
-- [ ] Dashboard shows stats cards
-- [ ] Click "New Post" → post editor opens
-- [ ] Select post type, fill details
-- [ ] Click "Generate Draft" → AI generates content
-- [ ] Edit content, attach image
-- [ ] Save as draft → appears in posts list
-- [ ] Approve and schedule post
-- [ ] View in calendar
-
-**Edge Cases**
-- [ ] Post body > 1500 chars → warning shown
-- [ ] Login with unregistered email → denied
-- [ ] Google not connected → publish fails gracefully
-
-### Tool 4: Lead Response
-
-**Prerequisites**
-- [ ] Run `npm install`
-- [ ] `.env` file created with all variables
-- [ ] Database pushed: `npx prisma db push`
-- [ ] Seeded: `npx prisma db seed`
-- [ ] User email added to database
-- [ ] Twilio phone number configured
-
-**Happy Path**
-- [ ] Run `npm run dev` → opens at localhost:3000
-- [ ] Login with magic link
-- [ ] Dashboard shows stats
-- [ ] Click "New Lead" → lead form opens
-- [ ] Fill lead details, submit
-- [ ] Lead appears in list
-- [ ] Click lead → detail view with message history
-- [ ] Compose manual message → sends
-- [ ] Webhook: POST to `/api/leads/webhook` creates lead
-- [ ] Twilio webhook: inbound SMS matches lead, pauses sequence
-
-**Edge Cases**
-- [ ] Lead without phone → SMS skipped, email only
-- [ ] Invalid phone format → normalized or rejected
-- [ ] Sequence completes → status changes to "completed"
-- [ ] Cal.com webhook → marks lead as booked
+5. **Scaffolded tools** need feature implementation:
+   - Photo Manager
+   - Referral Tracker
+   - Warranty Tracker
+   - Weather Content
+   - Competitor Monitor
 
 ---
 
 ## Quick Start Commands
 
 ```bash
-# Dashboard (no install needed)
-# Open hdd-dashboard/index.html in browser - links to all tools
+# Python launcher (recommended)
+python launcher.py
 
-# Tool 1: Sentiment Router (no install needed)
-# Just open hdd-sentiment-router/index.html in browser
+# Dashboard (static)
+start hdd-dashboard/index.html
 
-# Tool 2: Review Generator
-cd hdd-review-generator
-npm run dev
+# Sentiment Router (static)
+start hdd-sentiment-router/index.html
 
-# Tool 3: GBP Post Scheduler
-cd hdd-gbp-poster
-cp .env.example .env
-# Edit .env with your values
-npx prisma db push
-npm run dev
+# Quote Calculator (static)
+start hdd-quote-calculator/index.html
 
-# Tool 4: Lead Response
-cd hdd-lead-response
-npm install              # REQUIRED
-cp .env.example .env
-# Edit .env with your values
-npx prisma db push
-npm run dev
+# Review Generator (Vite)
+cd hdd-review-generator && npm run dev
+
+# GBP Post Scheduler (Next.js)
+cd hdd-gbp-poster && npm run dev
+
+# Lead Response (Next.js)
+cd hdd-lead-response && npm install && npm run dev
 ```
 
 ---
 
-## External Service Setup Required
+## External Service Setup
 
 ### For GBP Poster
 
-1. **Neon Database** - Create project at neon.tech
-2. **Resend** - Create account at resend.com for magic links
-3. **Anthropic** - Get API key from console.anthropic.com
-4. **Google Cloud** - Enable Business Profile API, create OAuth credentials
-5. **Vercel Blob** - Enable in Vercel project settings
+1. **Neon Database** - neon.tech
+2. **Resend** - resend.com
+3. **Anthropic** - console.anthropic.com
+4. **Google Cloud** - console.cloud.google.com (Business Profile API)
+5. **Vercel Blob** - Vercel project settings
 
 ### For Lead Response
 
-1. **Neon Database** - Create project at neon.tech
-2. **Resend** - Create account at resend.com for emails
-3. **Twilio** - Create account, purchase 513 area code number
-4. **Cal.com** - Create booking page, configure webhook
+1. **Neon Database** - neon.tech
+2. **Resend** - resend.com
+3. **Twilio** - twilio.com (purchase 513 area code number)
+4. **Cal.com** - cal.com (booking page + webhook)
+
+See [EXTERNAL_SERVICES_SETUP.md](EXTERNAL_SERVICES_SETUP.md) for detailed step-by-step instructions.
 
 ---
 
-*Last updated: 2026-02-01*
+*Last updated: 2026-02-03*

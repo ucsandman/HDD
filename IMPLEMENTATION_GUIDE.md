@@ -1,357 +1,480 @@
 # HDD Marketing Tools: Implementation & Testing Guide
 
-This guide covers setup, testing, and deployment for both marketing tools built for Hickory Dickory Decks franchisees.
+Complete setup, testing checklists, and deployment instructions for all HDD marketing tools.
 
 ---
 
 ## Table of Contents
 
 1. [Quick Start](#quick-start)
-2. [Review Request Generator](#review-request-generator)
-3. [Sentiment Router](#sentiment-router)
-4. [Deployment Options](#deployment-options)
-5. [Franchisee Handoff Checklist](#franchisee-handoff-checklist)
+2. [Static Tools](#static-tools)
+3. [React/Vite Tools](#reactvite-tools)
+4. [Next.js Tools](#nextjs-tools)
+5. [Testing Checklists](#testing-checklists)
+6. [Deployment Options](#deployment-options)
+7. [Troubleshooting](#troubleshooting)
 
 ---
 
 ## Quick Start
 
-**What you need:**
-- Node.js 20+ (for the Review Generator)
-- A web browser (for the Sentiment Router)
-- A code editor (VS Code recommended)
+### Prerequisites
 
-**What you do NOT need:**
-- Backend server
-- Database
-- API keys
-- Environment variables
+- Node.js 20+ (for React and Next.js tools)
+- Python 3.x (for launcher script)
+- Web browser
+
+### Recommended: Use the Launcher
+
+```bash
+python launcher.py
+```
+
+Interactive menu to launch any tool or group of tools.
+
+### Manual Launch
+
+```bash
+# Static tools - open directly in browser
+hdd-dashboard/index.html
+hdd-sentiment-router/index.html
+hdd-quote-calculator/index.html
+
+# React tools
+cd hdd-review-generator && npm run dev
+
+# Next.js tools (need .env setup first)
+cd hdd-gbp-poster && npm run dev
+cd hdd-lead-response && npm install && npm run dev
+```
 
 ---
 
-## Review Request Generator
+## Static Tools
 
-A React application that generates personalized review request messages (SMS, email, thank you card) from customer and project details.
+No build step required. Open HTML files directly in browser.
 
-### Setup
+### Dashboard (`hdd-dashboard/`)
 
-```bash
-cd hdd-review-generator
-npm install
-npm run dev
-```
+Central hub for all tools.
 
-The app runs at `http://localhost:5173`
+**Setup:** None required
 
-### Testing Checklist
+**Files:**
+- `index.html` - Main page
+- `styles.css` - Styling
+- `config.js` - Tool definitions
 
-Open the app in your browser and verify each item:
+### Sentiment Router (`hdd-sentiment-router/`)
 
-#### Form Functionality
+Routes customers by satisfaction level.
 
-| Test | Expected Result | Pass? |
-|------|-----------------|-------|
-| Leave all fields blank, click Generate | Validation errors appear for all required fields | ☐ |
-| Enter only first name, blur the field | No error (field is valid) | ☐ |
-| Enter invalid URL in Google Review Link | "Please enter a valid URL" error appears | ☐ |
-| Enter city with 1 character | "City must be at least 2 characters" error | ☐ |
-| Fill all fields correctly, click Generate | Messages appear below the form | ☐ |
-| Close browser, reopen app | Franchisee Name and Google Review Link persist | ☐ |
+**Setup:**
+1. Edit `config.js` with your franchise settings:
+   ```javascript
+   googleReviewUrl: "https://g.page/r/YOUR-REVIEW-LINK/review"
+   feedbackEmail: "feedback@yourfranchise.com"
+   formspreeId: "your-formspree-id"
+   websiteUrl: "https://www.hickorydickorydecks.com/your-location"
+   franchiseName: "Hickory Dickory Decks - Cincinnati"
+   ```
+2. Open `index.html` in browser to test
 
-#### Generated Messages
-
-| Test | Expected Result | Pass? |
-|------|-----------------|-------|
-| SMS shows customer first name | "Hi [FirstName]!" format | ☐ |
-| SMS includes Google Review link | Link appears at end of message | ☐ |
-| SMS character count displays | Count shown below SMS card | ☐ |
-| SMS under 320 chars shows no warning | Clean display | ☐ |
-| Email subject includes project type | "How's your new [project type]" | ☐ |
-| Email body includes city twice | City mentioned in two places | ☐ |
-| Thank you card uses full name | "[FirstName] [LastName]" format | ☐ |
-
-#### Copy Functionality
-
-| Test | Expected Result | Pass? |
-|------|-----------------|-------|
-| Click "Copy" on any message | Button turns green, shows "Copied!" | ☐ |
-| Paste after copying | Correct content in clipboard | ☐ |
-| Copy button resets after 2 seconds | Returns to "Copy" state | ☐ |
-
-#### Mobile Testing
-
-| Test | Expected Result | Pass? |
-|------|-----------------|-------|
-| Resize browser to 375px width | Form stacks vertically, still usable | ☐ |
-| Tap form fields on phone | Keyboard appears, no layout issues | ☐ |
-| Tap Copy buttons on phone | Copy works, feedback visible | ☐ |
-
-### Build for Production
-
-```bash
-npm run build
-```
-
-Output goes to `dist/` folder. These are static files ready for any web host.
-
-### Lint Check
-
-```bash
-npm run lint
-```
-
-Should return zero errors.
-
----
-
-## Sentiment Router
-
-A static HTML page that routes customers based on satisfaction. Happy customers go to Google Reviews. Unhappy customers go to a private feedback form.
-
-### Setup
-
-No setup required. Just open the files in a browser.
-
-```bash
-cd hdd-sentiment-router
-# Open index.html in your browser
-```
-
-Or use a simple local server:
-
-```bash
-npx serve .
-```
-
-### Configuration
-
-Edit `config.js` before testing or deployment:
-
-```javascript
-const CONFIG = {
-  // REQUIRED: Your Google Review URL
-  googleReviewUrl: "https://g.page/r/YOUR-REVIEW-LINK/review",
-  
-  // Email for mailto fallback
-  feedbackEmail: "feedback@yourfranchise.com",
-  
-  // Formspree ID (recommended for reliable delivery)
-  formspreeId: "your-formspree-id",
-  
-  // Return link on thank you page
-  websiteUrl: "https://www.hickorydickorydecks.com/your-location",
-  
-  // Franchise name shown in feedback emails
-  franchiseName: "Hickory Dickory Decks - Cincinnati"
-};
-```
-
-### Getting Your Google Review URL
-
+**Getting Your Google Review URL:**
 1. Go to [Google Business Profile](https://business.google.com)
 2. Select your business location
 3. Click "Get more reviews" or find the share review link
 4. Copy the URL (format: `https://g.page/r/XXXXX/review`)
-5. Paste into `config.js`
 
-### Setting Up Formspree (Recommended)
-
-Formspree handles form submissions without a backend:
-
+**Setting Up Formspree:**
 1. Create free account at [formspree.io](https://formspree.io)
 2. Create a new form
 3. Copy the form ID (the part after `/f/` in the URL)
 4. Add to `config.js` as `formspreeId`
 
-### Testing Checklist
+### Quote Calculator (`hdd-quote-calculator/`)
 
-#### Sentiment Page (index.html)
+Customer-facing deck estimate tool.
 
-| Test | Expected Result | Pass? |
-|------|-----------------|-------|
-| Page loads with two buttons | "Great!" and "Could be better" visible | ☐ |
+**Setup:**
+1. Edit `config.js` to adjust pricing for your market:
+   - `basePricePerSqFt` - Base pricing
+   - Material multipliers
+   - Feature pricing
+   - Height adjustments
+2. Open `index.html` in browser
+
+---
+
+## React/Vite Tools
+
+All use: React 19, TypeScript, Tailwind CSS v4, Vite 7
+
+### Review Generator (`hdd-review-generator/`)
+
+**Setup:**
+```bash
+cd hdd-review-generator
+npm install    # Already done
+npm run dev    # localhost:5173
+```
+
+**Build for Production:**
+```bash
+npm run build  # Output to dist/
+```
+
+### Scaffolded Tools
+
+These tools have basic scaffolding but need feature implementation:
+
+| Tool | Path | Port |
+|------|------|------|
+| Photo Manager | `hdd-photo-manager/` | 5174 |
+| Referral Tracker | `hdd-referral-tracker/` | 5175 |
+| Warranty Tracker | `hdd-warranty-tracker/` | 5176 |
+| Weather Content | `hdd-weather-content/` | 5177 |
+| Competitor Monitor | `hdd-competitor-monitor/` | 5178 |
+
+**Setup (any):**
+```bash
+cd hdd-[tool-name]
+npm install
+npm run dev
+```
+
+---
+
+## Next.js Tools
+
+Both use: Next.js 14, Prisma, Neon PostgreSQL, NextAuth.js v5
+
+### GBP Post Scheduler (`hdd-gbp-poster/`)
+
+**Setup:**
+```bash
+cd hdd-gbp-poster
+cp .env.example .env   # Edit with your values
+npx prisma db push     # Create database tables
+npx prisma db seed     # Seed Cincinnati franchise
+npm run dev            # localhost:3000
+```
+
+**Environment Variables:**
+See [EXTERNAL_SERVICES_SETUP.md](EXTERNAL_SERVICES_SETUP.md) for detailed instructions.
+
+| Variable | Purpose |
+|----------|---------|
+| `DATABASE_URL` | Neon PostgreSQL connection |
+| `DATABASE_URL_UNPOOLED` | Direct connection |
+| `NEXTAUTH_SECRET` | Session encryption |
+| `NEXTAUTH_URL` | App URL |
+| `RESEND_API_KEY` | Magic link emails |
+| `EMAIL_FROM` | Sender address |
+| `ANTHROPIC_API_KEY` | Claude AI |
+| `GOOGLE_CLIENT_ID` | GBP OAuth |
+| `GOOGLE_CLIENT_SECRET` | GBP OAuth |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob storage |
+| `CRON_SECRET` | Cron authentication |
+| `ENCRYPTION_KEY` | Token encryption |
+
+### Lead Response (`hdd-lead-response/`)
+
+**Setup:**
+```bash
+cd hdd-lead-response
+npm install            # REQUIRED - not yet done
+cp .env.example .env   # Edit with your values
+npx prisma db push     # Create database tables
+npx prisma db seed     # Seed default sequence
+npm run dev            # localhost:3000
+```
+
+**Environment Variables:**
+
+| Variable | Purpose |
+|----------|---------|
+| `DATABASE_URL` | Neon PostgreSQL connection |
+| `DATABASE_URL_UNPOOLED` | Direct connection |
+| `NEXTAUTH_SECRET` | Session encryption |
+| `NEXTAUTH_URL` | App URL |
+| `RESEND_API_KEY` | Email delivery |
+| `EMAIL_FROM` | Sender address |
+| `TWILIO_ACCOUNT_SID` | Twilio account |
+| `TWILIO_AUTH_TOKEN` | Twilio auth |
+| `TWILIO_PHONE_NUMBER` | SMS sending number |
+| `CAL_BOOKING_LINK` | Cal.com booking URL |
+| `CAL_WEBHOOK_SECRET` | Webhook verification |
+| `CRON_SECRET` | Cron authentication |
+| `WEBHOOK_SECRET` | Lead webhook auth |
+
+---
+
+## Testing Checklists
+
+### Dashboard
+
+| Test | Expected | Pass? |
+|------|----------|-------|
+| Page loads | "HDD Marketing Tools" heading visible | ☐ |
+| Tool cards display | All tools visible in grid | ☐ |
+| Status badges show | Green/amber/red badges on cards | ☐ |
+| Launch buttons work | Open correct URLs | ☐ |
+| Setup Info expands | Panels expand/collapse | ☐ |
+| Mobile responsive | Single column on narrow screens | ☐ |
+
+### Sentiment Router
+
+**Index Page:**
+| Test | Expected | Pass? |
+|------|----------|-------|
+| Page loads | "How was your experience?" heading | ☐ |
+| Buttons display | "Great!" and "Could be better" visible | ☐ |
 | Click "Great!" | Redirects to Google Review URL | ☐ |
 | Click "Could be better" | Navigates to feedback.html | ☐ |
-| Buttons are touch-friendly | At least 140x140px, easy to tap | ☐ |
+| Buttons touch-friendly | At least 140x140px | ☐ |
 
-#### Feedback Page (feedback.html)
+**Feedback Page:**
+| Test | Expected | Pass? |
+|------|----------|-------|
+| Form displays | Textarea and contact field visible | ☐ |
+| Empty feedback | Error: "Please provide more detail..." | ☐ |
+| 5 character feedback | Error (minimum 10 required) | ☐ |
+| Valid feedback, no contact | Error: "Please provide contact info" | ☐ |
+| Valid submission | Redirects to thank-you.html | ☐ |
 
-| Test | Expected Result | Pass? |
-|------|-----------------|-------|
-| Page shows feedback form | Textarea and contact field visible | ☐ |
-| Submit with empty feedback | Error: "Please provide more detail..." | ☐ |
-| Submit with 5 characters | Error appears (minimum 10 required) | ☐ |
-| Submit with 10+ chars, no contact | Error: "Please provide a way to contact you" | ☐ |
-| Submit with valid data | Redirects to thank-you.html | ☐ |
+**Thank You Page:**
+| Test | Expected | Pass? |
+|------|----------|-------|
+| Confirmation shows | Checkmark and thank you message | ☐ |
+| Return link works | Opens configured websiteUrl | ☐ |
 
-#### Thank You Page (thank-you.html)
+### Quote Calculator
 
-| Test | Expected Result | Pass? |
-|------|-----------------|-------|
-| Page shows confirmation | Checkmark and thank you message | ☐ |
-| "Return to website" link works | Opens configured websiteUrl | ☐ |
+| Test | Expected | Pass? |
+|------|----------|-------|
+| Page loads | Calculator form visible | ☐ |
+| Enter dimensions | Square footage calculates live | ☐ |
+| Select material | Price range updates | ☐ |
+| Add features | Price range increases | ☐ |
+| Change height | Price range adjusts | ☐ |
+| Calculate button | Full estimate displays | ☐ |
+| Mobile responsive | Form usable on phones | ☐ |
 
-#### Form Submission (if Formspree configured)
+### Review Generator
 
-| Test | Expected Result | Pass? |
-|------|-----------------|-------|
-| Submit valid feedback | Email arrives at configured address | ☐ |
-| Email contains feedback text | Message text included | ☐ |
-| Email contains contact info | Email/phone included | ☐ |
+**Form:**
+| Test | Expected | Pass? |
+|------|----------|-------|
+| All fields display | 6 form fields visible | ☐ |
+| Empty submit | Validation errors appear | ☐ |
+| Invalid URL | "Please enter a valid URL" error | ☐ |
+| Valid submit | Messages appear below | ☐ |
+| Page refresh | Franchisee name persists | ☐ |
+| Page refresh | Review link persists | ☐ |
 
-#### Mobile Testing
+**Generated Messages:**
+| Test | Expected | Pass? |
+|------|----------|-------|
+| SMS shows name | "Hi [FirstName]!" format | ☐ |
+| SMS includes link | Google Review link at end | ☐ |
+| SMS character count | Count displayed below card | ☐ |
+| Email subject | Includes project type | ☐ |
+| Email body | City mentioned twice | ☐ |
+| Thank you card | Full name format | ☐ |
 
-| Test | Expected Result | Pass? |
-|------|-----------------|-------|
-| index.html on phone | Buttons large and centered | ☐ |
-| feedback.html on phone | Form fields full width, keyboard works | ☐ |
-| thank-you.html on phone | Readable, link tappable | ☐ |
+**Copy Function:**
+| Test | Expected | Pass? |
+|------|----------|-------|
+| Click Copy | Button shows "Copied!" | ☐ |
+| Paste content | Correct text in clipboard | ☐ |
+| Button resets | Returns to "Copy" after 2s | ☐ |
 
-### Browser Testing
+### GBP Post Scheduler
 
-Test in each browser:
+**Prerequisites:**
+- `.env` configured
+- Database pushed and seeded
+- User email added to database
 
-| Browser | index.html | feedback.html | thank-you.html |
-|---------|------------|---------------|----------------|
-| Chrome (desktop) | ☐ | ☐ | ☐ |
-| Safari (desktop) | ☐ | ☐ | ☐ |
-| Firefox | ☐ | ☐ | ☐ |
-| Chrome (Android) | ☐ | ☐ | ☐ |
-| Safari (iOS) | ☐ | ☐ | ☐ |
+| Test | Expected | Pass? |
+|------|----------|-------|
+| App loads | Redirects to /login | ☐ |
+| Enter valid email | Magic link sent | ☐ |
+| Click magic link | Redirected to dashboard | ☐ |
+| Dashboard loads | Stats cards visible | ☐ |
+| Click "New Post" | Post editor opens | ☐ |
+| Select post type | Type-specific fields appear | ☐ |
+| Click "Generate Draft" | AI generates content | ☐ |
+| Save as draft | Appears in posts list | ☐ |
+| Approve and schedule | Status changes | ☐ |
+| View calendar | Scheduled posts visible | ☐ |
+| Upload image | Image appears in library | ☐ |
+
+### Lead Response
+
+**Prerequisites:**
+- `npm install` completed
+- `.env` configured
+- Database pushed and seeded
+- User email added to database
+
+| Test | Expected | Pass? |
+|------|----------|-------|
+| App loads | Redirects to /login | ☐ |
+| Login works | Magic link authentication | ☐ |
+| Dashboard loads | Stats cards visible | ☐ |
+| Click "New Lead" | Lead form opens | ☐ |
+| Submit lead | Lead appears in list | ☐ |
+| Click lead | Detail view with messages | ☐ |
+| Send manual message | Message sends | ☐ |
+| Sequence starts | First messages sent | ☐ |
+| Pause sequence | Sequence pauses | ☐ |
+| Resume sequence | Sequence resumes | ☐ |
 
 ---
 
 ## Deployment Options
 
-Both tools are static files. No backend required.
+### Static Tools (Dashboard, Sentiment Router, Quote Calculator)
 
-### Option 1: Vercel (Recommended)
-
-**Review Generator:**
+**Option 1: Vercel**
 ```bash
-cd hdd-review-generator
-npm run build
-# Drag dist/ folder to vercel.com/new
+# Drag folder to vercel.com/new
 ```
 
-**Sentiment Router:**
-```bash
-# Drag entire hdd-sentiment-router folder to vercel.com/new
-```
+**Option 2: Netlify**
+Same as Vercel - drag and drop.
 
-### Option 2: Netlify
-
-Same process as Vercel. Drag and drop the built files.
-
-### Option 3: GitHub Pages
-
-1. Push to GitHub repository
+**Option 3: GitHub Pages**
+1. Push to GitHub
 2. Settings > Pages > Select branch
-3. Wait for deployment
 
-### Option 4: Franchise's Existing Host
+**Option 4: FTP**
+Upload files to any web host.
 
-Upload files via FTP or their hosting control panel:
+### React Tools (Review Generator, etc.)
 
-**Review Generator:** Upload contents of `dist/` folder  
-**Sentiment Router:** Upload all 7 files to a folder like `/review/`
+```bash
+npm run build
+# Deploy dist/ folder to any static host
+```
 
----
+### Next.js Tools (GBP Poster, Lead Response)
 
-## Franchisee Handoff Checklist
+**Recommended: Vercel**
+1. Push to GitHub
+2. Import to Vercel
+3. Add environment variables
+4. Deploy
 
-Before handing off to a franchise location:
-
-### Review Generator
-
-| Item | Done? |
-|------|-------|
-| App builds without errors (`npm run build`) | ☐ |
-| All tests pass | ☐ |
-| Deployed to hosting | ☐ |
-| Franchisee has the URL | ☐ |
-| Demo completed with franchisee | ☐ |
-
-### Sentiment Router
-
-| Item | Done? |
-|------|-------|
-| `config.js` updated with franchise's Google Review URL | ☐ |
-| `config.js` updated with franchise's email/Formspree | ☐ |
-| `config.js` updated with franchise's website URL | ☐ |
-| All pages tested locally | ☐ |
-| Deployed to hosting | ☐ |
-| Franchisee has the link to share with customers | ☐ |
-| Test feedback submission, verify email delivery | ☐ |
-
-### Training Notes for Franchisee
-
-**Review Generator:**
-"Go to [URL], fill in the customer's info and project details, click Generate. Copy whichever message you need. The SMS goes out Day 3, email Day 7, thank you card Day 14."
-
-**Sentiment Router:**
-"After a project is complete, send customers this link: [URL]. Happy customers go straight to Google Reviews. Unhappy customers send feedback directly to you so you can fix issues before they post publicly."
+**Cron Jobs:**
+Add to `vercel.json`:
+```json
+{
+  "crons": [
+    {
+      "path": "/api/cron/generate-drafts",
+      "schedule": "0 5 * * 0"
+    },
+    {
+      "path": "/api/cron/publish-scheduled",
+      "schedule": "*/15 * * * *"
+    }
+  ]
+}
+```
 
 ---
 
 ## Troubleshooting
 
-### Review Generator
+### Static Tools
 
-**"npm install" fails**  
-Make sure you have Node.js 20+ installed. Run `node --version` to check.
+**"Great!" button does nothing**
+- Check `config.js` has valid `googleReviewUrl`
+- Open browser console for errors
 
-**Styles look broken**  
-Tailwind CSS v4 requires the PostCSS plugin. Verify `postcss.config.js` exists and contains `@tailwindcss/postcss`.
+**Feedback form doesn't send email**
+- Verify `formspreeId` is correct
+- Check Formspree dashboard for submissions
 
-**Copy button doesn't work**  
-Clipboard API requires HTTPS or localhost. Test locally or deploy to HTTPS host.
+### React Tools
 
-### Sentiment Router
+**"npm install" fails**
+- Ensure Node.js 20+ installed: `node --version`
 
-**"Great!" button does nothing**  
-Check that `config.js` has a valid `googleReviewUrl`. Open browser console for errors.
+**Styles look broken**
+- Verify `postcss.config.js` exists
+- Contains `@tailwindcss/postcss`
 
-**Feedback form doesn't send email**  
-Verify `formspreeId` is correct. Check Formspree dashboard for submissions. If using mailto fallback, user's email client must be configured.
+**Copy button doesn't work**
+- Clipboard API requires HTTPS or localhost
+- Deploy to HTTPS host
 
-**Custom colors not applying**  
-Verify `config.js` is loaded before `script.js` in the HTML files.
+### Next.js Tools
+
+**"Module not found" errors**
+- Run `npm install`
+- Delete `node_modules` and reinstall
+
+**Database connection fails**
+- Check `DATABASE_URL` in `.env`
+- Verify Neon database is running
+
+**Magic link not received**
+- Check `RESEND_API_KEY` is valid
+- Verify `EMAIL_FROM` domain is configured in Resend
+
+**Google OAuth fails**
+- Check `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`
+- Verify redirect URI in Google Cloud Console
 
 ---
 
-## File Reference
+## Franchisee Handoff Checklist
 
-### Review Generator (`hdd-review-generator/`)
+### Before Handoff
 
-| File | Purpose |
-|------|---------|
-| `src/App.tsx` | Main app component, state management |
-| `src/components/InputForm.tsx` | Form with validation |
-| `src/components/MessageCard.tsx` | Message display with copy |
-| `src/components/OutputSection.tsx` | Generated messages container |
-| `src/utils/generateMessages.ts` | Message template logic |
-| `src/types/index.ts` | TypeScript interfaces |
+| Item | Done? |
+|------|-------|
+| All tools tested locally | ☐ |
+| Environment variables configured | ☐ |
+| Databases seeded | ☐ |
+| User accounts created | ☐ |
+| Deployed to production | ☐ |
 
-### Sentiment Router (`hdd-sentiment-router/`)
+### Documentation Provided
 
-| File | Purpose |
-|------|---------|
-| `index.html` | Sentiment check page |
-| `feedback.html` | Private feedback form |
-| `thank-you.html` | Confirmation page |
-| `styles.css` | All styling |
-| `script.js` | Routing and validation logic |
-| `config.js` | Franchise settings |
+| Item | Done? |
+|------|-------|
+| URLs for each tool | ☐ |
+| Login credentials | ☐ |
+| Quick reference guide | ☐ |
+| Support contact | ☐ |
+
+### Training Completed
+
+| Item | Done? |
+|------|-------|
+| Review Generator demo | ☐ |
+| Sentiment Router demo | ☐ |
+| Quote Calculator demo | ☐ |
+| GBP Post Scheduler demo | ☐ |
+| Lead Response demo | ☐ |
 
 ---
 
 ## Support
 
-If issues arise during implementation, check:
+If issues arise:
 
-1. Browser console for JavaScript errors
-2. Network tab for failed requests (Formspree)
-3. Config file for typos in URLs
+1. Check browser console for JavaScript errors
+2. Check Network tab for failed requests
+3. Verify config files for typos
+4. Run `npm run lint` for React/Next.js tools
+5. Check Prisma logs: `npx prisma studio`
 
-For the Review Generator, `npm run lint` catches most code issues.
+---
+
+*Last updated: 2026-02-03*
