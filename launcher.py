@@ -9,10 +9,15 @@ import webbrowser
 import time
 import os
 import sys
+import socket
 from pathlib import Path
 
 # Base directory
 BASE_DIR = Path(__file__).parent
+
+# Configuration
+AUTO_OPEN_BROWSER = True  # Set to False to start servers without opening browsers
+STAGGER_DELAY = 4  # Seconds between server launches
 
 # Tool definitions
 TOOLS = {
@@ -96,6 +101,20 @@ TOOLS = {
 running_processes = {}
 
 
+def wait_for_port(port, timeout=30):
+    """Wait for a port to become available (server started)"""
+    start = time.time()
+    while time.time() - start < timeout:
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.settimeout(1)
+                s.connect(('localhost', port))
+                return True
+        except (socket.error, socket.timeout):
+            time.sleep(0.5)
+    return False
+
+
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -133,45 +152,59 @@ def print_menu():
             print(f"       {tool['description']}")
     
     print("\n" + "-"*60)
-    print("   [A] Launch ALL tools")
+    print("   [P] Launch PRODUCTION tools (4 tools - recommended)")
     print("   [S] Launch STATIC tools only (no server needed)")
-    print("   [R] Launch REACT tools only")
+    print("   [R] Launch REACT tools only (6 servers)")
+    print("   [A] Launch ALL tools (8 servers - heavy!)")
+    print()
+    browser_status = "ON" if AUTO_OPEN_BROWSER else "OFF"
+    print(f"   [B] Toggle auto-open browser [{browser_status}]")
     print("   [K] Kill all running servers")
     print("   [Q] Quit")
     print("-"*60)
 
 
-def launch_static(tool_key):
+def launch_static(tool_key, open_browser=None):
     """Launch a static HTML tool in the browser"""
     tool = TOOLS[tool_key]
     file_path = BASE_DIR / tool["path"]
-    
+
+    if open_browser is None:
+        open_browser = AUTO_OPEN_BROWSER
+
     if not file_path.exists():
         print(f"   ❌ File not found: {file_path}")
         return False
-    
-    print(f"   🌐 Opening {tool['name']}...")
-    webbrowser.open(f"file:///{file_path}")
-    running_processes[tool_key] = "browser"
+
+    if open_browser:
+        print(f"   🌐 Opening {tool['name']}...")
+        webbrowser.open(f"file:///{file_path}")
+        running_processes[tool_key] = "browser"
+    else:
+        print(f"   ✅ {tool['name']} ready (open manually: {file_path})")
+
     return True
 
 
-def launch_vite(tool_key):
+def launch_vite(tool_key, open_browser=None):
     """Launch a Vite dev server"""
     tool = TOOLS[tool_key]
     tool_path = BASE_DIR / tool["path"]
-    
+
+    if open_browser is None:
+        open_browser = AUTO_OPEN_BROWSER
+
     if not tool_path.exists():
         print(f"   ❌ Directory not found: {tool_path}")
         return False
-    
+
     # Check if node_modules exists
     if not (tool_path / "node_modules").exists():
         print(f"   📦 Installing dependencies for {tool['name']}...")
         subprocess.run(["npm", "install"], cwd=tool_path, shell=True)
-    
+
     print(f"   🚀 Starting {tool['name']} on port {tool['port']}...")
-    
+
     # Start the dev server
     process = subprocess.Popen(
         ["npm", "run", "dev", "--", "--port", str(tool["port"])],
@@ -180,27 +213,36 @@ def launch_vite(tool_key):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
-    
+
     running_processes[tool_key] = process
-    time.sleep(2)  # Give it time to start
-    
-    # Open in browser
+
+    # Wait for server to be ready
     url = f"http://localhost:{tool['port']}"
-    print(f"   🌐 Opening {url}")
-    webbrowser.open(url)
-    
+    if wait_for_port(tool['port'], timeout=15):
+        print(f"   ✅ {tool['name']} ready at {url}")
+    else:
+        print(f"   ⚠️  {tool['name']} may still be starting...")
+
+    # Open in browser if enabled
+    if open_browser:
+        print(f"   🌐 Opening {url}")
+        webbrowser.open(url)
+
     return True
 
 
-def launch_next(tool_key):
+def launch_next(tool_key, open_browser=None):
     """Launch a Next.js dev server"""
     tool = TOOLS[tool_key]
     tool_path = BASE_DIR / tool["path"]
-    
+
+    if open_browser is None:
+        open_browser = AUTO_OPEN_BROWSER
+
     if not tool_path.exists():
         print(f"   ❌ Directory not found: {tool_path}")
         return False
-    
+
     # Check for .env file
     env_file = tool_path / ".env"
     if not env_file.exists():
@@ -208,14 +250,14 @@ def launch_next(tool_key):
         print(f"      Copy .env.example to .env and fill in values")
         print(f"      Path: {tool_path}")
         return False
-    
+
     # Check if node_modules exists
     if not (tool_path / "node_modules").exists():
         print(f"   📦 Installing dependencies for {tool['name']}...")
         subprocess.run(["npm", "install"], cwd=tool_path, shell=True)
-    
+
     print(f"   🚀 Starting {tool['name']} on port {tool['port']}...")
-    
+
     # Start the dev server
     process = subprocess.Popen(
         ["npm", "run", "dev"],
@@ -225,42 +267,102 @@ def launch_next(tool_key):
         stderr=subprocess.PIPE,
         env={**os.environ, "PORT": str(tool["port"])}
     )
-    
+
     running_processes[tool_key] = process
-    time.sleep(3)  # Next.js takes longer to start
-    
-    # Open in browser
+
+    # Wait for server to be ready (Next.js takes longer)
     url = f"http://localhost:{tool['port']}"
-    print(f"   🌐 Opening {url}")
-    webbrowser.open(url)
-    
+    if wait_for_port(tool['port'], timeout=30):
+        print(f"   ✅ {tool['name']} ready at {url}")
+    else:
+        print(f"   ⚠️  {tool['name']} may still be starting...")
+
+    # Open in browser if enabled
+    if open_browser:
+        print(f"   🌐 Opening {url}")
+        webbrowser.open(url)
+
     return True
 
 
-def launch_tool(tool_key):
+def launch_tool(tool_key, open_browser=None):
     """Launch a single tool"""
     if tool_key not in TOOLS:
         print(f"   ❌ Invalid tool number: {tool_key}")
-        return
-    
+        return False
+
     tool = TOOLS[tool_key]
     print(f"\n🔧 Launching {tool['name']}...")
-    
+
     if tool["type"] == "static":
-        launch_static(tool_key)
+        return launch_static(tool_key, open_browser)
     elif tool["type"] == "vite":
-        launch_vite(tool_key)
+        return launch_vite(tool_key, open_browser)
     elif tool["type"] == "next":
-        launch_next(tool_key)
+        return launch_next(tool_key, open_browser)
+    return False
 
 
 def launch_all():
-    """Launch all tools"""
-    print("\n🚀 LAUNCHING ALL TOOLS...\n")
-    for key in TOOLS.keys():
-        launch_tool(key)
-        time.sleep(0.5)
+    """Launch all tools with warning"""
+    print("\n" + "="*60)
+    print("⚠️  WARNING: Heavy Resource Usage!")
+    print("="*60)
+    print("\nThis will start:")
+    print("   • 6 Vite dev servers (~1.5GB RAM)")
+    print("   • 2 Next.js servers (~1GB RAM)")
+    print("   • 11 browser tabs")
+    print("\nTotal: ~3-4GB RAM + high CPU during startup")
+    print("\nRecommendation: Use [P] Production tools instead (4 tools)")
+    print()
+
+    confirm = input("Continue anyway? [y/N]: ").strip().lower()
+    if confirm != 'y':
+        print("   Cancelled.")
+        return
+
+    print("\n🚀 LAUNCHING ALL TOOLS (staggered startup)...\n")
+
+    # Launch static tools first (no server needed)
+    for key, tool in TOOLS.items():
+        if tool["type"] == "static":
+            launch_tool(key)
+
+    # Launch Vite tools with staggered delay
+    for key, tool in TOOLS.items():
+        if tool["type"] == "vite":
+            launch_tool(key)
+            time.sleep(STAGGER_DELAY)
+
+    # Launch Next.js tools last
+    for key, tool in TOOLS.items():
+        if tool["type"] == "next":
+            launch_tool(key)
+            time.sleep(STAGGER_DELAY)
+
     print("\n✅ All tools launched!")
+
+
+def launch_production():
+    """Launch production-ready tools only (recommended)"""
+    print("\n🚀 LAUNCHING PRODUCTION TOOLS...\n")
+    print("   Starting 4 essential tools:\n")
+
+    # Production tools: Dashboard, Sentiment Router, Review Generator, GBP Poster
+    production_keys = ["1", "3", "4", "10"]
+
+    for key in production_keys:
+        tool = TOOLS[key]
+        print(f"   • {tool['name']}")
+
+    print()
+
+    for key in production_keys:
+        launch_tool(key)
+        if TOOLS[key]["type"] in ["vite", "next"]:
+            time.sleep(STAGGER_DELAY)
+
+    print("\n✅ Production tools launched!")
 
 
 def launch_static_only():
@@ -275,11 +377,17 @@ def launch_static_only():
 
 def launch_react_only():
     """Launch only React/Vite tools"""
-    print("\n🚀 LAUNCHING REACT TOOLS...\n")
+    print("\n⚠️  This will start 6 Vite dev servers (~1.5GB RAM)")
+    confirm = input("Continue? [y/N]: ").strip().lower()
+    if confirm != 'y':
+        print("   Cancelled.")
+        return
+
+    print("\n🚀 LAUNCHING REACT TOOLS (staggered startup)...\n")
     for key, tool in TOOLS.items():
         if tool["type"] == "vite":
             launch_tool(key)
-            time.sleep(1)
+            time.sleep(STAGGER_DELAY)
     print("\n✅ React tools launched!")
 
 
@@ -312,33 +420,45 @@ def show_status():
                 print(f"   🟢 {tool['name']} → http://localhost:{port}")
 
 
+def toggle_browser():
+    """Toggle auto-open browser setting"""
+    global AUTO_OPEN_BROWSER
+    AUTO_OPEN_BROWSER = not AUTO_OPEN_BROWSER
+    status = "ON" if AUTO_OPEN_BROWSER else "OFF"
+    print(f"\n   Auto-open browser is now {status}")
+
+
 def main():
     clear_screen()
     print_header()
-    
+
     while True:
         print_menu()
         show_status()
-        
+
         choice = input("\n👉 Enter choice: ").strip().upper()
-        
+
         if choice == "Q":
             kill_all()
             print("\n👋 Goodbye!\n")
             break
+        elif choice == "P":
+            launch_production()
         elif choice == "A":
             launch_all()
         elif choice == "S":
             launch_static_only()
         elif choice == "R":
             launch_react_only()
+        elif choice == "B":
+            toggle_browser()
         elif choice == "K":
             kill_all()
         elif choice in TOOLS:
             launch_tool(choice)
         else:
             print(f"\n❌ Invalid choice: {choice}")
-        
+
         input("\nPress Enter to continue...")
         clear_screen()
         print_header()

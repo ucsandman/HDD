@@ -293,9 +293,12 @@ python launcher.py
 Features:
 - 11 tools organized by type (Static/Vite/Next.js)
 - Launch individual, groups, or all
+- **Production mode** (`P`) - launches only 4 essential tools
+- **Resource warnings** - confirms before launching all 8 servers
+- **Staggered startup** - waits for each server to be ready
+- **Browser toggle** (`B`) - option to start servers without opening tabs
 - Auto npm install if needed
 - Process tracking
-- Environment check
 
 ### launch.bat
 
@@ -332,17 +335,17 @@ Windows batch file launcher (minimal).
 
 | Tool | Status | Notes |
 |------|--------|-------|
-| Dashboard | Complete | Static HTML |
-| Sentiment Router | Complete | Static HTML |
-| Quote Calculator | Complete | Static HTML |
-| Review Generator | Complete | Dependencies installed, dist/ exists |
-| GBP Post Scheduler | Complete | Needs env setup |
-| Lead Response | Complete | Needs `npm install` + env setup |
-| Photo Manager | Implemented | localStorage, not production-ready |
-| Referral Tracker | Scaffolded | App.tsx empty |
-| Warranty Tracker | Scaffolded | App.tsx empty |
-| Weather Content | Scaffolded | App.tsx empty |
-| Competitor Monitor | Scaffolded | App.tsx empty |
+| Dashboard | Ready | Static HTML |
+| Sentiment Router | Ready | Static HTML |
+| Quote Calculator | Ready | Static HTML |
+| Review Generator | Ready | Dependencies installed |
+| Photo Manager | Ready | Dependencies installed, localStorage-based |
+| Referral Tracker | Ready | Dependencies installed, scaffolded |
+| Warranty Tracker | Ready | Dependencies installed, scaffolded |
+| Weather Content | Ready | Dependencies installed, scaffolded |
+| Competitor Monitor | Ready | Dependencies installed, scaffolded |
+| GBP Post Scheduler | Needs Setup | Requires .env configuration |
+| Lead Response | Needs Setup | Requires .env configuration |
 
 ---
 
