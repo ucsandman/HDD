@@ -1,0 +1,346 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Page */
+  --background: #f8fafc;
+  --card-bg: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+
+  /* Status badges */
+  --status-ready-bg: #dcfce7;
+  --status-ready-text: #166534;
+  --status-setup-bg: #fef3c7;
+  --status-setup-text: #92400e;
+  --status-install-bg: #fee2e2;
+  --status-install-text: #991b1b;
+
+  /* Buttons */
+  --btn-primary-bg: #2563eb;
+  --btn-primary-hover: #1d4ed8;
+  --btn-primary-text: #ffffff;
+  --btn-secondary-bg: #f1f5f9;
+  --btn-secondary-hover: #e2e8f0;
+  --btn-secondary-text: #475569;
+
+  /* Setup panel */
+  --panel-bg: #f8fafc;
+  --panel-border: #e2e8f0;
+  --code-bg: #1e293b;
+  --code-text: #e2e8f0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--background);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 24px 16px;
+  }
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.header-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.header-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.header-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* Grid */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 860px) {
+  .tools-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card */
+.card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.card-content {
+  padding: 24px;
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.status-badge.ready {
+  background: var(--status-ready-bg);
+  color: var(--status-ready-text);
+}
+
+.status-badge.needs-setup {
+  background: var(--status-setup-bg);
+  color: var(--status-setup-text);
+}
+
+.status-badge.needs-install {
+  background: var(--status-install-bg);
+  color: var(--status-install-text);
+}
+
+/* Card Content */
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.card-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.card-stack {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+/* Buttons */
+.card-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.15s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+}
+
+.btn-primary:hover {
+  background: var(--btn-primary-hover);
+}
+
+.btn-primary.disabled {
+  background: var(--btn-secondary-bg);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn-secondary {
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+}
+
+.btn-secondary:hover {
+  background: var(--btn-secondary-hover);
+}
+
+.btn-secondary.active {
+  background: var(--btn-secondary-hover);
+}
+
+/* Setup Panel */
+.setup-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background: var(--panel-bg);
+  border-top: 1px solid var(--panel-border);
+}
+
+.setup-panel.open {
+  max-height: 1000px;
+  transition: max-height 0.2s ease-in;
+}
+
+.setup-panel-content {
+  padding: 24px;
+}
+
+.setup-section {
+  margin-bottom: 20px;
+}
+
+.setup-section:last-child {
+  margin-bottom: 0;
+}
+
+.setup-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+/* Code Block */
+.code-block {
+  background: var(--code-bg);
+  border-radius: 6px;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+.code-line {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 13px;
+  color: var(--code-text);
+  display: block;
+  line-height: 1.6;
+}
+
+.code-line.comment {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* Env Vars Table */
+.env-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.env-table th,
+.env-table td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.env-table th {
+  background: var(--card-bg);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.env-table td:first-child {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  color: var(--btn-primary-bg);
+  white-space: nowrap;
+}
+
+.env-table td:last-child {
+  color: var(--text-secondary);
+}
+
+/* Services List */
+.services-list {
+  list-style: none;
+  padding: 0;
+}
+
+.services-list li {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 6px 0;
+  padding-left: 20px;
+  position: relative;
+}
+
+.services-list li::before {
+  content: "•";
+  position: absolute;
+  left: 6px;
+  color: var(--text-secondary);
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.footer-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Tooltip for disabled button */
+.btn-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.btn-tooltip {
+  display: none;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  margin-bottom: 4px;
+}
+
+.btn-wrapper:hover .btn-tooltip {
+  display: block;
+}

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deck Quote Calculator | Hickory Dickory Decks Cincinnati</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo">🏠</div>
+      <h1>Deck Quote Calculator</h1>
+      <p class="subtitle">Get a ballpark estimate for your dream deck</p>
+    </header>
+
+    <form id="quote-form" class="quote-form">
+      <!-- Step 1: Dimensions -->
+      <section class="form-section">
+        <h2><span class="step-num">1</span> Deck Dimensions</h2>
+        <div class="input-row">
+          <div class="input-group">
+            <label for="length">Length (ft)</label>
+            <input type="number" id="length" min="8" max="100" value="16" required>
+          </div>
+          <div class="input-group">
+            <label for="width">Width (ft)</label>
+            <input type="number" id="width" min="8" max="100" value="12" required>
+          </div>
+        </div>
+        <p class="sqft-display">Total: <span id="sqft">192</span> sq ft</p>
+      </section>
+
+      <!-- Step 2: Material -->
+      <section class="form-section">
+        <h2><span class="step-num">2</span> Decking Material</h2>
+        <div class="material-grid">
+          <label class="material-card">
+            <input type="radio" name="material" value="trex-select" checked>
+            <div class="card-content">
+              <span class="material-name">Trex Select</span>
+              <span class="material-tier">Good</span>
+              <span class="material-price">$$</span>
+            </div>
+          </label>
+          <label class="material-card">
+            <input type="radio" name="material" value="trex-enhance">
+            <div class="card-content">
+              <span class="material-name">Trex Enhance</span>
+              <span class="material-tier">Better</span>
+              <span class="material-price">$$$</span>
+            </div>
+          </label>
+          <label class="material-card">
+            <input type="radio" name="material" value="trex-transcend">
+            <div class="card-content">
+              <span class="material-name">Trex Transcend</span>
+              <span class="material-tier">Best</span>
+              <span class="material-price">$$$$</span>
+            </div>
+          </label>
+          <label class="material-card">
+            <input type="radio" name="material" value="timbertech-pro">
+            <div class="card-content">
+              <span class="material-name">TimberTech PRO</span>
+              <span class="material-tier">Better</span>
+              <span class="material-price">$$$</span>
+            </div>
+          </label>
+          <label class="material-card">
+            <input type="radio" name="material" value="timbertech-azek">
+            <div class="card-content">
+              <span class="material-name">TimberTech AZEK</span>
+              <span class="material-tier">Premium</span>
+              <span class="material-price">$$$$$</span>
+            </div>
+          </label>
+        </div>
+      </section>
+
+      <!-- Step 3: Features -->
+      <section class="form-section">
+        <h2><span class="step-num">3</span> Features & Add-ons</h2>
+        <div class="features-grid">
+          <label class="feature-card">
+            <input type="checkbox" name="features" value="railing" checked>
+            <div class="card-content">
+              <span class="feature-icon">◧</span>
+              <span class="feature-name">Railing</span>
+              <span class="feature-desc">Composite railing system</span>
+            </div>
+          </label>
+          <label class="feature-card">
+            <input type="checkbox" name="features" value="stairs">
+            <div class="card-content">
+              <span class="feature-icon">▤</span>
+              <span class="feature-name">Stairs</span>
+              <span class="feature-desc">4-6 step staircase</span>
+            </div>
+          </label>
+          <label class="feature-card">
+            <input type="checkbox" name="features" value="lighting">
+            <div class="card-content">
+              <span class="feature-icon">☀</span>
+              <span class="feature-name">Lighting</span>
+              <span class="feature-desc">LED post cap & step lights</span>
+            </div>
+          </label>
+          <label class="feature-card">
+            <input type="checkbox" name="features" value="pergola">
+            <div class="card-content">
+              <span class="feature-icon">⌂</span>
+              <span class="feature-name">Pergola</span>
+              <span class="feature-desc">10x10 attached pergola</span>
+            </div>
+          </label>
+          <label class="feature-card">
+            <input type="checkbox" name="features" value="builtin-seating">
+            <div class="card-content">
+              <span class="feature-icon">▭</span>
+              <span class="feature-name">Built-in Seating</span>
+              <span class="feature-desc">Bench seating around perimeter</span>
+            </div>
+          </label>
+          <label class="feature-card">
+            <input type="checkbox" name="features" value="skirting">
+            <div class="card-content">
+              <span class="feature-icon">▬</span>
+              <span class="feature-name">Skirting</span>
+              <span class="feature-desc">Lattice or solid skirting</span>
+            </div>
+          </label>
+        </div>
+      </section>
+
+      <!-- Step 4: Deck Height -->
+      <section class="form-section">
+        <h2><span class="step-num">4</span> Deck Height</h2>
+        <div class="height-options">
+          <label class="height-card">
+            <input type="radio" name="height" value="ground" checked>
+            <div class="card-content">
+              <span class="height-name">Ground Level</span>
+              <span class="height-desc">0-2 ft off ground</span>
+            </div>
+          </label>
+          <label class="height-card">
+            <input type="radio" name="height" value="low">
+            <div class="card-content">
+              <span class="height-name">Low</span>
+              <span class="height-desc">2-4 ft off ground</span>
+            </div>
+          </label>
+          <label class="height-card">
+            <input type="radio" name="height" value="medium">
+            <div class="card-content">
+              <span class="height-name">Medium</span>
+              <span class="height-desc">4-8 ft off ground</span>
+            </div>
+          </label>
+          <label class="height-card">
+            <input type="radio" name="height" value="high">
+            <div class="card-content">
+              <span class="height-name">High/Second Story</span>
+              <span class="height-desc">8+ ft off ground</span>
+            </div>
+          </label>
+        </div>
+      </section>
+
+      <button type="submit" class="calculate-btn">Calculate Estimate</button>
+    </form>
+
+    <!-- Results Section -->
+    <section id="results" class="results hidden">
+      <h2>Your Estimate</h2>
+      
+      <div class="estimate-card">
+        <div class="estimate-range">
+          <span class="estimate-label">Estimated Range</span>
+          <span class="estimate-value">
+            <span id="low-estimate">$0</span> - <span id="high-estimate">$0</span>
+          </span>
+        </div>
+        
+        <div class="estimate-breakdown">
+          <h3>Breakdown</h3>
+          <div class="breakdown-row">
+            <span>Base deck (<span id="breakdown-sqft">0</span> sq ft)</span>
+            <span id="breakdown-base">$0</span>
+          </div>
+          <div class="breakdown-row" id="row-material">
+            <span>Material: <span id="breakdown-material">Trex Select</span></span>
+            <span id="breakdown-material-cost">included</span>
+          </div>
+          <div class="breakdown-row" id="row-height">
+            <span>Height adjustment</span>
+            <span id="breakdown-height">$0</span>
+          </div>
+          <div id="features-breakdown"></div>
+          <div class="breakdown-total">
+            <span>Estimated Total</span>
+            <span id="breakdown-total">$0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        <p><strong>⚠️ This is a rough estimate only.</strong></p>
+        <p>Actual pricing depends on site conditions, permits, design complexity, and current material costs. Contact us for a free on-site consultation and accurate quote.</p>
+      </div>
+
+      <div class="cta-section">
+        <a href="https://decks.ca/deck-builders/cincinnati/" class="cta-btn" target="_blank">
+          Request Free Consultation
+        </a>
+        <p class="cta-subtext">Or call <a href="tel:+15135551234">(513) 555-1234</a></p>
+      </div>
+
+      <button type="button" class="recalculate-btn" onclick="resetForm()">← Adjust & Recalculate</button>
+    </section>
+
+    <footer class="footer">
+      <p>Hickory Dickory Decks Cincinnati</p>
+      <p class="footer-sub">Serving Greater Cincinnati since 2024</p>
+    </footer>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="calculator.js"></script>
+</body>
+</html>

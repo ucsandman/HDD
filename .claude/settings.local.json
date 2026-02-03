@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(ls:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run dev:*)",
+      "Bash(timeout /t 3)",
+      "mcp__chrome-devtools__new_page",
+      "mcp__chrome-devtools__take_snapshot",
+      "mcp__chrome-devtools__fill_form",
+      "mcp__chrome-devtools__click",
+      "mcp__chrome-devtools__take_screenshot",
+      "mcp__chrome-devtools__close_page",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: HDD Review Request Generator\n\nReact + TypeScript + Tailwind CSS app that generates personalized\nreview request messages \\(SMS, Email, Thank You Card\\) for Hickory\nDickory Decks franchisees.\n\nFeatures:\n- Form with validation and localStorage persistence\n- Three message templates with variable substitution\n- Copy to clipboard with visual feedback\n- SMS character count with segment warnings\n- Mobile responsive design\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git remote set-url:*)",
+      "mcp__chrome-devtools__navigate_page",
+      "mcp__chrome-devtools__emulate",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd HDD sentiment router landing page\n\nStatic sentiment routing page that intercepts customer feedback:\n- Happy customers redirected to Google Reviews\n- Unhappy customers directed to private feedback form\n- Mobile-first responsive design\n- Configurable for multiple franchise locations\n- Supports Formspree, mailto, or Google Forms submission\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git fetch:*)",
+      "Bash(git rebase:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nUpdate docs to include sentiment router project\n\n- README.md: Describe both projects with quick start guides\n- CLAUDE.md: Architecture overview for both sentiment router and review generator\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "mcp__plugin_episodic-memory_episodic-memory__search",
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir=false --import-alias=\"@/*\" --turbopack --yes)",
+      "Bash(npx prisma:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(git commit:*)",
+      "Bash(tree:*)",
+      "Bash(dir:*)",
+      "Bash(start hdd-dashboard/index.html)",
+      "Bash(openssl rand:*)",
+      "Bash(start hdd-gbp-poster/SETUP_GUIDE.md)"
+    ]
+  }
+}

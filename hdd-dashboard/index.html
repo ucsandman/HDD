@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HDD Marketing Tools</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="header-icon" aria-hidden="true">&#128296;</div>
+      <h1 class="header-title" id="dashboard-title"></h1>
+      <p class="header-subtitle" id="dashboard-subtitle"></p>
+    </header>
+
+    <div class="tools-grid" id="tools-grid"></div>
+
+    <footer class="footer">
+      <p class="footer-text" id="footer-text"></p>
+    </footer>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      renderDashboard();
+    });
+
+    function renderDashboard() {
+      document.getElementById('dashboard-title').textContent = DASHBOARD.title;
+      document.getElementById('dashboard-subtitle').textContent = DASHBOARD.subtitle;
+
+      const grid = document.getElementById('tools-grid');
+      TOOLS.forEach(tool => {
+        grid.appendChild(createToolCard(tool));
+      });
+
+      const readyCount = TOOLS.filter(t => t.status === 'ready').length;
+      document.getElementById('footer-text').textContent =
+        TOOLS.length + ' tools \u00B7 ' + readyCount + ' ready \u00B7 Built for ' + DASHBOARD.franchisee;
+    }
+
+    function createToolCard(tool) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = 'card-' + tool.id;
+
+      // Card content wrapper
+      const content = document.createElement('div');
+      content.className = 'card-content';
+
+      // Status badge
+      const badge = document.createElement('span');
+      badge.className = 'status-badge ' + tool.status;
+      badge.textContent = getStatusText(tool.status);
+      content.appendChild(badge);
+
+      // Title
+      const title = document.createElement('h2');
+      title.className = 'card-title';
+      title.textContent = tool.name;
+      content.appendChild(title);
+
+      // Description
+      const desc = document.createElement('p');
+      desc.className = 'card-description';
+      desc.textContent = tool.description;
+      content.appendChild(desc);
+
+      // Stack
+      const stack = document.createElement('p');
+      stack.className = 'card-stack';
+      stack.textContent = tool.stack;
+      content.appendChild(stack);
+
+      // Buttons
+      const buttons = document.createElement('div');
+      buttons.className = 'card-buttons';
+
+      const isDisabled = tool.status === 'needs-install';
+
+      if (isDisabled) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'btn-wrapper';
+
+        const launchBtn = document.createElement('button');
+        launchBtn.className = 'btn btn-primary disabled';
+        launchBtn.disabled = true;
+        launchBtn.textContent = 'Launch';
+        wrapper.appendChild(launchBtn);
+
+        const tooltip = document.createElement('span');
+        tooltip.className = 'btn-tooltip';
+        tooltip.textContent = 'Run setup first';
+        wrapper.appendChild(tooltip);
+
+        buttons.appendChild(wrapper);
+      } else {
+        const launchBtn = document.createElement('button');
+        launchBtn.className = 'btn btn-primary';
+        launchBtn.textContent = 'Launch';
+        launchBtn.addEventListener('click', function() {
+          window.open(tool.launchUrl, '_blank');
+        });
+        buttons.appendChild(launchBtn);
+      }
+
+      const setupBtn = document.createElement('button');
+      setupBtn.className = 'btn btn-secondary';
+      setupBtn.id = 'setup-btn-' + tool.id;
+      setupBtn.textContent = 'Setup Info';
+      setupBtn.addEventListener('click', function() {
+        toggleSetup(tool.id);
+      });
+      buttons.appendChild(setupBtn);
+
+      content.appendChild(buttons);
+      card.appendChild(content);
+
+      // Setup panel
+      const panel = document.createElement('div');
+      panel.className = 'setup-panel';
+      panel.id = 'setup-panel-' + tool.id;
+
+      const panelContent = document.createElement('div');
+      panelContent.className = 'setup-panel-content';
+      renderSetupContent(panelContent, tool.setup);
+      panel.appendChild(panelContent);
+
+      card.appendChild(panel);
+
+      return card;
+    }
+
+    function getStatusText(status) {
+      switch (status) {
+        case 'ready': return 'Ready';
+        case 'needs-setup': return 'Needs Setup';
+        case 'needs-install': return 'Needs Install';
+        default: return status;
+      }
+    }
+
+    function renderSetupContent(container, setup) {
+      // Commands section
+      if (setup.commands && setup.commands.length > 0) {
+        const section = document.createElement('div');
+        section.className = 'setup-section';
+
+        const sectionTitle = document.createElement('h3');
+        sectionTitle.className = 'setup-section-title';
+        sectionTitle.textContent = 'Commands';
+        section.appendChild(sectionTitle);
+
+        const codeBlock = document.createElement('div');
+        codeBlock.className = 'code-block';
+
+        setup.commands.forEach(function(cmd) {
+          const codeLine = document.createElement('code');
+          codeLine.className = 'code-line';
+          if (cmd.trim().startsWith('#')) {
+            codeLine.classList.add('comment');
+          }
+          codeLine.textContent = cmd;
+          codeBlock.appendChild(codeLine);
+        });
+
+        section.appendChild(codeBlock);
+        container.appendChild(section);
+      }
+
+      // Environment variables section
+      if (setup.envVars && setup.envVars.length > 0) {
+        const section = document.createElement('div');
+        section.className = 'setup-section';
+
+        const sectionTitle = document.createElement('h3');
+        sectionTitle.className = 'setup-section-title';
+        sectionTitle.textContent = 'Environment Variables';
+        section.appendChild(sectionTitle);
+
+        const table = document.createElement('table');
+        table.className = 'env-table';
+
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        const th1 = document.createElement('th');
+        th1.textContent = 'Variable';
+        const th2 = document.createElement('th');
+        th2.textContent = 'Purpose';
+        headerRow.appendChild(th1);
+        headerRow.appendChild(th2);
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        setup.envVars.forEach(function(v) {
+          const row = document.createElement('tr');
+          const td1 = document.createElement('td');
+          td1.textContent = v.name;
+          const td2 = document.createElement('td');
+          td2.textContent = v.purpose;
+          row.appendChild(td1);
+          row.appendChild(td2);
+          tbody.appendChild(row);
+        });
+        table.appendChild(tbody);
+
+        section.appendChild(table);
+        container.appendChild(section);
+      }
+
+      // External services section
+      if (setup.externalServices && setup.externalServices.length > 0) {
+        const section = document.createElement('div');
+        section.className = 'setup-section';
+
+        const sectionTitle = document.createElement('h3');
+        sectionTitle.className = 'setup-section-title';
+        sectionTitle.textContent = 'External Services Required';
+        section.appendChild(sectionTitle);
+
+        const list = document.createElement('ul');
+        list.className = 'services-list';
+
+        setup.externalServices.forEach(function(s) {
+          const li = document.createElement('li');
+          li.textContent = s;
+          list.appendChild(li);
+        });
+
+        section.appendChild(list);
+        container.appendChild(section);
+      }
+    }
+
+    var openPanelId = null;
+
+    function toggleSetup(toolId) {
+      const panel = document.getElementById('setup-panel-' + toolId);
+      const btn = document.getElementById('setup-btn-' + toolId);
+
+      if (openPanelId && openPanelId !== toolId) {
+        const openPanel = document.getElementById('setup-panel-' + openPanelId);
+        const openBtn = document.getElementById('setup-btn-' + openPanelId);
+        if (openPanel) openPanel.classList.remove('open');
+        if (openBtn) openBtn.classList.remove('active');
+      }
+
+      const isOpen = panel.classList.contains('open');
+      if (isOpen) {
+        panel.classList.remove('open');
+        btn.classList.remove('active');
+        openPanelId = null;
+      } else {
+        panel.classList.add('open');
+        btn.classList.add('active');
+        openPanelId = toolId;
+      }
+    }
+  </script>
+</body>
+</html>
