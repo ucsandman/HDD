@@ -167,6 +167,17 @@ function displayResults(data) {
       estimate_high: data.totalHigh
     });
   }
+
+  // Set CTA links from config
+  const bookingLink = document.getElementById('cta-booking');
+  const phoneLink = document.getElementById('cta-phone');
+  if (bookingLink && typeof CONFIG !== 'undefined' && CONFIG.bookingUrl) {
+    bookingLink.href = CONFIG.bookingUrl;
+  }
+  if (phoneLink && typeof CONFIG !== 'undefined' && CONFIG.contactPhone) {
+    phoneLink.href = 'tel:' + CONFIG.contactPhone.replace(/[^+\d]/g, '');
+    phoneLink.textContent = 'Call ' + CONFIG.contactPhone;
+  }
 }
 
 function formatCurrency(value) {

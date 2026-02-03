@@ -1,7 +1,7 @@
 /**
  * HDD GBP Poster - Post Update Script
  * 
- * Posts updates to Google Business Profiles for Honest Day's Driving locations.
+ * Posts updates to Google Business Profiles for Hickory Dickory Decks locations.
  * 
  * Usage: npm run post
  * 
@@ -34,21 +34,21 @@ const LOCATIONS = [
 
 const POST_CONTENT = {
   // Post text (required)
-  summary: `🚛 Hiring CDL drivers now!
+  summary: `🏠 Transform your backyard this season!
 
-Honest Day's Driving is looking for experienced CDL drivers. We offer:
-✅ Competitive pay
-✅ Great benefits
-✅ Flexible schedules
-✅ Family-friendly company culture
+Hickory Dickory Decks builds beautiful, long-lasting composite decks. We offer:
+✅ Premium Trex & TimberTech materials
+✅ Expert craftsmanship
+✅ Free consultations
+✅ 25-year warranty
 
-Apply today at honestdaysdriving.com/careers`,
+Book your free consultation at decks.ca/deck-builders/cincinnati`,
 
   // Call to action (optional)
   // Supported types: BOOK, ORDER, SHOP, LEARN_MORE, SIGN_UP, CALL
   callToAction: {
     actionType: 'LEARN_MORE',
-    url: 'https://honestdaysdriving.com/careers'
+    url: 'https://decks.ca/deck-builders/cincinnati'
   },
 
   // Optional: Schedule for future (ISO 8601 format)

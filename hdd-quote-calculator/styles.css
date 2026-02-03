@@ -435,6 +435,56 @@ body {
   font-weight: 600;
 }
 
+.cta-text {
+  font-size: 16px;
+  color: var(--text);
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-cta {
+  display: inline-block;
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+  cursor: pointer;
+}
+
+.btn-cta:active {
+  transform: scale(0.98);
+}
+
+.btn-cta-primary {
+  background: #22c55e;
+  color: white;
+}
+
+.btn-cta-primary:hover {
+  background: #16a34a;
+}
+
+.btn-cta-secondary {
+  background: transparent;
+  color: #2563eb;
+  border: 2px solid #2563eb;
+}
+
+.btn-cta-secondary:hover {
+  background: #2563eb;
+  color: white;
+}
+
 .recalculate-btn {
   display: block;
   width: 100%;

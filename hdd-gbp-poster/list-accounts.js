@@ -58,7 +58,7 @@ async function listAccounts() {
     if (accounts.length === 0) {
       console.log('No Business Profile accounts found for this Google account.');
       console.log('\nMake sure you\'re signed in with the account that manages');
-      console.log('the Honest Day\'s Driving Business Profiles.');
+      console.log('the Hickory Dickory Decks Business Profiles.');
       return;
     }
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Header } from './components/Header';
 import { InputForm } from './components/InputForm';
 import { OutputSection } from './components/OutputSection';
@@ -7,10 +7,17 @@ import type { FormData, GeneratedMessages } from './types';
 
 function App() {
   const [messages, setMessages] = useState<GeneratedMessages | null>(null);
+  const formRef = useRef<{ resetCustomerFields: () => void }>(null);
 
   const handleSubmit = (data: FormData) => {
     const generated = generateMessages(data);
     setMessages(generated);
+  };
+
+  const handleReset = () => {
+    setMessages(null);
+    formRef.current?.resetCustomerFields();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -22,10 +29,10 @@ function App() {
           <h2 className="text-lg font-semibold text-slate-800 mb-4">
             Project Details
           </h2>
-          <InputForm onSubmit={handleSubmit} />
+          <InputForm ref={formRef} onSubmit={handleSubmit} />
         </div>
 
-        {messages && <OutputSection messages={messages} />}
+        {messages && <OutputSection messages={messages} onReset={handleReset} />}
       </main>
 
       <footer className="text-center py-6 text-sm text-slate-500">

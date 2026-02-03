@@ -3,7 +3,7 @@
  * 
  * Run this first to authenticate with Google and get a refresh token.
  * This will open a browser window for you to sign in with the Google account
- * that manages the Honest Day's Driving Business Profiles.
+ * that manages the Hickory Dickory Decks Business Profiles.
  * 
  * Usage: npm run auth
  */

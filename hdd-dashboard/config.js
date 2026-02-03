@@ -54,7 +54,7 @@ const TOOLS = [
     name: "Project Photo Manager",
     description: "Organize before/after project photos. Tag by project type, material, and neighborhood. Quick export for GBP posts, social media, and website galleries.",
     stack: "React, TypeScript, Tailwind CSS, Vite",
-    status: "ready",
+    status: "needs-install",
     launchUrl: "http://localhost:5174",
     setup: {
       commands: [
@@ -71,7 +71,7 @@ const TOOLS = [
     name: "Referral Tracker",
     description: "Track lead sources and referral codes. See which marketing channels convert best. Give past customers referral links to share.",
     stack: "React, TypeScript, Tailwind CSS, Vite",
-    status: "ready",
+    status: "needs-install",
     launchUrl: "http://localhost:5175",
     setup: {
       commands: [
@@ -88,7 +88,7 @@ const TOOLS = [
     name: "Warranty Tracker",
     description: "Track customer warranties and schedule maintenance reminders. Send annual checkup notifications and seasonal care tips.",
     stack: "React, TypeScript, Tailwind CSS, Vite",
-    status: "ready",
+    status: "needs-install",
     launchUrl: "http://localhost:5176",
     setup: {
       commands: [
@@ -144,7 +144,7 @@ const TOOLS = [
     description: "Automated lead follow-up engine. When a lead comes in, sends an instant SMS and email, then follows up automatically over 7 days until the lead responds or books a consultation.",
     stack: "Next.js, Prisma, Twilio, Resend, Cal.com",
     status: "needs-install",
-    launchUrl: "http://localhost:3000",
+    launchUrl: "http://localhost:3001",
     setup: {
       commands: [
         "cd hdd-lead-response",
@@ -182,7 +182,7 @@ const TOOLS = [
     name: "Weather Content Suggester",
     description: "Auto-suggests GBP posts based on Cincinnati weather. 'Perfect deck weather this weekend!' when sunny, seasonal planning tips in winter.",
     stack: "React, TypeScript, NWS Weather API",
-    status: "ready",
+    status: "needs-install",
     launchUrl: "http://localhost:5177",
     setup: {
       commands: [
@@ -201,7 +201,7 @@ const TOOLS = [
     name: "Competitor Monitor",
     description: "Track local deck builders' Google ratings, review counts, and GBP activity. See how you compare and spot opportunities.",
     stack: "React, TypeScript, Tailwind CSS",
-    status: "ready",
+    status: "needs-install",
     launchUrl: "http://localhost:5178",
     setup: {
       commands: [

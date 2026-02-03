@@ -4,19 +4,27 @@ import type { GeneratedMessages } from '../types';
 
 interface OutputSectionProps {
   messages: GeneratedMessages;
+  onReset: () => void;
 }
 
-export function OutputSection({ messages }: OutputSectionProps) {
+export function OutputSection({ messages, onReset }: OutputSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Auto-scroll to output section when messages are generated
     sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [messages]);
 
   return (
     <div ref={sectionRef} className="space-y-6 pt-6">
-      <h2 className="text-lg font-semibold text-slate-800">Generated Messages</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-slate-800">Generated Messages</h2>
+        <button
+          onClick={onReset}
+          className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200"
+        >
+          New Customer
+        </button>
+      </div>
 
       <MessageCard
         title="Day 3: SMS Message"

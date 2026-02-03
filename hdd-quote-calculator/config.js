@@ -9,6 +9,10 @@ const CONFIG = {
     serviceArea: "Greater Cincinnati"
   },
 
+  // Contact info for CTA
+  contactPhone: "(513) 555-0123",
+  bookingUrl: "https://cal.com/hickory-dickory-decks-cincinnati",
+
   // Base price per square foot (includes labor + basic materials)
   // This is for ground-level deck with basic composite
   basePricePerSqFt: {

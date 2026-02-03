@@ -338,7 +338,7 @@ Windows batch file launcher (minimal).
 | Review Generator | Complete | Dependencies installed, dist/ exists |
 | GBP Post Scheduler | Complete | Needs env setup |
 | Lead Response | Complete | Needs `npm install` + env setup |
-| Photo Manager | Scaffolded | App.tsx empty |
+| Photo Manager | Implemented | localStorage, not production-ready |
 | Referral Tracker | Scaffolded | App.tsx empty |
 | Warranty Tracker | Scaffolded | App.tsx empty |
 | Weather Content | Scaffolded | App.tsx empty |

@@ -109,6 +109,20 @@ Your marketing tools need some online services to work. Think of these like util
    - Client ID
    - Client Secret
 
+### Important: Testing Mode Limitations
+
+The OAuth consent screen starts in "Testing" mode. This means:
+- Only emails you manually add as test users can authenticate
+- **Tokens expire after 7 days** and users must re-authenticate
+- Maximum of 100 test users
+
+For ongoing use, you will need to push the app to **Production** mode:
+1. Go to [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent)
+2. Click **"Publish App"**
+3. Google may request verification (can take a few days for simple apps)
+
+Do this after you have confirmed everything works in testing mode. Until then, be aware that the Google connection will break every 7 days and require re-authentication.
+
 ---
 
 ## Service #5: AI Service (Anthropic)

@@ -1,6 +1,13 @@
-# Environment
+# Environment files
 .env
+.env.*
 .env.local
+.env.production
+!.env.example
+
+# Credentials
+credentials.json
+token.json
 
 # Logs
 logs
