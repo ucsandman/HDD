@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth'
+import NextAuth, { type Session } from 'next-auth'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import Resend from 'next-auth/providers/resend'
 import prisma from './db'
@@ -73,12 +73,12 @@ export const { handlers, signIn, signOut, auth: nextAuth } = NextAuth({
 /**
  * Auth wrapper that returns demo session in demo mode
  */
-export async function auth() {
+export async function auth(): Promise<Session | null> {
   if (isDemoMode) {
     // Return a mock session for demo mode
-    return DEMO_SESSION as Awaited<ReturnType<typeof nextAuth>>
+    return DEMO_SESSION as Session
   }
-  return nextAuth()
+  return await nextAuth() as Session | null
 }
 
 export async function getSession() {

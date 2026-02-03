@@ -62,16 +62,19 @@ export async function POST(request: NextRequest) {
 
     // Create database record
     // Note: In demo mode with SQLite, tags is stored as JSON string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const imageData: any = {
+      url: imageUrl,
+      filename: file.name,
+      altText: altText || null,
+      projectType: projectType || null,
+      tags: isDemoMode ? JSON.stringify([]) : [],
+      franchiseId: session.user.franchiseId,
+      uploadedBy: session.user.id,
+    }
+
     const image = await prisma.image.create({
-      data: {
-        url: imageUrl,
-        filename: file.name,
-        altText: altText || null,
-        projectType: projectType || null,
-        tags: isDemoMode ? JSON.stringify([]) : [],
-        franchiseId: session.user.franchiseId,
-        uploadedBy: session.user.id,
-      },
+      data: imageData,
     })
 
     return NextResponse.json(image)

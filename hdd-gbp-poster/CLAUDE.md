@@ -39,7 +39,68 @@ npm run lint         # ESLint
 npx prisma generate  # Generate Prisma client
 npx prisma db push   # Push schema to database
 npx prisma db seed   # Seed Cincinnati franchise
+
+# Demo mode
+npm run demo         # One-command demo setup and start
+npm run demo:reset   # Reset demo data to fresh state
 ```
+
+## Demo Mode
+
+Demo mode allows running the full application locally without any external services (no database, no API keys, no Google OAuth). Perfect for:
+- Sales demos to franchise owners
+- Development without credentials
+- Testing the UI/UX flow
+
+### Quick Start
+
+```bash
+npm run demo
+```
+
+This single command:
+1. Backs up existing `.env` and `schema.prisma`
+2. Configures SQLite database (no PostgreSQL needed)
+3. Seeds realistic Cincinnati franchise data
+4. Starts the dev server with auto-authentication
+
+### Demo Features
+
+| Feature | Behavior |
+|---------|----------|
+| Authentication | Auto-logged in as Nathan Ricke (admin) |
+| AI Generation | Returns sample Cincinnati-focused content |
+| Publishing | Simulates GBP API with mock URLs |
+| Images | Saved locally to `public/demo-uploads/` |
+| Google Connection | Shows "Connected" status |
+
+### Demo Data
+
+- **1 Franchise**: Hickory Dickory Decks - Cincinnati
+- **1 User**: Nathan Ricke (admin)
+- **6 Images**: Placeholder images for various project types
+- **8 Posts**: Across all statuses (draft, pending, approved, scheduled, published)
+- **3 Queue Entries**: For dashboard stats
+
+### Restore Production Mode
+
+```bash
+copy .env.backup .env
+copy prisma/schema.prisma.backup prisma/schema.prisma
+npx prisma generate
+```
+
+### Demo Files
+
+| File | Purpose |
+|------|---------|
+| `lib/demo.ts` | Demo mode utilities and constants |
+| `lib/anthropic/demo-posts.ts` | Sample post content (12 posts) |
+| `prisma/schema.demo.prisma` | SQLite schema |
+| `prisma/seed-demo.ts` | Demo data seeder |
+| `.env.demo` | Minimal demo configuration |
+| `scripts/demo-setup.js` | Setup automation |
+| `scripts/demo-reset.js` | Reset automation |
 
 ## Database Schema
 

@@ -75,7 +75,8 @@ export async function POST(request: NextRequest) {
     }
 
     // In demo mode, store tags as JSON string for SQLite compatibility
-    const data = isDemoMode
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: any = isDemoMode
       ? {
           ...validation.data,
           tags: JSON.stringify(validation.data.tags || []),

@@ -127,19 +127,21 @@ Website: https://decks.ca/deck-builders/cincinnati`,
   ]
 
   for (const img of imageData) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const imageCreateData: any = {
+      id: img.id,
+      franchiseId: franchise.id,
+      url: img.url,
+      filename: img.filename,
+      altText: img.altText,
+      projectType: img.projectType,
+      tags: JSON.stringify(['demo', img.projectType]),
+      uploadedBy: adminUser.id,
+    }
     await prisma.image.upsert({
       where: { id: img.id },
       update: {},
-      create: {
-        id: img.id,
-        franchiseId: franchise.id,
-        url: img.url,
-        filename: img.filename,
-        altText: img.altText,
-        projectType: img.projectType,
-        tags: JSON.stringify(['demo', img.projectType]),
-        uploadedBy: adminUser.id,
-      },
+      create: imageCreateData,
     })
   }
 
