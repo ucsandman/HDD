@@ -4,8 +4,8 @@ Marketing, customer feedback, and automation platform for Hickory Dickory Decks 
 
 ## Overview
 
-**16 total tools** in 3 categories:
-- **8 Production Tools**: Sentiment Router, Review Generator, GBP Post Scheduler, Lead Response, Quote Tracker, Project Messenger, Permit Tracker, Job Costing
+**17 total tools** in 3 categories:
+- **9 Production Tools**: Sentiment Router, Review Generator, GBP Post Scheduler, Lead Response, Quote Tracker, Project Messenger, Permit Tracker, Job Costing, Supplier Tracker
 - **3 Infrastructure Tools**: Dashboard, Quote Calculator, Material Calculator
 - **5 Development Tools**: Photo Manager, Referral Tracker, Warranty Tracker, Weather Content, Competitor Monitor
 
@@ -40,6 +40,7 @@ Marketing, customer feedback, and automation platform for Hickory Dickory Decks 
 | Permit Tracker | `hdd-permit-tracker/` | 5184 | Track permits and inspections |
 | Material Calculator | `hdd-material-calculator/` | 5181 | Calculate deck materials |
 | Job Costing | `hdd-job-costing/` | 5182 | Track project costs and profitability |
+| Supplier Tracker | `hdd-supplier-tracker/` | 5183 | Compare prices across suppliers |
 
 **Stack**: React 19, TypeScript, Tailwind CSS v4, Vite 7
 
@@ -479,7 +480,50 @@ Track project costs, expenses, and profitability for deck construction projects.
 
 ---
 
-### 10. Quote Calculator (`hdd-quote-calculator/`)
+### 10. Supplier Tracker (`hdd-supplier-tracker/`)
+
+Compare material prices across multiple suppliers.
+
+| File | Purpose |
+|------|---------|
+| `src/types/index.ts` | TypeScript interfaces, categories, default data |
+| `src/utils/storage.ts` | localStorage, calculations, CSV export |
+| `src/hooks/useSupplierData.ts` | Supplier, material, price CRUD operations |
+| `src/components/Header.tsx` | App header with navigation |
+| `src/components/StatsBar.tsx` | Dashboard statistics (5 cards) |
+| `src/components/PriceComparisonTable.tsx` | Main price matrix view |
+| `src/components/SupplierList.tsx` | Manage suppliers |
+| `src/components/MaterialList.tsx` | Manage materials |
+| `src/components/PriceForm.tsx` | Add/edit price modal |
+
+**Pre-loaded Data**:
+- 5 suppliers: Home Depot, Lowe's, 84 Lumber, Carter Lumber, ABC Supply
+- 24 materials: Decking, framing, hardware, concrete, railing, fasteners
+
+**Material Categories**:
+- Decking (PT pine, Trex, TimberTech)
+- Framing Lumber (joists, beams, posts)
+- Hardware (hangers, brackets, bolts)
+- Concrete & Footings (bags, sono tubes, gravel)
+- Railing (posts, rails, balusters)
+- Fasteners & Screws (deck screws, hidden fasteners)
+
+**Features**:
+- Price comparison table (materials × suppliers)
+- Lowest price highlighting with checkmark
+- Preferred supplier marking (star)
+- Price history tracking with change percentage
+- Add/edit prices with effective date
+- Filter by category and search
+- Supplier management (CRUD, preferred flag)
+- Material management (CRUD, categories, units)
+- Dashboard stats (materials, suppliers, price entries, savings opportunity)
+- Export to CSV
+- localStorage persistence
+
+---
+
+### 11. Quote Calculator (`hdd-quote-calculator/`)
 
 Customer-facing deck estimate tool.
 
@@ -497,7 +541,7 @@ Total = (SqFt × BasePrice × MaterialMultiplier) + HeightAdjustment + Features
 
 ---
 
-### 11. Dashboard (`hdd-dashboard/`)
+### 12. Dashboard (`hdd-dashboard/`)
 
 Central hub for all tools.
 
@@ -660,6 +704,7 @@ Windows batch file launcher (minimal).
 | Permit Tracker | Ready | Dependencies installed, fully functional |
 | Material Calculator | Ready | Dependencies installed, fully functional |
 | Job Costing | Ready | Dependencies installed, fully functional |
+| Supplier Tracker | Ready | Dependencies installed, fully functional |
 | GBP Post Scheduler | Needs Setup | Requires .env configuration |
 | Lead Response | Needs Setup | Requires .env configuration |
 
@@ -679,6 +724,7 @@ cd hdd-quote-tracker && npm run dev     # :5179
 cd hdd-project-messenger && npm run dev # :5180
 cd hdd-material-calculator && npm run dev # :5181
 cd hdd-job-costing && npm run dev       # :5182
+cd hdd-supplier-tracker && npm run dev  # :5183
 cd hdd-permit-tracker && npm run dev    # :5184
 
 # Next.js tools

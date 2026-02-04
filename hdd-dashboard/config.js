@@ -293,6 +293,22 @@ const TOOLS = [
       envVars: [],
       externalServices: []
     }
+  },
+  {
+    id: "supplier-tracker",
+    name: "Supplier Tracker",
+    description: "Compare material prices across multiple suppliers. Track price changes over time, identify the lowest prices, and export comparison data for ordering.",
+    stack: "React, TypeScript, Tailwind CSS, Vite",
+    status: "ready",
+    launchUrl: "http://localhost:5183",
+    setup: {
+      commands: [
+        "cd hdd-supplier-tracker",
+        "npm run dev"
+      ],
+      envVars: [],
+      externalServices: []
+    }
   }
 ];
 
