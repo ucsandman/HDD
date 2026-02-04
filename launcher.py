@@ -110,13 +110,20 @@ TOOLS = {
         "description": "Calculate materials needed for deck construction"
     },
     "14": {
+        "name": "Job Costing",
+        "type": "vite",
+        "path": "hdd-job-costing",
+        "port": 5182,
+        "description": "Track project costs and profitability"
+    },
+    "15": {
         "name": "GBP Post Scheduler",
         "type": "next",
         "path": "hdd-gbp-poster",
         "port": 3000,
         "description": "AI-powered Google Business Profile posts (needs env setup)"
     },
-    "15": {
+    "16": {
         "name": "Lead Response System",
         "type": "next",
         "path": "hdd-lead-response",
@@ -180,10 +187,10 @@ def print_menu():
             print(f"       {tool['description']}")
     
     print("\n" + "-"*60)
-    print("   [P] Launch PRODUCTION tools (7 tools - recommended)")
+    print("   [P] Launch PRODUCTION tools (8 tools - recommended)")
     print("   [S] Launch STATIC tools only (no server needed)")
-    print("   [R] Launch REACT tools only (9 servers)")
-    print("   [A] Launch ALL tools (11 servers - heavy!)")
+    print("   [R] Launch REACT tools only (10 servers)")
+    print("   [A] Launch ALL tools (12 servers - heavy!)")
     print()
     browser_status = "ON" if AUTO_OPEN_BROWSER else "OFF"
     print(f"   [B] Toggle auto-open browser [{browser_status}]")
@@ -374,10 +381,10 @@ def launch_all():
 def launch_production():
     """Launch production-ready tools only (recommended)"""
     print("\n🚀 LAUNCHING PRODUCTION TOOLS...\n")
-    print("   Starting 7 essential tools:\n")
+    print("   Starting 8 essential tools:\n")
 
-    # Production tools: Dashboard, Sentiment Router, Review Generator, Quote Tracker, Project Messenger, Permit Tracker, GBP Poster
-    production_keys = ["1", "3", "4", "10", "11", "12", "13"]
+    # Production tools: Dashboard, Sentiment Router, Review Generator, Quote Tracker, Project Messenger, Permit Tracker, Material Calculator, Job Costing
+    production_keys = ["1", "3", "4", "10", "11", "12", "13", "14"]
 
     for key in production_keys:
         tool = TOOLS[key]

@@ -4,8 +4,8 @@ Marketing, customer feedback, and automation platform for Hickory Dickory Decks 
 
 ## Overview
 
-**15 total tools** in 3 categories:
-- **7 Production Tools**: Sentiment Router, Review Generator, GBP Post Scheduler, Lead Response, Quote Tracker, Project Messenger, Permit Tracker
+**16 total tools** in 3 categories:
+- **8 Production Tools**: Sentiment Router, Review Generator, GBP Post Scheduler, Lead Response, Quote Tracker, Project Messenger, Permit Tracker, Job Costing
 - **3 Infrastructure Tools**: Dashboard, Quote Calculator, Material Calculator
 - **5 Development Tools**: Photo Manager, Referral Tracker, Warranty Tracker, Weather Content, Competitor Monitor
 
@@ -39,6 +39,7 @@ Marketing, customer feedback, and automation platform for Hickory Dickory Decks 
 | Project Messenger | `hdd-project-messenger/` | 5180 | Automated project milestone communications |
 | Permit Tracker | `hdd-permit-tracker/` | 5184 | Track permits and inspections |
 | Material Calculator | `hdd-material-calculator/` | 5181 | Calculate deck materials |
+| Job Costing | `hdd-job-costing/` | 5182 | Track project costs and profitability |
 
 **Stack**: React 19, TypeScript, Tailwind CSS v4, Vite 7
 
@@ -428,7 +429,57 @@ Calculate lumber, hardware, concrete, and materials needed for deck construction
 
 ---
 
-### 9. Quote Calculator (`hdd-quote-calculator/`)
+### 9. Job Costing (`hdd-job-costing/`)
+
+Track project costs, expenses, and profitability for deck construction projects.
+
+| File | Purpose |
+|------|---------|
+| `src/types/index.ts` | TypeScript interfaces, cost categories, status enums |
+| `src/utils/storage.ts` | localStorage persistence, project/expense calculations, CSV export |
+| `src/hooks/useProjects.ts` | Project CRUD, expense management |
+| `src/components/Header.tsx` | App header with navigation |
+| `src/components/StatsBar.tsx` | Dashboard statistics (6 cards) |
+| `src/components/StatusBadge.tsx` | Project and category badges |
+| `src/components/ProjectList.tsx` | Project list with filters, cost bars |
+| `src/components/ProjectForm.tsx` | Create/edit project form |
+| `src/components/ProjectDetail.tsx` | Detail modal with tabs |
+| `src/components/ExpenseForm.tsx` | Add/edit expense form |
+| `src/components/CostBreakdown.tsx` | Visual cost breakdown by category |
+
+**Project Status Workflow**: `estimating` → `quoted` → `in_progress` → `completed` / `cancelled`
+
+**Cost Categories**:
+- Materials (green)
+- Labor (blue)
+- Permits & Fees (purple)
+- Equipment (amber)
+- Subcontractor (pink)
+- Overhead (gray)
+- Other (teal)
+
+**Features**:
+- Dashboard with stats (total projects, active, revenue, costs, profit, avg margin)
+- Filter projects by status and search
+- Project management (create, view, update, delete)
+- Cost breakdown visualization (colored bar chart)
+- Expense tracking with category, vendor, quantity, unit cost
+- Auto-calculated totals and profit margins
+- Profit/loss indicators with color coding
+- Quick status change from detail view
+- Export projects to CSV
+- Export individual project expenses to CSV
+- localStorage persistence
+
+**Data Model**:
+- Projects with customer info, quote amount, status, dates
+- Expenses with category, description, vendor, quantity, unit cost
+- Auto-calculated: total costs, profit, profit margin
+- Category summaries with percentages
+
+---
+
+### 10. Quote Calculator (`hdd-quote-calculator/`)
 
 Customer-facing deck estimate tool.
 
@@ -446,7 +497,7 @@ Total = (SqFt × BasePrice × MaterialMultiplier) + HeightAdjustment + Features
 
 ---
 
-### 10. Dashboard (`hdd-dashboard/`)
+### 11. Dashboard (`hdd-dashboard/`)
 
 Central hub for all tools.
 
@@ -608,6 +659,7 @@ Windows batch file launcher (minimal).
 | Competitor Monitor | Ready | Dependencies installed, scaffolded |
 | Permit Tracker | Ready | Dependencies installed, fully functional |
 | Material Calculator | Ready | Dependencies installed, fully functional |
+| Job Costing | Ready | Dependencies installed, fully functional |
 | GBP Post Scheduler | Needs Setup | Requires .env configuration |
 | Lead Response | Needs Setup | Requires .env configuration |
 
@@ -626,6 +678,7 @@ cd hdd-review-generator && npm run dev  # :5173
 cd hdd-quote-tracker && npm run dev     # :5179
 cd hdd-project-messenger && npm run dev # :5180
 cd hdd-material-calculator && npm run dev # :5181
+cd hdd-job-costing && npm run dev       # :5182
 cd hdd-permit-tracker && npm run dev    # :5184
 
 # Next.js tools

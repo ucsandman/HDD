@@ -277,6 +277,22 @@ const TOOLS = [
       envVars: [],
       externalServices: []
     }
+  },
+  {
+    id: "job-costing",
+    name: "Job Costing",
+    description: "Track project costs, expenses, and profitability. Record material costs, labor, permits, and subcontractor expenses to see real profit margins on completed projects.",
+    stack: "React, TypeScript, Tailwind CSS, Vite",
+    status: "ready",
+    launchUrl: "http://localhost:5182",
+    setup: {
+      commands: [
+        "cd hdd-job-costing",
+        "npm run dev"
+      ],
+      envVars: [],
+      externalServices: []
+    }
   }
 ];
 
