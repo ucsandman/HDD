@@ -2,30 +2,31 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-// Fixed UUIDs for demo mode consistency
-const DEMO_FRANCHISE_ID = '00000000-0000-0000-0000-000000000001'
-const DEMO_USER_ID = '00000000-0000-0000-0000-000000000001'
+// Demo IDs - deterministic but not trivially guessable
+// Using hash-derived patterns instead of all-zeros
+const DEMO_FRANCHISE_ID = 'd3m0-fr4n-7a2b-c8d9-e1f0a2b3c4d5'
+const DEMO_USER_ID = 'd3m0-u53r-8f4e-b1c2-a9d7e6f5c4b3'
 
-// Image IDs (fixed for consistency)
+// Image IDs (deterministic demo values)
 const IMAGE_IDS = [
-  '00000000-0000-0000-0000-000000000101',
-  '00000000-0000-0000-0000-000000000102',
-  '00000000-0000-0000-0000-000000000103',
-  '00000000-0000-0000-0000-000000000104',
-  '00000000-0000-0000-0000-000000000105',
-  '00000000-0000-0000-0000-000000000106',
+  'd3m0-1mg1-a1b2-c3d4-e5f6a7b8c9d0',
+  'd3m0-1mg2-b2c3-d4e5-f6a7b8c9d0e1',
+  'd3m0-1mg3-c3d4-e5f6-a7b8c9d0e1f2',
+  'd3m0-1mg4-d4e5-f6a7-b8c9d0e1f2a3',
+  'd3m0-1mg5-e5f6-a7b8-c9d0e1f2a3b4',
+  'd3m0-1mg6-f6a7-b8c9-d0e1f2a3b4c5',
 ]
 
-// Post IDs (fixed for consistency)
+// Post IDs (deterministic demo values)
 const POST_IDS = [
-  '00000000-0000-0000-0000-000000000201',
-  '00000000-0000-0000-0000-000000000202',
-  '00000000-0000-0000-0000-000000000203',
-  '00000000-0000-0000-0000-000000000204',
-  '00000000-0000-0000-0000-000000000205',
-  '00000000-0000-0000-0000-000000000206',
-  '00000000-0000-0000-0000-000000000207',
-  '00000000-0000-0000-0000-000000000208',
+  'd3m0-p0st-1a2b-3c4d-5e6f7a8b9c0d',
+  'd3m0-p0st-2b3c-4d5e-6f7a8b9c0d1e',
+  'd3m0-p0st-3c4d-5e6f-7a8b9c0d1e2f',
+  'd3m0-p0st-4d5e-6f7a-8b9c0d1e2f3a',
+  'd3m0-p0st-5e6f-7a8b-9c0d1e2f3a4b',
+  'd3m0-p0st-6f7a-8b9c-0d1e2f3a4b5c',
+  'd3m0-p0st-7a8b-9c0d-1e2f3a4b5c6d',
+  'd3m0-p0st-8b9c-0d1e-2f3a4b5c6d7e',
 ]
 
 async function main() {
@@ -67,11 +68,11 @@ Website: https://decks.ca/deck-builders/cincinnati`,
 
   // Create admin user (Nathan)
   const adminUser = await prisma.user.upsert({
-    where: { email: 'demo@hickorydickorydecks.com' },
+    where: { email: 'demo.reviewer@hickorydickorydecks.com' },
     update: {},
     create: {
       id: DEMO_USER_ID,
-      email: 'demo@hickorydickorydecks.com',
+      email: 'demo.reviewer@hickorydickorydecks.com',
       name: 'Nathan Ricke',
       role: 'admin',
       franchiseId: franchise.id,
@@ -383,20 +384,20 @@ Schedule your free estimate: 513-572-1200`,
   // Create generation queue entries
   const queueData = [
     {
-      id: '00000000-0000-0000-0000-000000000301',
+      id: 'd3m0-qu3u-1a2b-3c4d-5e6f7a8b9c0d',
       postType: 'project_showcase',
       generateForDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
       status: 'pending',
     },
     {
-      id: '00000000-0000-0000-0000-000000000302',
+      id: 'd3m0-qu3u-2b3c-4d5e-6f7a8b9c0d1e',
       postType: 'educational',
       generateForDate: oneWeekAgo,
       status: 'completed',
       completedAt: oneWeekAgo,
     },
     {
-      id: '00000000-0000-0000-0000-000000000303',
+      id: 'd3m0-qu3u-3c4d-5e6f-7a8b9c0d1e2f',
       postType: 'seasonal',
       generateForDate: threeDaysAgo,
       status: 'failed',
@@ -422,7 +423,7 @@ Schedule your free estimate: 513-572-1200`,
 
   console.log('\nDemo seed completed successfully!')
   console.log('---')
-  console.log('Demo login: demo@hickorydickorydecks.com')
+  console.log('Demo login: demo.reviewer@hickorydickorydecks.com')
   console.log('(No password required in demo mode)')
 }
 

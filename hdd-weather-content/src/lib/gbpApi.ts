@@ -13,9 +13,9 @@ export interface CreateDraftResponse {
   editUrl: string
 }
 
+// GBP Poster URL is safe to expose (it's just a URL, no credentials)
+// Used for generating edit links that open in new tab
 const GBP_POSTER_URL = import.meta.env.VITE_GBP_POSTER_URL || 'http://localhost:3000'
-const API_KEY = import.meta.env.VITE_GBP_POSTER_API_KEY
-const FRANCHISE_ID = import.meta.env.VITE_GBP_FRANCHISE_ID
 
 export class GBPApiError extends Error {
   status?: number
@@ -29,21 +29,17 @@ export class GBPApiError extends Error {
   }
 }
 
+/**
+ * Create a draft post via server-side proxy
+ * API credentials are kept secure on the server, not exposed in client bundle
+ */
 export async function createDraft(request: CreateDraftRequest): Promise<CreateDraftResponse> {
-  if (!API_KEY || !FRANCHISE_ID) {
-    throw new GBPApiError(
-      'GBP integration not configured. Please set VITE_GBP_POSTER_API_KEY and VITE_GBP_FRANCHISE_ID in .env',
-      0
-    )
-  }
-
   try {
-    const response = await fetch(`${GBP_POSTER_URL}/api/external/create-draft`, {
+    // Call our own server-side proxy which holds the API credentials
+    const response = await fetch('/api/create-draft', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': API_KEY,
-        'x-franchise-id': FRANCHISE_ID,
       },
       body: JSON.stringify(request),
     })
@@ -66,7 +62,7 @@ export async function createDraft(request: CreateDraftRequest): Promise<CreateDr
 
     // Network or other errors
     throw new GBPApiError(
-      'Unable to connect to GBP Post Scheduler. Make sure it is running.',
+      'Unable to connect to GBP Post Scheduler. Make sure the server is configured.',
       0
     )
   }
@@ -76,6 +72,11 @@ export function getGBPPosterUrl(path: string = ''): string {
   return `${GBP_POSTER_URL}${path}`
 }
 
+/**
+ * Check if GBP integration is configured
+ * Note: This only checks if the URL is configured (for edit links)
+ * Server-side credentials are validated when making API calls
+ */
 export function isConfigured(): boolean {
-  return !!(API_KEY && FRANCHISE_ID)
+  return !!GBP_POSTER_URL
 }

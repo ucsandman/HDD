@@ -3,12 +3,14 @@ import type { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'
 
 // Check for demo mode at edge runtime
-const isDemoMode = process.env.DEMO_MODE === 'true'
+// SECURITY: Demo mode is only allowed in non-production environments
+const isDemoMode = process.env.DEMO_MODE === 'true' && process.env.NODE_ENV !== 'production'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // In demo mode, bypass all auth checks (except cron secret)
+  // This block only executes in development/test environments
   if (isDemoMode) {
     // Cron endpoints still require CRON_SECRET header even in demo mode
     if (pathname.startsWith('/api/cron')) {

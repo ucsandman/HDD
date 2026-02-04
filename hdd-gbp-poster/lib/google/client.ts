@@ -1,9 +1,13 @@
 import prisma from '@/lib/db'
 import { encrypt, decrypt } from '@/lib/crypto'
+import { randomBytes, createHash } from 'crypto'
 
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token'
 const GBP_API_BASE = 'https://mybusinessbusinessinformation.googleapis.com/v1'
 const GBP_POSTS_API_BASE = 'https://mybusiness.googleapis.com/v4'
+
+// OAuth state expiration (10 minutes)
+const STATE_EXPIRATION_MS = 10 * 60 * 1000
 
 interface TokenResponse {
   access_token: string
@@ -18,6 +22,53 @@ interface GoogleTokens {
   expiresAt: Date
 }
 
+interface OAuthState {
+  franchiseId: string
+  nonce: string
+  timestamp: number
+}
+
+/**
+ * Generate a secure OAuth state parameter
+ * Contains franchiseId, random nonce, and timestamp - encrypted to prevent tampering
+ */
+export function generateOAuthState(franchiseId: string): string {
+  const state: OAuthState = {
+    franchiseId,
+    nonce: randomBytes(16).toString('hex'),
+    timestamp: Date.now(),
+  }
+  return encrypt(JSON.stringify(state))
+}
+
+/**
+ * Verify and decode OAuth state parameter
+ * Returns franchiseId if valid, null if invalid or expired
+ */
+export function verifyOAuthState(encryptedState: string): string | null {
+  try {
+    const decrypted = decrypt(encryptedState)
+    const state: OAuthState = JSON.parse(decrypted)
+
+    // Check if state has expired
+    if (Date.now() - state.timestamp > STATE_EXPIRATION_MS) {
+      console.error('OAuth state expired')
+      return null
+    }
+
+    // Validate structure
+    if (!state.franchiseId || !state.nonce) {
+      console.error('Invalid OAuth state structure')
+      return null
+    }
+
+    return state.franchiseId
+  } catch (error) {
+    console.error('Failed to verify OAuth state:', error)
+    return null
+  }
+}
+
 export async function getGoogleAuthUrl(franchiseId: string): Promise<string> {
   const clientId = process.env.GOOGLE_CLIENT_ID
   const redirectUri = `${process.env.NEXTAUTH_URL}/api/auth/google/callback`
@@ -26,6 +77,9 @@ export async function getGoogleAuthUrl(franchiseId: string): Promise<string> {
     'https://www.googleapis.com/auth/business.manage',
   ]
 
+  // Use encrypted state with nonce to prevent CSRF attacks
+  const state = generateOAuthState(franchiseId)
+
   const params = new URLSearchParams({
     client_id: clientId!,
     redirect_uri: redirectUri,
@@ -33,7 +87,7 @@ export async function getGoogleAuthUrl(franchiseId: string): Promise<string> {
     scope: scopes.join(' '),
     access_type: 'offline',
     prompt: 'consent',
-    state: franchiseId,
+    state,
   })
 
   return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`

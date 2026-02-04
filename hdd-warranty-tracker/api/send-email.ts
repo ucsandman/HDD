@@ -2,6 +2,26 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+/**
+ * Verify API secret for authentication
+ */
+function verifyApiSecret(request: Request): boolean {
+  const authHeader = request.headers.get('authorization');
+  const apiSecret = process.env.API_SECRET;
+
+  if (!apiSecret) {
+    console.error('API_SECRET environment variable not configured');
+    return false;
+  }
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return false;
+  }
+
+  const token = authHeader.slice(7); // Remove 'Bearer ' prefix
+  return token === apiSecret;
+}
+
 export default async function handler(req: Request) {
   // Only allow POST requests
   if (req.method !== 'POST') {
@@ -9,6 +29,17 @@ export default async function handler(req: Request) {
       JSON.stringify({ error: 'Method not allowed' }),
       {
         status: 405,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
+  }
+
+  // Verify authentication
+  if (!verifyApiSecret(req)) {
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized' }),
+      {
+        status: 401,
         headers: { 'Content-Type': 'application/json' }
       }
     );
@@ -29,8 +60,9 @@ export default async function handler(req: Request) {
       );
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Validate email format (RFC 5322 compliant pattern)
+    // Requires: local part, @, domain with at least one dot, TLD 2-63 chars
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,63}$/;
     if (!emailRegex.test(to)) {
       return new Response(
         JSON.stringify({ error: 'Invalid email address' }),
@@ -51,9 +83,11 @@ export default async function handler(req: Request) {
     });
 
     if (error) {
+      // Log detailed error server-side for debugging
       console.error('Resend API error:', error);
+      // Return generic error to client to prevent information leakage
       return new Response(
-        JSON.stringify({ error: error.message || 'Failed to send email' }),
+        JSON.stringify({ error: 'Failed to send email. Please try again.' }),
         {
           status: 400,
           headers: { 'Content-Type': 'application/json' }
@@ -73,10 +107,12 @@ export default async function handler(req: Request) {
       }
     );
   } catch (error) {
+    // Log detailed error server-side for debugging
     console.error('Email send error:', error);
+    // Return generic error to client to prevent information leakage
     return new Response(
       JSON.stringify({
-        error: error instanceof Error ? error.message : 'Failed to send email'
+        error: 'An error occurred while sending the email. Please try again.'
       }),
       {
         status: 500,

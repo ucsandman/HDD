@@ -84,7 +84,10 @@ export function useMigrateToBlob(
               progress++;
               setMigrationStatus(prev => ({ ...prev, progress }));
             } catch (error) {
-              console.error('Failed to migrate before photo:', error);
+              // Only log in development mode
+              if (import.meta.env.DEV) {
+                console.error('Failed to migrate before photo:', error);
+              }
               // Keep original if migration fails
               newBeforePhotos.push(photo);
             }
@@ -104,7 +107,10 @@ export function useMigrateToBlob(
               progress++;
               setMigrationStatus(prev => ({ ...prev, progress }));
             } catch (error) {
-              console.error('Failed to migrate after photo:', error);
+              // Only log in development mode
+              if (import.meta.env.DEV) {
+                console.error('Failed to migrate after photo:', error);
+              }
               // Keep original if migration fails
               newAfterPhotos.push(photo);
             }

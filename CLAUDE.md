@@ -538,9 +538,54 @@ python launcher.py
 
 ## Security Notes
 
+### Encryption & Authentication
 - Google tokens encrypted with AES-256-GCM at rest
 - Franchise isolation on all queries
+- API endpoints protected with Bearer token authentication
+- Magic link authentication via Resend (no passwords stored)
+
+### Rate Limiting & Protection
 - Rate limiting on AI generation (10/hour/user)
+- External API rate limiting (20/hour/franchise)
+- SMS rate limiting (1min interval, 5/day per lead)
+- Webhook idempotency (24hr deduplication)
+
+### Input Validation
+- Zod schema validation on all API inputs
+- Magic byte validation for image uploads (prevents MIME spoofing)
+- File extension validation on uploads
+- RFC 5322 compliant email validation
+- CSV injection prevention on exports
+
+### Security Headers
+- Content-Security-Policy on all static HTML pages
+- X-Content-Type-Options, X-Frame-Options headers
+- HSTS, Referrer-Policy on Next.js apps
+- Permissions-Policy restricting camera/microphone/geolocation
+
+### Webhook Security
+- HMAC signature verification (timing-safe comparison)
+- Twilio signature verification
+- OAuth state parameter with cryptographic nonce
+
+### Other
 - Cron endpoints protected by secret
-- Webhook endpoints use HMAC/signature verification
 - No secrets committed (all use .env)
+- Demo mode disabled in production
+- Client-side console logging disabled in production builds
+
+### Security Audit (2026-02-03)
+
+Comprehensive security audit completed with fixes across all severity levels:
+
+| Severity | Issues Found | Fixed |
+|----------|--------------|-------|
+| Critical | 4 | 4 |
+| High | 6 | 6 |
+| Medium | 8 | 8 |
+| Low | 6 | 6 |
+
+**Critical fixes**: API endpoint authentication (Photo Manager, Warranty Tracker)
+**High fixes**: Demo mode bypass, CSV injection, Next.js CVEs, API key exposure, MIME validation
+**Medium fixes**: Rate limiting, input validation, timing attacks, OAuth CSRF, error leakage
+**Low fixes**: CSP headers, email regex, file extensions, console logging, demo credentials

@@ -5,6 +5,7 @@ import {
   exchangeCodeForTokens,
   storeGoogleTokens,
   fetchGoogleAccountInfo,
+  verifyOAuthState,
 } from '@/lib/google/client'
 
 export async function GET(request: NextRequest) {
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url)
     const code = searchParams.get('code')
-    const state = searchParams.get('state') // franchiseId
+    const state = searchParams.get('state')
     const error = searchParams.get('error')
 
     if (error) {
@@ -32,10 +33,24 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Verify the state matches the user's franchise
-    if (state !== session.user.franchiseId) {
+    if (!state) {
+      return NextResponse.redirect(
+        new URL('/settings?error=missing_state', process.env.NEXTAUTH_URL!)
+      )
+    }
+
+    // Verify the encrypted state parameter (contains franchiseId, nonce, timestamp)
+    const franchiseIdFromState = verifyOAuthState(state)
+    if (!franchiseIdFromState) {
       return NextResponse.redirect(
         new URL('/settings?error=invalid_state', process.env.NEXTAUTH_URL!)
+      )
+    }
+
+    // Verify the state's franchiseId matches the user's franchise (prevents CSRF)
+    if (franchiseIdFromState !== session.user.franchiseId) {
+      return NextResponse.redirect(
+        new URL('/settings?error=franchise_mismatch', process.env.NEXTAUTH_URL!)
       )
     }
 

@@ -1,6 +1,19 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
+/**
+ * Get the API secret for authentication
+ * SECURITY NOTE: For production, protect this app with Vercel password protection
+ * or deploy behind a VPN/authentication proxy.
+ */
+function getApiSecret(): string {
+  const secret = import.meta.env.VITE_API_SECRET
+  if (!secret) {
+    throw new Error('VITE_API_SECRET environment variable not configured')
+  }
+  return secret
+}
+
 interface AnniversaryTrigger {
   sent: boolean
   sentAt?: string
@@ -307,6 +320,7 @@ function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getApiSecret()}`,
         },
         body: JSON.stringify({
           to: customer.email,

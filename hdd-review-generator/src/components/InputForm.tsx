@@ -86,7 +86,11 @@ export const InputForm = forwardRef<{ resetCustomerFields: () => void }, InputFo
         case 'googleReviewLink':
           if (!value) return 'Google Review link is required';
           try {
-            new URL(value);
+            const url = new URL(value);
+            // Only allow http and https schemes to prevent javascript:, data:, etc.
+            if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+              return 'URL must start with http:// or https://';
+            }
             return undefined;
           } catch {
             return 'Please enter a valid URL';

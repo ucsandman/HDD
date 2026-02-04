@@ -1,4 +1,20 @@
 /**
+ * Get the API secret from environment variable
+ * This secret should be set in .env as VITE_API_SECRET
+ *
+ * SECURITY NOTE: For production deployment, this app should be
+ * protected with Vercel's password protection or deployed behind
+ * a VPN/authentication proxy since client-side secrets can be extracted.
+ */
+function getApiSecret(): string {
+  const secret = import.meta.env.VITE_API_SECRET;
+  if (!secret) {
+    throw new Error('VITE_API_SECRET environment variable not configured');
+  }
+  return secret;
+}
+
+/**
  * Upload a file to Vercel Blob storage
  */
 export async function uploadToBlob(file: File): Promise<string> {
@@ -7,6 +23,9 @@ export async function uploadToBlob(file: File): Promise<string> {
 
   const response = await fetch('/api/upload', {
     method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${getApiSecret()}`,
+    },
     body: formData,
   });
 
@@ -27,6 +46,7 @@ export async function deleteFromBlob(url: string): Promise<void> {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getApiSecret()}`,
     },
     body: JSON.stringify({ url }),
   });
@@ -75,7 +95,10 @@ export async function migratePhotoToBlob(base64Url: string, index: number): Prom
     const file = dataUrlToFile(base64Url, filename);
     return await uploadToBlob(file);
   } catch (error) {
-    console.error('Migration failed:', error);
+    // Only log in development mode
+    if (import.meta.env.DEV) {
+      console.error('Migration failed:', error);
+    }
     throw error;
   }
 }

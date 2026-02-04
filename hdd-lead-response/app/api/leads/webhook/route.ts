@@ -7,6 +7,7 @@ import { processInstantResponse } from '@/lib/sequence'
 
 /**
  * Verify HMAC signature for webhook requests
+ * Uses timing-safe comparison to prevent timing attacks
  */
 function verifySignature(payload: string, signature: string): boolean {
   const secret = process.env.WEBHOOK_SECRET
@@ -17,9 +18,15 @@ function verifySignature(payload: string, signature: string): boolean {
     .update(payload)
     .digest('hex')
 
+  // Length check must happen before timing-safe comparison
+  // to prevent length-based timing attacks
+  if (signature.length !== expectedSignature.length) {
+    return false
+  }
+
   return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expectedSignature)
+    Buffer.from(signature, 'utf8'),
+    Buffer.from(expectedSignature, 'utf8')
   )
 }
 

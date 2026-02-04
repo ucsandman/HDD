@@ -10,7 +10,10 @@ export function useCopyToClipboard() {
       setTimeout(() => setCopied(false), 2000);
       return true;
     } catch (error) {
-      console.error('Failed to copy:', error);
+      // Only log in development mode
+      if (import.meta.env.DEV) {
+        console.error('Failed to copy:', error);
+      }
       return false;
     }
   };

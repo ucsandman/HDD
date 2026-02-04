@@ -8,9 +8,9 @@ export const createLeadSchema = z.object({
   address: z.string().max(500).optional().nullable(),
   city: z.string().max(100).optional().nullable(),
   projectType: z.string().max(100).optional().nullable(),
-  projectDescription: z.string().optional().nullable(),
+  projectDescription: z.string().max(5000).optional().nullable(),
   source: z.string().max(100).optional().nullable(),
-  notes: z.string().optional().nullable(),
+  notes: z.string().max(10000).optional().nullable(),
   externalId: z.string().max(255).optional().nullable(),
 })
 
@@ -22,10 +22,10 @@ export const updateLeadSchema = z.object({
   address: z.string().max(500).optional().nullable(),
   city: z.string().max(100).optional().nullable(),
   projectType: z.string().max(100).optional().nullable(),
-  projectDescription: z.string().optional().nullable(),
+  projectDescription: z.string().max(5000).optional().nullable(),
   source: z.string().max(100).optional().nullable(),
   status: z.enum(['new', 'contacted', 'engaged', 'qualified', 'booked', 'won', 'lost']).optional(),
-  notes: z.string().optional().nullable(),
+  notes: z.string().max(10000).optional().nullable(),
 })
 
 export const closeLeadSchema = z.object({
@@ -38,7 +38,7 @@ export const closeLeadSchema = z.object({
     'no_response',
     'other',
   ]),
-  notes: z.string().optional().nullable(),
+  notes: z.string().max(5000).optional().nullable(),
 })
 
 export const webhookLeadSchema = z.object({
@@ -49,7 +49,7 @@ export const webhookLeadSchema = z.object({
   address: z.string().max(500).optional().nullable(),
   city: z.string().max(100).optional().nullable(),
   projectType: z.string().max(100).optional().nullable(),
-  projectDescription: z.string().optional().nullable(),
+  projectDescription: z.string().max(5000).optional().nullable(),
   source: z.string().max(100).optional().nullable(),
   externalId: z.string().max(255).optional().nullable(),
 })

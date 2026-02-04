@@ -11,6 +11,32 @@ const externalDraftSchema = z.object({
   source: z.string().max(100).optional(), // e.g., "weather-content"
 })
 
+// Rate limiting: track requests per franchise
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
+const RATE_LIMIT = 20 // drafts per hour per franchise
+const RATE_LIMIT_WINDOW = 60 * 60 * 1000 // 1 hour in ms
+
+function checkRateLimit(franchiseId: string): { allowed: boolean; retryAfter?: number } {
+  const now = Date.now()
+  const key = `external_${franchiseId}`
+  const limit = rateLimitMap.get(key)
+
+  if (!limit || now > limit.resetAt) {
+    rateLimitMap.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW })
+    return { allowed: true }
+  }
+
+  if (limit.count >= RATE_LIMIT) {
+    return {
+      allowed: false,
+      retryAfter: Math.ceil((limit.resetAt - now) / 1000),
+    }
+  }
+
+  limit.count++
+  return { allowed: true }
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Verify API key
@@ -25,6 +51,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Missing franchise ID header' },
         { status: 400 }
+      )
+    }
+
+    // Check rate limit before database operations
+    const rateCheck = checkRateLimit(franchiseId)
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded', retryAfter: rateCheck.retryAfter },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(rateCheck.retryAfter) },
+        }
       )
     }
 
