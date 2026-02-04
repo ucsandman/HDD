@@ -1,16 +1,23 @@
 // HDD Quote Calculator Configuration
 // Adjust pricing based on current material costs and labor rates
 
+/**
+ * FRANCHISE CONFIGURATION
+ *
+ * IMPORTANT: Update phone numbers before deployment!
+ * The 555-xxxx numbers below are placeholders (reserved for fictional use
+ * in the US and will not work for real calls/texts).
+ */
 const CONFIG = {
   franchise: {
     name: "Hickory Dickory Decks Cincinnati",
-    phone: "(513) 555-1234",
+    phone: "(513) 555-1234",  // TODO: Replace with real franchise phone
     website: "https://decks.ca/deck-builders/cincinnati/",
     serviceArea: "Greater Cincinnati"
   },
 
   // Contact info for CTA
-  contactPhone: "(513) 555-0123",
+  contactPhone: "(513) 555-0123",  // TODO: Replace with real contact phone
   bookingUrl: "https://cal.com/hickory-dickory-decks-cincinnati",
 
   // Base price per square foot (includes labor + basic materials)

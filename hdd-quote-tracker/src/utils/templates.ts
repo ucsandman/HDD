@@ -6,8 +6,15 @@ export interface FollowUpTemplate {
   message: string;
 }
 
+/**
+ * Franchise Configuration
+ *
+ * IMPORTANT: Update these values for your franchise before deployment.
+ * The phone number below is a placeholder (555-xxxx numbers are reserved
+ * for fictional use in the US and will not work for real calls/texts).
+ */
 const franchiseeName = 'Nathan Ricke';
-const franchiseePhone = '(513) 555-1234';
+const franchiseePhone = '(513) 555-1234'; // TODO: Replace with real franchise phone
 const companyName = 'Hickory Dickory Decks';
 
 export function generateFollowUp24h(quote: Quote): FollowUpTemplate {

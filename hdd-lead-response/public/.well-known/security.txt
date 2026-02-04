@@ -1,0 +1,10 @@
+# Security Policy for HDD Lead Response System
+# https://securitytxt.org/
+
+Contact: mailto:security@hickorydickorydecks.com
+Expires: 2027-02-03T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://leads.hickorydickorydecks.com/.well-known/security.txt
+
+# This is an internal business tool for Hickory Dickory Decks franchisees.
+# If you discover a security vulnerability, please report it responsibly.

@@ -15,7 +15,9 @@ export interface CreateDraftResponse {
 
 // GBP Poster URL is safe to expose (it's just a URL, no credentials)
 // Used for generating edit links that open in new tab
-const GBP_POSTER_URL = import.meta.env.VITE_GBP_POSTER_URL || 'http://localhost:3000'
+// In production, this must be set; in development, falls back to localhost
+const GBP_POSTER_URL = import.meta.env.VITE_GBP_POSTER_URL ||
+  (import.meta.env.DEV ? 'http://localhost:3000' : '')
 
 export class GBPApiError extends Error {
   status?: number
@@ -78,5 +80,9 @@ export function getGBPPosterUrl(path: string = ''): string {
  * Server-side credentials are validated when making API calls
  */
 export function isConfigured(): boolean {
+  // In production, require explicit configuration
+  if (!import.meta.env.DEV && !import.meta.env.VITE_GBP_POSTER_URL) {
+    return false
+  }
   return !!GBP_POSTER_URL
 }

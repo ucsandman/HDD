@@ -1,0 +1,8 @@
+# robots.txt for HDD Lead Response System
+# This is an internal business application - no indexing needed
+
+User-agent: *
+Disallow: /
+
+# Allow security.txt to be discovered
+Allow: /.well-known/security.txt

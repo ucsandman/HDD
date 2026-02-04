@@ -1,3 +1,10 @@
+/**
+ * HDD Marketing Tools Dashboard Configuration
+ *
+ * This dashboard is for LOCAL DEVELOPMENT use only.
+ * The localhost URLs below point to development servers.
+ * For production deployments, each tool has its own domain.
+ */
 const TOOLS = [
   {
     id: "sentiment-router",
