@@ -4,8 +4,8 @@ Marketing, customer feedback, and automation platform for Hickory Dickory Decks 
 
 ## Overview
 
-**13 total tools** in 3 categories:
-- **6 Production Tools**: Sentiment Router, Review Generator, GBP Post Scheduler, Lead Response, Quote Tracker, Project Messenger
+**14 total tools** in 3 categories:
+- **7 Production Tools**: Sentiment Router, Review Generator, GBP Post Scheduler, Lead Response, Quote Tracker, Project Messenger, Permit Tracker
 - **2 Infrastructure Tools**: Dashboard, Quote Calculator
 - **5 Development Tools**: Photo Manager, Referral Tracker, Warranty Tracker, Weather Content, Competitor Monitor
 
@@ -37,6 +37,7 @@ Marketing, customer feedback, and automation platform for Hickory Dickory Decks 
 | Competitor Monitor | `hdd-competitor-monitor/` | 5178 | Track competitor ratings |
 | Quote Tracker | `hdd-quote-tracker/` | 5179 | Track quotes and follow-ups |
 | Project Messenger | `hdd-project-messenger/` | 5180 | Automated project milestone communications |
+| Permit Tracker | `hdd-permit-tracker/` | 5184 | Track permits and inspections |
 
 **Stack**: React 19, TypeScript, Tailwind CSS v4, Vite 7
 
@@ -327,7 +328,60 @@ Each status change generates:
 
 ---
 
-### 7. Quote Calculator (`hdd-quote-calculator/`)
+### 7. Permit Tracker (`hdd-permit-tracker/`)
+
+Track building permits and inspections for deck construction projects.
+
+| File | Purpose |
+|------|---------|
+| `src/types/index.ts` | TypeScript interfaces, status enums, constants |
+| `src/hooks/usePermits.ts` | Permit CRUD, inspection and document management |
+| `src/hooks/useMunicipalities.ts` | Municipality management |
+| `src/utils/storage.ts` | localStorage persistence, CSV export |
+| `src/utils/dates.ts` | Date calculations, expiration checks |
+| `src/data/municipalities.ts` | 14 pre-loaded Cincinnati area municipalities |
+| `src/components/Header.tsx` | App header with branding |
+| `src/components/StatsBar.tsx` | Dashboard statistics |
+| `src/components/PermitList.tsx` | Permit list with filters |
+| `src/components/PermitForm.tsx` | Create/edit permit form |
+| `src/components/PermitDetail.tsx` | Detail view with tabs |
+| `src/components/InspectionForm.tsx` | Add/edit inspection form |
+| `src/components/MunicipalityManager.tsx` | Manage municipality info |
+| `src/components/StatusBadge.tsx` | Status badge components |
+
+**Permit Status Workflow**: `not_started` → `application_submitted` → `pending_review` → `revisions_required` → `approved` → `expired`
+
+**Inspection Types**: Footing, Framing, Final, Electrical
+
+**Inspection Status**: `not_scheduled` → `scheduled` → `completed` / `failed_reschedule`
+
+**Features**:
+- Dashboard with stats (total, in progress, pending review, needs attention, scheduled inspections)
+- Filter permits by status
+- Permit management (create, view, update, delete)
+- Municipality info lookup (fees, requirements, contacts, approval times)
+- Inspection scheduling and tracking
+- Document attachment (placeholder for future upload)
+- Status history timeline
+- Estimated approval date calculation
+- Expiration warnings (30-day alert)
+- Pending too long warnings (>14 days)
+- CSV export for reporting
+- localStorage persistence
+
+**Pre-loaded Municipalities**:
+Cincinnati, Mason, West Chester, Liberty Township, Fairfield, Hamilton, Loveland, Blue Ash, Montgomery, Sharonville, Anderson Township, Indian Hill, Milford, Hamilton County (unincorporated)
+
+**Data Model**:
+- Permits with customer info, status, dates, fees, contacts
+- Status history with timestamps and notes
+- Inspections with type, status, result, corrections
+- Documents with metadata
+- Municipalities with fees, requirements, contacts, avg approval time
+
+---
+
+### 8. Quote Calculator (`hdd-quote-calculator/`)
 
 Customer-facing deck estimate tool.
 
@@ -345,7 +399,7 @@ Total = (SqFt × BasePrice × MaterialMultiplier) + HeightAdjustment + Features
 
 ---
 
-### 8. Dashboard (`hdd-dashboard/`)
+### 9. Dashboard (`hdd-dashboard/`)
 
 Central hub for all tools.
 
@@ -505,6 +559,7 @@ Windows batch file launcher (minimal).
 | Warranty Tracker | Ready | Dependencies installed, scaffolded |
 | Weather Content | Ready | Fully functional, GBP integration ready |
 | Competitor Monitor | Ready | Dependencies installed, scaffolded |
+| Permit Tracker | Ready | Dependencies installed, fully functional |
 | GBP Post Scheduler | Needs Setup | Requires .env configuration |
 | Lead Response | Needs Setup | Requires .env configuration |
 
@@ -522,6 +577,7 @@ hdd-quote-calculator/index.html
 cd hdd-review-generator && npm run dev  # :5173
 cd hdd-quote-tracker && npm run dev     # :5179
 cd hdd-project-messenger && npm run dev # :5180
+cd hdd-permit-tracker && npm run dev    # :5184
 
 # Next.js tools
 cd hdd-gbp-poster && npm run dev        # :3000

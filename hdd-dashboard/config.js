@@ -213,6 +213,54 @@ const TOOLS = [
       envVars: [],
       externalServices: []
     }
+  },
+  {
+    id: "quote-tracker",
+    name: "Quote Tracker",
+    description: "Track quotes from Quote Calculator and automate follow-up sequences. Dashboard with metrics, conversion funnel, and follow-up message templates.",
+    stack: "React, TypeScript, Tailwind CSS, Vite",
+    status: "ready",
+    launchUrl: "http://localhost:5179",
+    setup: {
+      commands: [
+        "cd hdd-quote-tracker",
+        "npm run dev"
+      ],
+      envVars: [],
+      externalServices: []
+    }
+  },
+  {
+    id: "project-messenger",
+    name: "Project Messenger",
+    description: "Automated milestone communication for active deck projects. Generate SMS and email messages for each project status update (sold, materials ordered, scheduled, complete).",
+    stack: "React, TypeScript, Tailwind CSS, Vite",
+    status: "ready",
+    launchUrl: "http://localhost:5180",
+    setup: {
+      commands: [
+        "cd hdd-project-messenger",
+        "npm run dev"
+      ],
+      envVars: [],
+      externalServices: []
+    }
+  },
+  {
+    id: "permit-tracker",
+    name: "Permit Tracker",
+    description: "Track building permits and inspections for deck projects. Manage permit applications, monitor approval timelines, schedule inspections, and store municipality requirements.",
+    stack: "React, TypeScript, Tailwind CSS, Vite",
+    status: "ready",
+    launchUrl: "http://localhost:5184",
+    setup: {
+      commands: [
+        "cd hdd-permit-tracker",
+        "npm run dev"
+      ],
+      envVars: [],
+      externalServices: []
+    }
   }
 ];
 
