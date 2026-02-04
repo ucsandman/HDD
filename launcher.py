@@ -124,13 +124,20 @@ TOOLS = {
         "description": "Compare material prices across suppliers"
     },
     "16": {
+        "name": "Customer Portal",
+        "type": "vite",
+        "path": "hdd-customer-portal",
+        "port": 5185,
+        "description": "Customer-facing portal for project status"
+    },
+    "17": {
         "name": "GBP Post Scheduler",
         "type": "next",
         "path": "hdd-gbp-poster",
         "port": 3000,
         "description": "AI-powered Google Business Profile posts (needs env setup)"
     },
-    "17": {
+    "18": {
         "name": "Lead Response System",
         "type": "next",
         "path": "hdd-lead-response",
@@ -194,10 +201,10 @@ def print_menu():
             print(f"       {tool['description']}")
     
     print("\n" + "-"*60)
-    print("   [P] Launch PRODUCTION tools (9 tools - recommended)")
+    print("   [P] Launch PRODUCTION tools (10 tools - recommended)")
     print("   [S] Launch STATIC tools only (no server needed)")
-    print("   [R] Launch REACT tools only (11 servers)")
-    print("   [A] Launch ALL tools (13 servers - heavy!)")
+    print("   [R] Launch REACT tools only (13 servers)")
+    print("   [A] Launch ALL tools (15 servers - heavy!)")
     print()
     browser_status = "ON" if AUTO_OPEN_BROWSER else "OFF"
     print(f"   [B] Toggle auto-open browser [{browser_status}]")
@@ -351,11 +358,11 @@ def launch_all():
     print("⚠️  WARNING: Heavy Resource Usage!")
     print("="*60)
     print("\nThis will start:")
-    print("   • 9 Vite dev servers (~2.3GB RAM)")
+    print("   • 13 Vite dev servers (~3GB RAM)")
     print("   • 2 Next.js servers (~1GB RAM)")
-    print("   • 15 browser tabs")
-    print("\nTotal: ~3-4GB RAM + high CPU during startup")
-    print("\nRecommendation: Use [P] Production tools instead (7 tools)")
+    print("   • 18 browser tabs")
+    print("\nTotal: ~4-5GB RAM + high CPU during startup")
+    print("\nRecommendation: Use [P] Production tools instead (10 tools)")
     print()
 
     confirm = input("Continue anyway? [y/N]: ").strip().lower()
@@ -388,10 +395,10 @@ def launch_all():
 def launch_production():
     """Launch production-ready tools only (recommended)"""
     print("\n🚀 LAUNCHING PRODUCTION TOOLS...\n")
-    print("   Starting 9 essential tools:\n")
+    print("   Starting 10 essential tools:\n")
 
-    # Production tools: Dashboard, Sentiment Router, Review Generator, Quote Tracker, Project Messenger, Permit Tracker, Material Calculator, Job Costing, Supplier Tracker
-    production_keys = ["1", "3", "4", "10", "11", "12", "13", "14", "15"]
+    # Production tools: Dashboard, Sentiment Router, Review Generator, Quote Tracker, Project Messenger, Permit Tracker, Material Calculator, Job Costing, Supplier Tracker, Customer Portal
+    production_keys = ["1", "3", "4", "10", "11", "12", "13", "14", "15", "16"]
 
     for key in production_keys:
         tool = TOOLS[key]
@@ -419,7 +426,7 @@ def launch_static_only():
 
 def launch_react_only():
     """Launch only React/Vite tools"""
-    print("\n⚠️  This will start 9 Vite dev servers (~2.3GB RAM)")
+    print("\n⚠️  This will start 13 Vite dev servers (~3GB RAM)")
     confirm = input("Continue? [y/N]: ").strip().lower()
     if confirm != 'y':
         print("   Cancelled.")

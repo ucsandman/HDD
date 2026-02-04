@@ -309,6 +309,22 @@ const TOOLS = [
       envVars: [],
       externalServices: []
     }
+  },
+  {
+    id: "customer-portal",
+    name: "Customer Portal",
+    description: "Customer-facing portal for viewing project status. Customers log in with access codes to see project timeline, photos, documents, and updates. Send messages directly to the team.",
+    stack: "React, TypeScript, Tailwind CSS, Vite",
+    status: "ready",
+    launchUrl: "http://localhost:5185",
+    setup: {
+      commands: [
+        "cd hdd-customer-portal",
+        "npm run dev"
+      ],
+      envVars: [],
+      externalServices: []
+    }
   }
 ];
 

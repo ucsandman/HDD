@@ -4,8 +4,8 @@ Marketing, customer feedback, and automation platform for Hickory Dickory Decks 
 
 ## Overview
 
-**17 total tools** in 3 categories:
-- **9 Production Tools**: Sentiment Router, Review Generator, GBP Post Scheduler, Lead Response, Quote Tracker, Project Messenger, Permit Tracker, Job Costing, Supplier Tracker
+**18 total tools** in 3 categories:
+- **10 Production Tools**: Sentiment Router, Review Generator, GBP Post Scheduler, Lead Response, Quote Tracker, Project Messenger, Permit Tracker, Job Costing, Supplier Tracker, Customer Portal
 - **3 Infrastructure Tools**: Dashboard, Quote Calculator, Material Calculator
 - **5 Development Tools**: Photo Manager, Referral Tracker, Warranty Tracker, Weather Content, Competitor Monitor
 
@@ -41,6 +41,7 @@ Marketing, customer feedback, and automation platform for Hickory Dickory Decks 
 | Material Calculator | `hdd-material-calculator/` | 5181 | Calculate deck materials |
 | Job Costing | `hdd-job-costing/` | 5182 | Track project costs and profitability |
 | Supplier Tracker | `hdd-supplier-tracker/` | 5183 | Compare prices across suppliers |
+| Customer Portal | `hdd-customer-portal/` | 5185 | Customer-facing project status portal |
 
 **Stack**: React 19, TypeScript, Tailwind CSS v4, Vite 7
 
@@ -523,7 +524,55 @@ Compare material prices across multiple suppliers.
 
 ---
 
-### 11. Quote Calculator (`hdd-quote-calculator/`)
+### 11. Customer Portal (`hdd-customer-portal/`)
+
+Customer-facing portal for viewing project status, photos, documents, and communicating with the team.
+
+| File | Purpose |
+|------|---------|
+| `src/types/index.ts` | TypeScript interfaces, status enums, demo data |
+| `src/utils/storage.ts` | localStorage persistence, session management |
+| `src/hooks/usePortalData.ts` | Customer and admin portal hooks |
+| `src/components/CustomerLogin.tsx` | Access code login form |
+| `src/components/CustomerDashboard.tsx` | Main customer view |
+| `src/components/ProjectCard.tsx` | Project summary card |
+| `src/components/ProjectDetail.tsx` | Full project detail with tabs |
+| `src/components/ProjectTimeline.tsx` | Visual status progress |
+| `src/components/PhotoGallery.tsx` | Photo viewer with lightbox |
+| `src/components/DocumentList.tsx` | Document list by type |
+| `src/components/UpdatesList.tsx` | Status updates timeline |
+| `src/components/ContactCard.tsx` | Contact info and message form |
+| `src/components/Header.tsx` | Portal header with user info |
+| `src/components/StatusBadge.tsx` | Status badge component |
+
+**Project Status Workflow**: `quote_sent` → `quote_accepted` → `permit_pending` → `permit_approved` → `materials_ordered` → `scheduled` → `in_progress` → `inspection_scheduled` → `complete`
+
+**Customer Features**:
+- Access code login (no password required)
+- Project overview with status badge
+- Visual progress timeline (9 steps)
+- Status updates feed with dates
+- Photo gallery with before/during/after filtering
+- Document list (quote, contract, permit, warranty)
+- Send messages to the team
+- Contact info with phone, email, website
+
+**Data Model**:
+- Customers with access codes
+- Projects with status, dates, crew info
+- Photos with stages and captions
+- Documents with types
+- Updates/messages with timestamps
+- Session persistence
+
+**Demo Data**:
+- Demo code: `SMITH2024`
+- Demo customer: John Smith, Cincinnati
+- Demo project: Smith Composite Deck (scheduled status)
+
+---
+
+### 12. Quote Calculator (`hdd-quote-calculator/`)
 
 Customer-facing deck estimate tool.
 
@@ -541,7 +590,7 @@ Total = (SqFt × BasePrice × MaterialMultiplier) + HeightAdjustment + Features
 
 ---
 
-### 12. Dashboard (`hdd-dashboard/`)
+### 13. Dashboard (`hdd-dashboard/`)
 
 Central hub for all tools.
 
@@ -705,6 +754,7 @@ Windows batch file launcher (minimal).
 | Material Calculator | Ready | Dependencies installed, fully functional |
 | Job Costing | Ready | Dependencies installed, fully functional |
 | Supplier Tracker | Ready | Dependencies installed, fully functional |
+| Customer Portal | Ready | Dependencies installed, fully functional |
 | GBP Post Scheduler | Needs Setup | Requires .env configuration |
 | Lead Response | Needs Setup | Requires .env configuration |
 
@@ -726,6 +776,7 @@ cd hdd-material-calculator && npm run dev # :5181
 cd hdd-job-costing && npm run dev       # :5182
 cd hdd-supplier-tracker && npm run dev  # :5183
 cd hdd-permit-tracker && npm run dev    # :5184
+cd hdd-customer-portal && npm run dev   # :5185
 
 # Next.js tools
 cd hdd-gbp-poster && npm run dev        # :3000
