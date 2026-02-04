@@ -325,6 +325,54 @@ const TOOLS = [
       envVars: [],
       externalServices: []
     }
+  },
+  {
+    id: "before-after",
+    name: "Before/After Slider",
+    description: "Create interactive before/after image comparisons for social media and website use. Drag slider to reveal transformations. Export as HTML embed code.",
+    stack: "React, TypeScript, Tailwind CSS, Vite",
+    status: "ready",
+    launchUrl: "http://localhost:5186",
+    setup: {
+      commands: [
+        "cd hdd-before-after",
+        "npm run dev"
+      ],
+      envVars: [],
+      externalServices: []
+    }
+  },
+  {
+    id: "campaign-manager",
+    name: "Campaign Manager",
+    description: "Seasonal marketing campaign manager with pre-built templates for spring, summer, fall, and winter. Schedule email, SMS, social media, and GBP campaigns.",
+    stack: "React, TypeScript, Tailwind CSS, Vite",
+    status: "ready",
+    launchUrl: "http://localhost:5187",
+    setup: {
+      commands: [
+        "cd hdd-campaign-manager",
+        "npm run dev"
+      ],
+      envVars: [],
+      externalServices: []
+    }
+  },
+  {
+    id: "customer-survey",
+    name: "Customer Survey",
+    description: "Post-project satisfaction surveys with NPS scoring. Track promoters, passives, and detractors. Generate survey links for customers to complete.",
+    stack: "React, TypeScript, Tailwind CSS, Vite",
+    status: "ready",
+    launchUrl: "http://localhost:5188",
+    setup: {
+      commands: [
+        "cd hdd-customer-survey",
+        "npm run dev"
+      ],
+      envVars: [],
+      externalServices: []
+    }
   }
 ];
 

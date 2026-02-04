@@ -4,8 +4,8 @@ Marketing, customer feedback, and automation platform for Hickory Dickory Decks 
 
 ## Overview
 
-**18 total tools** in 3 categories:
-- **10 Production Tools**: Sentiment Router, Review Generator, GBP Post Scheduler, Lead Response, Quote Tracker, Project Messenger, Permit Tracker, Job Costing, Supplier Tracker, Customer Portal
+**21 total tools** in 3 categories:
+- **13 Production Tools**: Sentiment Router, Review Generator, GBP Post Scheduler, Lead Response, Quote Tracker, Project Messenger, Customer Survey, Permit Tracker, Job Costing, Supplier Tracker, Customer Portal, Before/After Slider, Campaign Manager
 - **3 Infrastructure Tools**: Dashboard, Quote Calculator, Material Calculator
 - **5 Development Tools**: Photo Manager, Referral Tracker, Warranty Tracker, Weather Content, Competitor Monitor
 
@@ -42,6 +42,9 @@ Marketing, customer feedback, and automation platform for Hickory Dickory Decks 
 | Job Costing | `hdd-job-costing/` | 5182 | Track project costs and profitability |
 | Supplier Tracker | `hdd-supplier-tracker/` | 5183 | Compare prices across suppliers |
 | Customer Portal | `hdd-customer-portal/` | 5185 | Customer-facing project status portal |
+| Before/After Slider | `hdd-before-after/` | 5186 | Interactive image comparison slider |
+| Campaign Manager | `hdd-campaign-manager/` | 5187 | Seasonal marketing campaign templates |
+| Customer Survey | `hdd-customer-survey/` | 5188 | Post-project NPS surveys |
 
 **Stack**: React 19, TypeScript, Tailwind CSS v4, Vite 7
 
@@ -332,7 +335,61 @@ Each status change generates:
 
 ---
 
-### 7. Permit Tracker (`hdd-permit-tracker/`)
+### 7. Customer Survey (`hdd-customer-survey/`)
+
+Post-project satisfaction surveys with NPS (Net Promoter Score) scoring.
+
+| File | Purpose |
+|------|---------|
+| `src/types/index.ts` | TypeScript interfaces, status enums, default questions |
+| `src/hooks/useSurveys.ts` | Survey CRUD operations and stats calculation |
+| `src/hooks/useCopyToClipboard.ts` | Clipboard API wrapper |
+| `src/utils/storage.ts` | localStorage persistence, NPS calculation, CSV export |
+| `src/components/Header.tsx` | App header with branding and demo mode toggle |
+| `src/components/StatsBar.tsx` | Dashboard statistics with NPS gauge |
+| `src/components/NPSGauge.tsx` | Visual NPS score display (-100 to +100) |
+| `src/components/SurveyList.tsx` | Survey table with status filtering |
+| `src/components/SurveyForm.tsx` | Create new survey form |
+| `src/components/SurveyDetail.tsx` | View survey details and responses |
+| `src/components/SurveyPreview.tsx` | Preview customer-facing survey |
+| `src/components/CustomerSurveyView.tsx` | Actual survey form customers fill out |
+| `src/components/ResponseChart.tsx` | Bar chart visualization of responses |
+
+**Survey Status Workflow**: `pending` -> `sent` -> `completed` / `expired`
+
+**NPS Scoring**:
+- Promoters (9-10): Loyal enthusiasts
+- Passives (7-8): Satisfied but unenthusiastic
+- Detractors (0-6): Unhappy customers
+- Formula: (% Promoters - % Detractors) x 100
+
+**Default Survey Questions**:
+1. **NPS (0-10)**: "How likely are you to recommend Hickory Dickory Decks?"
+2. **Rating (1-5)**: "How satisfied are you with the quality of work?"
+3. **Rating (1-5)**: "How would you rate our communication?"
+4. **Rating (1-5)**: "How satisfied are you with the timeline?"
+5. **Yes/No**: "Would you use us again for future projects?"
+6. **Text**: "What did we do well?"
+7. **Text**: "How could we improve?"
+
+**Features**:
+- Dashboard with NPS gauge, response rate, category breakdown
+- Survey management (create, send, view, delete)
+- Customer access via unique URL code (e.g., `?code=ABCD1234`)
+- Survey preview in admin view
+- Demo mode to preview customer experience
+- Response visualization with bar charts
+- CSV export for reporting
+- localStorage persistence
+
+**Data Model**:
+- Surveys with customer info, status, responses, NPS score, access code
+- Survey responses with questionId and value
+- Stats with totals, rates, and NPS breakdown
+
+---
+
+### 8. Permit Tracker (`hdd-permit-tracker/`)
 
 Track building permits and inspections for deck construction projects.
 
@@ -572,7 +629,51 @@ Customer-facing portal for viewing project status, photos, documents, and commun
 
 ---
 
-### 12. Quote Calculator (`hdd-quote-calculator/`)
+### 12. Before/After Slider (`hdd-before-after/`)
+
+Interactive before/after image comparison slider for social media and website use.
+
+| File | Purpose |
+|------|---------|
+| `src/types/index.ts` | TypeScript interfaces, orientation types, demo data |
+| `src/utils/storage.ts` | localStorage CRUD, embed code generation, HTML export |
+| `src/hooks/useComparisons.ts` | Comparison CRUD operations |
+| `src/hooks/useCopyToClipboard.ts` | Clipboard API wrapper |
+| `src/components/Header.tsx` | App header with navigation |
+| `src/components/StatsBar.tsx` | Stats cards (total, horizontal, vertical, this month) |
+| `src/components/ComparisonSlider.tsx` | Core interactive slider component |
+| `src/components/ComparisonList.tsx` | Grid gallery of saved comparisons |
+| `src/components/ComparisonForm.tsx` | Create new comparison form |
+| `src/components/ComparisonDetail.tsx` | Detail modal with preview mode |
+| `src/components/ExportModal.tsx` | Embed code and download options |
+
+**Features**:
+- Interactive drag slider (mouse + touch support)
+- Horizontal (left/right) or vertical (top/bottom) orientation
+- Before/After labels
+- Image URL input (compatible with Photo Manager)
+- Preview mode for social media screenshots
+- Generate self-contained HTML embed code
+- Download as standalone HTML file
+- Copy individual image URLs
+- Demo data with placeholder images
+
+**Data Model**:
+```typescript
+{
+  id: string;
+  name: string;
+  projectName: string;
+  beforeImage: { url, caption, uploadedAt };
+  afterImage: { url, caption, uploadedAt };
+  orientation: 'horizontal' | 'vertical';
+  createdAt: string;
+}
+```
+
+---
+
+### 14. Quote Calculator (`hdd-quote-calculator/`)
 
 Customer-facing deck estimate tool.
 
@@ -590,7 +691,7 @@ Total = (SqFt × BasePrice × MaterialMultiplier) + HeightAdjustment + Features
 
 ---
 
-### 13. Dashboard (`hdd-dashboard/`)
+### 15. Dashboard (`hdd-dashboard/`)
 
 Central hub for all tools.
 
@@ -745,6 +846,7 @@ Windows batch file launcher (minimal).
 | Review Generator | Ready | Dependencies installed |
 | Quote Tracker | Ready | Dependencies installed, fully functional |
 | Project Messenger | Ready | Dependencies installed, fully functional |
+| Customer Survey | Ready | Dependencies installed, fully functional |
 | Photo Manager | Ready | Dependencies installed, localStorage-based |
 | Referral Tracker | Ready | Dependencies installed, scaffolded |
 | Warranty Tracker | Ready | Dependencies installed, scaffolded |
@@ -755,6 +857,7 @@ Windows batch file launcher (minimal).
 | Job Costing | Ready | Dependencies installed, fully functional |
 | Supplier Tracker | Ready | Dependencies installed, fully functional |
 | Customer Portal | Ready | Dependencies installed, fully functional |
+| Before/After Slider | Ready | Dependencies installed, fully functional |
 | GBP Post Scheduler | Needs Setup | Requires .env configuration |
 | Lead Response | Needs Setup | Requires .env configuration |
 
@@ -772,11 +875,13 @@ hdd-quote-calculator/index.html
 cd hdd-review-generator && npm run dev  # :5173
 cd hdd-quote-tracker && npm run dev     # :5179
 cd hdd-project-messenger && npm run dev # :5180
-cd hdd-material-calculator && npm run dev # :5181
-cd hdd-job-costing && npm run dev       # :5182
+cd hdd-customer-survey && npm run dev   # :5181
+cd hdd-material-calculator && npm run dev # :5188
+cd hdd-job-costing && npm run dev       # :5189
 cd hdd-supplier-tracker && npm run dev  # :5183
 cd hdd-permit-tracker && npm run dev    # :5184
 cd hdd-customer-portal && npm run dev   # :5185
+cd hdd-before-after && npm run dev     # :5186
 
 # Next.js tools
 cd hdd-gbp-poster && npm run dev        # :3000

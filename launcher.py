@@ -131,13 +131,34 @@ TOOLS = {
         "description": "Customer-facing portal for project status"
     },
     "17": {
+        "name": "Before/After Slider",
+        "type": "vite",
+        "path": "hdd-before-after",
+        "port": 5186,
+        "description": "Interactive before/after image comparisons"
+    },
+    "18": {
+        "name": "Campaign Manager",
+        "type": "vite",
+        "path": "hdd-campaign-manager",
+        "port": 5187,
+        "description": "Seasonal marketing campaigns with templates"
+    },
+    "19": {
+        "name": "Customer Survey",
+        "type": "vite",
+        "path": "hdd-customer-survey",
+        "port": 5188,
+        "description": "Post-project satisfaction surveys with NPS"
+    },
+    "20": {
         "name": "GBP Post Scheduler",
         "type": "next",
         "path": "hdd-gbp-poster",
         "port": 3000,
         "description": "AI-powered Google Business Profile posts (needs env setup)"
     },
-    "18": {
+    "21": {
         "name": "Lead Response System",
         "type": "next",
         "path": "hdd-lead-response",
@@ -201,10 +222,10 @@ def print_menu():
             print(f"       {tool['description']}")
     
     print("\n" + "-"*60)
-    print("   [P] Launch PRODUCTION tools (10 tools - recommended)")
+    print("   [P] Launch PRODUCTION tools (13 tools - recommended)")
     print("   [S] Launch STATIC tools only (no server needed)")
-    print("   [R] Launch REACT tools only (13 servers)")
-    print("   [A] Launch ALL tools (15 servers - heavy!)")
+    print("   [R] Launch REACT tools only (16 servers)")
+    print("   [A] Launch ALL tools (18 servers - heavy!)")
     print()
     browser_status = "ON" if AUTO_OPEN_BROWSER else "OFF"
     print(f"   [B] Toggle auto-open browser [{browser_status}]")
@@ -358,11 +379,11 @@ def launch_all():
     print("⚠️  WARNING: Heavy Resource Usage!")
     print("="*60)
     print("\nThis will start:")
-    print("   • 13 Vite dev servers (~3GB RAM)")
+    print("   • 16 Vite dev servers (~4GB RAM)")
     print("   • 2 Next.js servers (~1GB RAM)")
-    print("   • 18 browser tabs")
-    print("\nTotal: ~4-5GB RAM + high CPU during startup")
-    print("\nRecommendation: Use [P] Production tools instead (10 tools)")
+    print("   • 21 browser tabs")
+    print("\nTotal: ~5-6GB RAM + high CPU during startup")
+    print("\nRecommendation: Use [P] Production tools instead (13 tools)")
     print()
 
     confirm = input("Continue anyway? [y/N]: ").strip().lower()
@@ -395,10 +416,10 @@ def launch_all():
 def launch_production():
     """Launch production-ready tools only (recommended)"""
     print("\n🚀 LAUNCHING PRODUCTION TOOLS...\n")
-    print("   Starting 10 essential tools:\n")
+    print("   Starting 13 essential tools:\n")
 
-    # Production tools: Dashboard, Sentiment Router, Review Generator, Quote Tracker, Project Messenger, Permit Tracker, Material Calculator, Job Costing, Supplier Tracker, Customer Portal
-    production_keys = ["1", "3", "4", "10", "11", "12", "13", "14", "15", "16"]
+    # Production tools: Dashboard, Sentiment Router, Review Generator, Quote Tracker, Project Messenger, Permit Tracker, Material Calculator, Job Costing, Supplier Tracker, Customer Portal, Before/After, Campaign Manager, Customer Survey
+    production_keys = ["1", "3", "4", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19"]
 
     for key in production_keys:
         tool = TOOLS[key]
@@ -426,7 +447,7 @@ def launch_static_only():
 
 def launch_react_only():
     """Launch only React/Vite tools"""
-    print("\n⚠️  This will start 13 Vite dev servers (~3GB RAM)")
+    print("\n⚠️  This will start 16 Vite dev servers (~4GB RAM)")
     confirm = input("Continue? [y/N]: ").strip().lower()
     if confirm != 'y':
         print("   Cancelled.")
