@@ -261,6 +261,22 @@ const TOOLS = [
       envVars: [],
       externalServices: []
     }
+  },
+  {
+    id: "material-calculator",
+    name: "Material Calculator",
+    description: "Calculate lumber, hardware, concrete, and materials needed for deck construction. Input dimensions, select materials, get a complete supply list with quantities.",
+    stack: "React, TypeScript, Tailwind CSS, Vite",
+    status: "ready",
+    launchUrl: "http://localhost:5181",
+    setup: {
+      commands: [
+        "cd hdd-material-calculator",
+        "npm run dev"
+      ],
+      envVars: [],
+      externalServices: []
+    }
   }
 ];
 

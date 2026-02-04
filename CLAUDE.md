@@ -4,9 +4,9 @@ Marketing, customer feedback, and automation platform for Hickory Dickory Decks 
 
 ## Overview
 
-**14 total tools** in 3 categories:
+**15 total tools** in 3 categories:
 - **7 Production Tools**: Sentiment Router, Review Generator, GBP Post Scheduler, Lead Response, Quote Tracker, Project Messenger, Permit Tracker
-- **2 Infrastructure Tools**: Dashboard, Quote Calculator
+- **3 Infrastructure Tools**: Dashboard, Quote Calculator, Material Calculator
 - **5 Development Tools**: Photo Manager, Referral Tracker, Warranty Tracker, Weather Content, Competitor Monitor
 
 **Target Franchise**: Cincinnati (Nathan & Brinton Ricke)
@@ -38,6 +38,7 @@ Marketing, customer feedback, and automation platform for Hickory Dickory Decks 
 | Quote Tracker | `hdd-quote-tracker/` | 5179 | Track quotes and follow-ups |
 | Project Messenger | `hdd-project-messenger/` | 5180 | Automated project milestone communications |
 | Permit Tracker | `hdd-permit-tracker/` | 5184 | Track permits and inspections |
+| Material Calculator | `hdd-material-calculator/` | 5181 | Calculate deck materials |
 
 **Stack**: React 19, TypeScript, Tailwind CSS v4, Vite 7
 
@@ -381,7 +382,53 @@ Cincinnati, Mason, West Chester, Liberty Township, Fairfield, Hamilton, Loveland
 
 ---
 
-### 8. Quote Calculator (`hdd-quote-calculator/`)
+### 8. Material Calculator (`hdd-material-calculator/`)
+
+Calculate lumber, hardware, concrete, and materials needed for deck construction.
+
+| File | Purpose |
+|------|---------|
+| `src/types/index.ts` | TypeScript interfaces, material categories, pricing |
+| `src/utils/calculations.ts` | Core calculation logic for all materials |
+| `src/utils/storage.ts` | localStorage persistence, clipboard/CSV export |
+| `src/components/Header.tsx` | App header with navigation |
+| `src/components/DeckConfigForm.tsx` | Configuration form (dimensions, materials, options) |
+| `src/components/MaterialsList.tsx` | Results display with copy/save/export |
+| `src/components/SavedCalculations.tsx` | Saved calculations manager |
+
+**Input Configuration**:
+- Dimensions (length, width, height)
+- Deck style (ground level, elevated, freestanding)
+- Decking material (PT pine, cedar, composite standard/premium)
+- Framing material (PT pine, cedar)
+- Joist spacing (12", 16", 24" O.C.)
+- Decking direction (parallel/perpendicular to house)
+- Railing style (none, wood, composite, aluminum, cable)
+- Stairs (optional, width options)
+- Waste factor (5-20%)
+
+**Calculated Materials**:
+- **Decking**: Deck boards, fascia
+- **Framing**: Joists, rim joists, ledger, beam, posts, blocking
+- **Hardware**: Joist hangers, post brackets, lag bolts, flashing, screws
+- **Concrete**: Sono tubes, concrete bags, gravel
+- **Railing**: Posts, rails, balusters, brackets
+- **Stairs**: Stringers, treads, railing kits, landing pads
+
+**Features**:
+- Real-time calculation as you adjust settings
+- Summary stats (joists, posts, footings, estimated cost)
+- Copy full material list to clipboard
+- Export to CSV for supplier ordering
+- Save calculations with customer/project info
+- Load saved calculations
+- Material quantity includes waste factor
+- Automatic railing requirement (height > 30")
+- Proper lumber sizing based on span
+
+---
+
+### 9. Quote Calculator (`hdd-quote-calculator/`)
 
 Customer-facing deck estimate tool.
 
@@ -399,7 +446,7 @@ Total = (SqFt × BasePrice × MaterialMultiplier) + HeightAdjustment + Features
 
 ---
 
-### 9. Dashboard (`hdd-dashboard/`)
+### 10. Dashboard (`hdd-dashboard/`)
 
 Central hub for all tools.
 
@@ -560,6 +607,7 @@ Windows batch file launcher (minimal).
 | Weather Content | Ready | Fully functional, GBP integration ready |
 | Competitor Monitor | Ready | Dependencies installed, scaffolded |
 | Permit Tracker | Ready | Dependencies installed, fully functional |
+| Material Calculator | Ready | Dependencies installed, fully functional |
 | GBP Post Scheduler | Needs Setup | Requires .env configuration |
 | Lead Response | Needs Setup | Requires .env configuration |
 
@@ -577,6 +625,7 @@ hdd-quote-calculator/index.html
 cd hdd-review-generator && npm run dev  # :5173
 cd hdd-quote-tracker && npm run dev     # :5179
 cd hdd-project-messenger && npm run dev # :5180
+cd hdd-material-calculator && npm run dev # :5181
 cd hdd-permit-tracker && npm run dev    # :5184
 
 # Next.js tools

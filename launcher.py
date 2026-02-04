@@ -103,13 +103,20 @@ TOOLS = {
         "description": "Track permits and inspections for deck projects"
     },
     "13": {
+        "name": "Material Calculator",
+        "type": "vite",
+        "path": "hdd-material-calculator",
+        "port": 5181,
+        "description": "Calculate materials needed for deck construction"
+    },
+    "14": {
         "name": "GBP Post Scheduler",
         "type": "next",
         "path": "hdd-gbp-poster",
         "port": 3000,
         "description": "AI-powered Google Business Profile posts (needs env setup)"
     },
-    "14": {
+    "15": {
         "name": "Lead Response System",
         "type": "next",
         "path": "hdd-lead-response",
@@ -175,8 +182,8 @@ def print_menu():
     print("\n" + "-"*60)
     print("   [P] Launch PRODUCTION tools (7 tools - recommended)")
     print("   [S] Launch STATIC tools only (no server needed)")
-    print("   [R] Launch REACT tools only (8 servers)")
-    print("   [A] Launch ALL tools (10 servers - heavy!)")
+    print("   [R] Launch REACT tools only (9 servers)")
+    print("   [A] Launch ALL tools (11 servers - heavy!)")
     print()
     browser_status = "ON" if AUTO_OPEN_BROWSER else "OFF"
     print(f"   [B] Toggle auto-open browser [{browser_status}]")
@@ -330,9 +337,9 @@ def launch_all():
     print("⚠️  WARNING: Heavy Resource Usage!")
     print("="*60)
     print("\nThis will start:")
-    print("   • 8 Vite dev servers (~2GB RAM)")
+    print("   • 9 Vite dev servers (~2.3GB RAM)")
     print("   • 2 Next.js servers (~1GB RAM)")
-    print("   • 14 browser tabs")
+    print("   • 15 browser tabs")
     print("\nTotal: ~3-4GB RAM + high CPU during startup")
     print("\nRecommendation: Use [P] Production tools instead (7 tools)")
     print()
@@ -398,7 +405,7 @@ def launch_static_only():
 
 def launch_react_only():
     """Launch only React/Vite tools"""
-    print("\n⚠️  This will start 8 Vite dev servers (~2GB RAM)")
+    print("\n⚠️  This will start 9 Vite dev servers (~2.3GB RAM)")
     confirm = input("Continue? [y/N]: ").strip().lower()
     if confirm != 'y':
         print("   Cancelled.")
