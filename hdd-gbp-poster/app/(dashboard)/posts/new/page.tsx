@@ -105,7 +105,7 @@ export default function NewPostPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">New Post</h1>
+          <h1 className="text-2xl font-bold text-hdd-green-dark">New Post</h1>
           <p className="text-gray-500 mt-1">Create a new Google Business Profile post</p>
         </div>
       </div>

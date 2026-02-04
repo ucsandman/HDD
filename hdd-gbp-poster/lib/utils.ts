@@ -49,7 +49,7 @@ export function getStatusColor(status: string): string {
     case 'scheduled':
       return 'bg-purple-100 text-purple-800'
     case 'published':
-      return 'bg-green-100 text-green-800'
+      return 'bg-hdd-green-100 text-hdd-green-dark'
     case 'failed':
       return 'bg-red-100 text-red-800'
     default:

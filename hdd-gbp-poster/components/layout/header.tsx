@@ -2,13 +2,14 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import {
   Menu,
   X,
   LayoutDashboard,
   FileText,
-  Image,
+  Image as ImageIcon,
   Calendar,
   Settings,
   LogOut
@@ -18,7 +19,7 @@ import { cn } from '@/lib/utils'
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Posts', href: '/posts', icon: FileText },
-  { name: 'Images', href: '/images', icon: Image },
+  { name: 'Images', href: '/images', icon: ImageIcon },
   { name: 'Calendar', href: '/calendar', icon: Calendar },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
@@ -54,7 +55,7 @@ export function Header({ user }: HeaderProps) {
 
       <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
         <div className="flex flex-1 items-center gap-x-2">
-          <h1 className="text-lg font-semibold text-gray-900 lg:hidden">
+          <h1 className="text-lg font-semibold text-hdd-green lg:hidden">
             GBP Poster
           </h1>
           {isDemoMode && (
@@ -82,10 +83,14 @@ export function Header({ user }: HeaderProps) {
           <div className="fixed inset-y-0 left-0 z-50 w-full max-w-xs overflow-y-auto bg-white px-6 py-6">
             <div className="flex items-center justify-between">
               <Link href="/" className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-gray-900 flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">HD</span>
-                </div>
-                <span className="font-semibold text-gray-900">GBP Poster</span>
+                <Image
+                  src="/hdd-logo.webp"
+                  alt="Hickory Dickory Decks"
+                  width={40}
+                  height={40}
+                  className="h-10 w-10"
+                />
+                <span className="font-semibold text-hdd-green">GBP Poster</span>
               </Link>
               <button
                 type="button"
@@ -109,14 +114,14 @@ export function Header({ user }: HeaderProps) {
                         className={cn(
                           'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
                           isActive
-                            ? 'bg-gray-100 text-gray-900'
-                            : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                            ? 'bg-hdd-green-50 text-hdd-green-dark'
+                            : 'text-gray-700 hover:bg-hdd-green-50 hover:text-hdd-green-dark'
                         )}
                       >
                         <item.icon
                           className={cn(
                             'h-6 w-6 shrink-0',
-                            isActive ? 'text-gray-900' : 'text-gray-400 group-hover:text-gray-900'
+                            isActive ? 'text-hdd-green' : 'text-gray-400 group-hover:text-hdd-green'
                           )}
                         />
                         {item.name}
@@ -129,9 +134,9 @@ export function Header({ user }: HeaderProps) {
                 <form action="/api/auth/signout" method="POST">
                   <button
                     type="submit"
-                    className="group flex w-full gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                    className="group flex w-full gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-hdd-green-50 hover:text-hdd-green-dark"
                   >
-                    <LogOut className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-gray-900" />
+                    <LogOut className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-hdd-green" />
                     Sign out
                   </button>
                 </form>

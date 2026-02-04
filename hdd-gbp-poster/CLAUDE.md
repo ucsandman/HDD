@@ -138,6 +138,22 @@ See `.env.example` for required variables:
 - Storage: `BLOB_READ_WRITE_TOKEN`
 - Security: `CRON_SECRET`, `ENCRYPTION_KEY`
 
+## Branding
+
+HDD brand colors and logo applied throughout:
+
+| Color | Hex | Usage |
+|-------|-----|-------|
+| HDD Green | `#2D8B47` | Primary buttons, active nav, icons |
+| HDD Green Dark | `#236B38` | Page titles, hover states |
+| HDD Green Light | `#3DA85A` | Light accents |
+| HDD Green 50 | `#E8F5EC` | Backgrounds, badges |
+| HDD Green 100 | `#C5E6CF` | Hover backgrounds |
+
+Brand assets:
+- `public/hdd-logo.webp` - HDD mascot logo (sidebar, login)
+- CSS variables defined in `app/globals.css`
+
 ## Security
 
 - Google tokens encrypted with AES-256-GCM at rest

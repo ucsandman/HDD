@@ -201,13 +201,13 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6 max-w-4xl">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+        <h1 className="text-2xl font-bold text-hdd-green-dark">Settings</h1>
         <p className="text-gray-500 mt-1">Manage your franchise settings</p>
       </div>
 
       {success === 'google_connected' && (
-        <div className="rounded-md bg-green-50 p-4">
-          <p className="text-sm text-green-700">Google Business Profile connected successfully!</p>
+        <div className="rounded-md bg-hdd-green-50 p-4">
+          <p className="text-sm text-hdd-green-dark">Google Business Profile connected successfully!</p>
         </div>
       )}
 

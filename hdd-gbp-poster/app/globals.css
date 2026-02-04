@@ -3,6 +3,13 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* HDD Brand Colors */
+  --hdd-green: #2D8B47;
+  --hdd-green-dark: #236B38;
+  --hdd-green-light: #3DA85A;
+  --hdd-green-50: #E8F5EC;
+  --hdd-green-100: #C5E6CF;
 }
 
 @theme inline {
@@ -10,13 +17,13 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* HDD Brand Colors for Tailwind */
+  --color-hdd-green: var(--hdd-green);
+  --color-hdd-green-dark: var(--hdd-green-dark);
+  --color-hdd-green-light: var(--hdd-green-light);
+  --color-hdd-green-50: var(--hdd-green-50);
+  --color-hdd-green-100: var(--hdd-green-100);
 }
 
 body {

@@ -142,7 +142,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
           </Link>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-gray-900">Edit Post</h1>
+              <h1 className="text-2xl font-bold text-hdd-green-dark">Edit Post</h1>
               <Badge className={getStatusColor(post.status)}>
                 {getStatusLabel(post.status)}
               </Badge>

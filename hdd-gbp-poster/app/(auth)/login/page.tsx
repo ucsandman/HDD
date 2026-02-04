@@ -1,6 +1,7 @@
 'use client'
 
 import { Suspense, useState } from 'react'
+import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
@@ -47,8 +48,8 @@ function LoginForm() {
     return (
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
-            <CheckCircle className="h-6 w-6 text-green-600" />
+          <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-hdd-green-50 flex items-center justify-center">
+            <CheckCircle className="h-6 w-6 text-hdd-green" />
           </div>
           <CardTitle>Check your email</CardTitle>
           <CardDescription>
@@ -70,10 +71,14 @@ function LoginForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <div className="mx-auto mb-4 h-12 w-12 rounded-lg bg-gray-900 flex items-center justify-center">
-          <span className="text-white font-bold text-lg">HD</span>
-        </div>
-        <CardTitle>Sign in to GBP Poster</CardTitle>
+        <Image
+          src="/hdd-logo.webp"
+          alt="Hickory Dickory Decks"
+          width={64}
+          height={64}
+          className="mx-auto mb-4 h-16 w-16"
+        />
+        <CardTitle className="text-hdd-green">Sign in to GBP Poster</CardTitle>
         <CardDescription>
           Enter your email to receive a magic link
         </CardDescription>
