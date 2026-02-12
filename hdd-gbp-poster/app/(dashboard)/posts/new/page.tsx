@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, Suspense } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Loader2, Sparkles, Save } from 'lucide-react'
+import { ArrowLeft, Loader2, Sparkles, Save, FileText } from 'lucide-react'
 import { usePost } from '@/hooks/usePost'
 import { EDUCATIONAL_TOPICS, SEASONS, PROJECT_TYPES } from '@/types'
 import type { PostType, CallToActionType } from '@/types'
@@ -23,15 +23,38 @@ const CALL_TO_ACTION_TYPES = [
   { value: 'GET_OFFER', label: 'Get Offer' },
 ]
 
-export default function NewPostPage() {
+function NewPostForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { createPost, generateDraft, isLoading, isGenerating, error, clearError } = usePost()
 
   // Form state
   const [postType, setPostType] = useState<PostType>('project_showcase')
   const [body, setBody] = useState('')
+  const [title, setTitle] = useState('')
   const [callToAction, setCallToAction] = useState('')
   const [callToActionUrl, setCallToActionUrl] = useState('https://decks.ca/deck-builders/cincinnati')
+  const [blogId, setBlogId] = useState<string | null>(null)
+
+  // Check for incoming blog summary
+  useEffect(() => {
+    const pendingSummary = sessionStorage.getItem('pending_gbp_summary')
+    if (pendingSummary) {
+      try {
+        const data = JSON.parse(pendingSummary)
+        setBody(data.body)
+        setTitle(data.title || '')
+        setBlogId(data.blogId || null)
+        setPostType('educational')
+        setCallToAction('LEARN_MORE')
+        
+        // Clear it so it doesn't persist on refresh
+        sessionStorage.removeItem('pending_gbp_summary')
+      } catch (e) {
+        console.error('Failed to parse pending summary', e)
+      }
+    }
+  }, [])
 
   // Generation params
   const [projectTypeName, setProjectTypeName] = useState('deck')
@@ -84,10 +107,12 @@ export default function NewPostPage() {
       const post = await createPost({
         postType,
         body: body.trim(),
+        title: title || undefined,
         callToAction: callToAction ? (callToAction as CallToActionType) : undefined,
         callToActionUrl: callToAction ? callToActionUrl : undefined,
-        generatedBy: generationPrompt ? 'ai' : 'manual',
+        generatedBy: generationPrompt || blogId ? 'ai' : 'manual',
         generationPrompt: generationPrompt || undefined,
+        blogId: blogId || undefined,
       })
 
       router.push(`/posts/${post.id}`)
@@ -110,9 +135,19 @@ export default function NewPostPage() {
         </div>
       </div>
 
+      {blogId && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center gap-3">
+          <FileText className="h-5 w-5 text-blue-500" />
+          <div>
+            <p className="text-sm font-medium text-blue-900">Linked to Blog Post</p>
+            <p className="text-xs text-blue-700">This post was generated as a summary for your new blog.</p>
+          </div>
+        </div>
+      )}
+
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Left column - Generation */}
-        <Card>
+        <Card className={blogId ? 'opacity-50 pointer-events-none' : ''}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5" />
@@ -242,6 +277,16 @@ export default function NewPostPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
+              <Label htmlFor="title">Title (Internal only)</Label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g., Spring Deck Special"
+              />
+            </div>
+
+            <div>
               <div className="flex items-center justify-between mb-1">
                 <Label htmlFor="body">Post Body</Label>
                 <Badge
@@ -313,5 +358,13 @@ export default function NewPostPage() {
         </Card>
       </div>
     </div>
+  )
+}
+
+export default function NewPostPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[400px]"><Loader2 className="h-8 w-8 animate-spin text-hdd-green" /></div>}>
+      <NewPostForm />
+    </Suspense>
   )
 }

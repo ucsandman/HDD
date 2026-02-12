@@ -10,6 +10,21 @@ export type PostStatus =
 
 export type PostType = 'project_showcase' | 'educational' | 'seasonal'
 
+export interface BlogData {
+  id: string
+  title: string
+  slug: string
+  content: string
+  excerpt: string | null
+  status: string
+  metaTitle: string | null
+  metaDescription: string | null
+  keywords: string[]
+  generatedBy: GeneratedBy | null
+  createdAt: string
+  updatedAt: string
+}
+
 export type CallToActionType =
   | 'LEARN_MORE'
   | 'CALL'

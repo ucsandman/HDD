@@ -30,6 +30,7 @@ export const createPostSchema = z.object({
   imageIds: z.array(z.string().uuid()).max(10).optional(),
   generatedBy: z.enum(['ai', 'manual']).optional(),
   generationPrompt: z.string().optional(),
+  blogId: z.string().uuid().optional(),
 })
 
 export const updatePostSchema = z.object({
@@ -40,6 +41,7 @@ export const updatePostSchema = z.object({
   callToActionUrl: z.string().url().max(500).optional().nullable(),
   imageIds: z.array(z.string().uuid()).max(10).optional(),
   status: postStatusSchema.optional(),
+  blogId: z.string().uuid().optional().nullable(),
 })
 
 export const approvePostSchema = z.object({

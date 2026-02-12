@@ -29,6 +29,7 @@ model Franchise {
   users           User[]
   images          Image[]
   posts           Post[]
+  blogs           Blog[]
   generationQueue GenerationQueue[]
 
   @@map("franchises")
@@ -96,8 +97,34 @@ model Post {
   createdBy  User?       @relation("CreatedBy", fields: [createdById], references: [id])
   approvedBy User?       @relation("ApprovedBy", fields: [approvedById], references: [id])
   postImages PostImage[]
+  blog       Blog?       @relation(fields: [blogId], references: [id])
+  blogId     String?     @map("blog_id") @db.Uuid
 
   @@map("posts")
+}
+
+model Blog {
+  id                String    @id @default(uuid()) @db.Uuid
+  franchiseId       String    @map("franchise_id") @db.Uuid
+  title             String    @db.VarChar(255)
+  slug              String    @db.VarChar(255)
+  content           String    @db.Text
+  excerpt           String?   @db.Text
+  status            String    @default("draft") @db.VarChar(50)
+  metaTitle         String?   @map("meta_title") @db.VarChar(255)
+  metaDescription   String?   @map("meta_description") @db.Text
+  keywords          String[]  @db.VarChar(100)
+  generatedBy       String?   @map("generated_by") @db.VarChar(50)
+  generationPrompt  String?   @map("generation_prompt") @db.Text
+  createdById       String?   @map("created_by") @db.Uuid
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  franchise Franchise @relation(fields: [franchiseId], references: [id])
+  posts     Post[]
+
+  @@unique([franchiseId, slug])
+  @@map("blogs")
 }
 
 model PostImage {

@@ -20,6 +20,7 @@ export function usePost(options?: UsePostOptions) {
     imageIds?: string[]
     generatedBy?: 'ai' | 'manual'
     generationPrompt?: string
+    blogId?: string
   }) => {
     setIsLoading(true)
     setError(null)
@@ -57,6 +58,7 @@ export function usePost(options?: UsePostOptions) {
     callToActionUrl?: string | null
     imageIds?: string[]
     status?: string
+    blogId?: string
   }) => {
     setIsLoading(true)
     setError(null)

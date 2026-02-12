@@ -1,0 +1,38 @@
+# Blog Generator Implementation Details
+
+## Overview
+Expanded the `hdd-gbp-poster` tool to include a high-quality blog generator powered by Claude 4.5 Sonnet. This allows franchisees to generate 1,200-word SEO-optimized blog posts and instantly create summarized Google Business Profile (GBP) updates from them.
+
+## New Features
+- **Blog Generation**: Creates long-form, SEO-friendly content with local Cincinnati relevance.
+- **GBP Summary Engine**: Distills long blogs into <1500 character GBP posts with 3 key points and a CTA.
+- **Claude 4.5 Sonnet Integration**: All generation routes updated to use the latest `claude-4-5-sonnet-20250514` model.
+- **Database Linking**: GBP posts are now linked to their source blogs in the database for better tracking.
+
+## Technical Changes
+- **Database**: Added `Blog` model to Prisma schema and `blogId` field to `Post`.
+- **API Routes**:
+  - `POST /api/blogs`: Generates and saves a new blog.
+  - `POST /api/blogs/[id]/summary`: Generates a GBP post draft from a blog.
+  - `POST /api/posts`: Updated to handle blog linking.
+- **UI Components**:
+  - `/blogs`: List of generated blogs.
+  - `/blogs/new`: Interactive blog generation form with preview.
+  - Updated `/posts/new` to accept incoming blog summaries.
+- **Sidebar**: Added "Blogs" navigation link.
+
+## How to Test (Local)
+1. Sync Database: `cd hdd-gbp-poster && npx prisma db push`
+2. Run App: `npm run dev`
+3. Navigate to `http://localhost:3000/blogs` to start generating.
+
+## How to Deploy (Cloud/Friend Access)
+1. Ensure code is pushed to your private GitHub repo.
+2. Connect the repo to Vercel (vercel.com).
+3. Add Environment Variables in Vercel:
+   - `DATABASE_URL` (Neon Postgres)
+   - `ANTHROPIC_API_KEY` (Claude API)
+   - `NEXTAUTH_SECRET` (Random string)
+   - `GOOGLE_CLIENT_ID` / `SECRET` (GBP API)
+4. Deploy and share the `.vercel.app` URL with your friend.
+5. Ensure your friend's email is added to the `User` table in the database so they can log in via Magic Link.

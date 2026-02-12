@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
   FileText,
+  BookOpen,
   Image as ImageIcon,
   Calendar,
   Settings,
@@ -16,6 +17,7 @@ import { cn } from '@/lib/utils'
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Posts', href: '/posts', icon: FileText },
+  { name: 'Blogs', href: '/blogs', icon: BookOpen },
   { name: 'Images', href: '/images', icon: ImageIcon },
   { name: 'Calendar', href: '/calendar', icon: Calendar },
   { name: 'Settings', href: '/settings', icon: Settings },

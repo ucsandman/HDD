@@ -122,3 +122,60 @@ export function getPromptForPostType(
       return getSeasonalPrompt(params as SeasonalParams)
   }
 }
+
+export interface BlogPromptParams {
+  topic: string
+  neighborhood?: string
+  materials?: string
+  targetKeywords?: string[]
+}
+
+export function getBlogPrompt(params: BlogPromptParams): string {
+  const { topic, neighborhood, materials, targetKeywords } = params
+  
+  const localContext = neighborhood ? ` specifically for homeowners in the ${neighborhood} area of Cincinnati` : ' for Cincinnati homeowners'
+  const materialContext = materials ? ` highlighting the use of ${materials}` : ''
+  const keywordsContext = targetKeywords && targetKeywords.length > 0 
+    ? `\nTarget Keywords to include naturally: ${targetKeywords.join(', ')}` 
+    : ''
+
+  return `Write a comprehensive, SEO-optimized blog post about: "${topic}"${localContext}.${materialContext}
+
+The blog should be approximately 1,200 words and follow this structure:
+1. **Engaging Title (H1)**: Catchy and SEO-friendly.
+2. **Introduction**: Set the scene, address common homeowner pain points, and introduce Hickory Dickory Decks.
+3. **Core Content (H2 & H3)**: Detailed sections providing genuine value, tips, and professional insights. Use bullet points for readability.
+4. **Local Relevance**: Mention Cincinnati-specific considerations (weather, local building codes, popular styles in areas like West Chester or Mason).
+5. **Conclusion**: Summarize key takeaways.
+6. **Soft Call to Action**: Encourage readers to book a free consultation or visit our local showroom.
+
+**Tone Guidelines**:
+- Professional yet conversational "expert neighbor" voice.
+- Focus on the benefits of composite/PVC decking (low maintenance, durability).
+- Informative and helpful, not pushy or aggressive.
+${keywordsContext}
+
+Please also provide:
+- **Meta Title** (max 60 chars)
+- **Meta Description** (max 160 chars)
+- **Slug** (URL-friendly version of the title)
+- **3-5 suggested tags/keywords**
+
+Format the output clearly with markers for [TITLE], [SLUG], [CONTENT], [META_TITLE], [META_DESCRIPTION], and [KEYWORDS].`
+}
+
+export function getGBPSummaryPrompt(blogContent: string): string {
+  return `Act as a social media manager for Hickory Dickory Decks Cincinnati. 
+
+Read the following blog post and create a compelling Google Business Profile (GBP) post that summarizes the key takeaways and drives traffic to read the full article.
+
+**GBP Post Requirements**:
+- Length: Under 1,500 characters.
+- Tone: Friendly, professional, and local.
+- Structure: Catchy opening + 3 bulleted key points + "Learn More" call to action.
+- Content: Distill the most valuable advice from the blog.
+- Formatting: Do not use hashtags. Use emojis sparingly.
+
+**Blog Content to Summarize**:
+${blogContent.slice(0, 5000)} ... [content truncated]`
+}

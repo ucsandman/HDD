@@ -72,7 +72,17 @@
       "WebSearch",
       "Bash(for dir in hdd-photo-manager hdd-referral-tracker hdd-warranty-tracker hdd-weather-content hdd-competitor-monitor)",
       "Bash(do echo \"=== $dir ===\")",
-      "Bash([ -f \"$dir/README.md\" ])"
+      "Bash([ -f \"$dir/README.md\" ])",
+      "Bash(npm audit:*)",
+      "Bash(echo:*)",
+      "Bash(npx tsc:*)",
+      "Bash(timeout:*)",
+      "mcp__chrome-devtools__list_pages",
+      "mcp__chrome-devtools__select_page",
+      "mcp__chrome-devtools__fill",
+      "Bash(git status:*)",
+      "Bash(ping:*)",
+      "mcp__chrome-devtools__list_console_messages"
     ]
   }
 }
