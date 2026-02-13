@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 
     // Call Claude API - using the latest Sonnet 4.5 model as requested
     const message = await anthropic.messages.create({
-      model: 'claude-4-5-sonnet-20250514',
+      model: 'claude-haiku-4-5',
       max_tokens: 4096,
       system: systemPrompt,
       messages: [
@@ -61,13 +61,15 @@ export async function POST(request: NextRequest) {
     const rawText = textBlock.text
     
     // Parse the AI output based on markers
-    const title = extractValue(rawText, 'TITLE') || topic
-    const slug = extractValue(rawText, 'SLUG') || slugify(title)
+    const title = (extractValue(rawText, 'TITLE') || topic).slice(0, 255)
+    const slug = (extractValue(rawText, 'SLUG') || slugify(title)).slice(0, 255)
     const content = extractValue(rawText, 'CONTENT') || rawText
-    const metaTitle = extractValue(rawText, 'META_TITLE')
+    const metaTitle = extractValue(rawText, 'META_TITLE')?.slice(0, 255)
     const metaDescription = extractValue(rawText, 'META_DESCRIPTION')
     const keywordsRaw = extractValue(rawText, 'KEYWORDS')
-    const keywords = keywordsRaw ? keywordsRaw.split(',').map(k => k.trim()) : []
+    const keywords = keywordsRaw 
+      ? keywordsRaw.split(',').map(k => k.trim().slice(0, 100)) 
+      : []
 
     // Save to database
     const blog = await prisma.blog.create({
@@ -98,7 +100,7 @@ export async function POST(request: NextRequest) {
 }
 
 function extractValue(text: string, marker: string): string | null {
-  const regex = new RegExp(`\[${marker}\]\s*([\s\S]*?)(?=\s*\[|$)`, 'i')
+  const regex = new RegExp(`\\[${marker}\\]\\s*([\\s\\S]*?)(?=\\s*\\[|$)`, 'i')
   const match = text.match(regex)
   return match ? match[1].trim() : null
 }

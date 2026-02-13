@@ -41,7 +41,7 @@ export async function POST(
 
     // Call Claude API - using Sonnet 4.5
     const message = await anthropic.messages.create({
-      model: 'claude-4-5-sonnet-20250514',
+      model: 'claude-haiku-4-5',
       max_tokens: 1024,
       system: systemPrompt,
       messages: [

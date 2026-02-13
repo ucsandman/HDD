@@ -41,6 +41,8 @@ model User {
   name        String?  @db.VarChar(255)
   franchiseId String   @map("franchise_id") @db.Uuid
   role        String   @default("editor") @db.VarChar(50)
+  emailVerified DateTime? @map("email_verified")
+  image       String?
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 

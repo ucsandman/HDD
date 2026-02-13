@@ -2,31 +2,30 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-// Demo IDs - deterministic but not trivially guessable
-// Using hash-derived patterns instead of all-zeros
-const DEMO_FRANCHISE_ID = 'd3m0-fr4n-7a2b-c8d9-e1f0a2b3c4d5'
-const DEMO_USER_ID = 'd3m0-u53r-8f4e-b1c2-a9d7e6f5c4b3'
+// Demo IDs - VALID UUIDs (hex only)
+const DEMO_FRANCHISE_ID = 'd3000000-0000-0000-0000-000000000001'
+const DEMO_USER_ID = 'd3000000-0000-0000-0000-000000000002'
 
-// Image IDs (deterministic demo values)
+// Image IDs (deterministic valid UUIDs)
 const IMAGE_IDS = [
-  'd3m0-1mg1-a1b2-c3d4-e5f6a7b8c9d0',
-  'd3m0-1mg2-b2c3-d4e5-f6a7b8c9d0e1',
-  'd3m0-1mg3-c3d4-e5f6-a7b8c9d0e1f2',
-  'd3m0-1mg4-d4e5-f6a7-b8c9d0e1f2a3',
-  'd3m0-1mg5-e5f6-a7b8-c9d0e1f2a3b4',
-  'd3m0-1mg6-f6a7-b8c9-d0e1f2a3b4c5',
+  'd3000000-1000-0000-0000-000000000001',
+  'd3000000-1000-0000-0000-000000000002',
+  'd3000000-1000-0000-0000-000000000003',
+  'd3000000-1000-0000-0000-000000000004',
+  'd3000000-1000-0000-0000-000000000005',
+  'd3000000-1000-0000-0000-000000000006',
 ]
 
-// Post IDs (deterministic demo values)
+// Post IDs (deterministic valid UUIDs)
 const POST_IDS = [
-  'd3m0-p0st-1a2b-3c4d-5e6f7a8b9c0d',
-  'd3m0-p0st-2b3c-4d5e-6f7a8b9c0d1e',
-  'd3m0-p0st-3c4d-5e6f-7a8b9c0d1e2f',
-  'd3m0-p0st-4d5e-6f7a-8b9c0d1e2f3a',
-  'd3m0-p0st-5e6f-7a8b-9c0d1e2f3a4b',
-  'd3m0-p0st-6f7a-8b9c-0d1e2f3a4b5c',
-  'd3m0-p0st-7a8b-9c0d-1e2f3a4b5c6d',
-  'd3m0-p0st-8b9c-0d1e-2f3a4b5c6d7e',
+  'd3000000-2000-0000-0000-000000000001',
+  'd3000000-2000-0000-0000-000000000002',
+  'd3000000-2000-0000-0000-000000000003',
+  'd3000000-2000-0000-0000-000000000004',
+  'd3000000-2000-0000-0000-000000000005',
+  'd3000000-2000-0000-0000-000000000006',
+  'd3000000-2000-0000-0000-000000000007',
+  'd3000000-2000-0000-0000-000000000008',
 ]
 
 async function main() {
@@ -35,7 +34,10 @@ async function main() {
   // Create Cincinnati franchise with mock Google connection
   const franchise = await prisma.franchise.upsert({
     where: { slug: 'cincinnati' },
-    update: {},
+    update: {
+      // Ensure ID matches demo ID if we're updating
+      id: DEMO_FRANCHISE_ID
+    },
     create: {
       id: DEMO_FRANCHISE_ID,
       name: 'Hickory Dickory Decks - Cincinnati',
@@ -136,7 +138,7 @@ Website: https://decks.ca/deck-builders/cincinnati`,
       filename: img.filename,
       altText: img.altText,
       projectType: img.projectType,
-      tags: JSON.stringify(['demo', img.projectType]),
+      tags: ['demo', img.projectType], // PostgreSQL supports arrays directly
       uploadedBy: adminUser.id,
     }
     await prisma.image.upsert({
@@ -381,23 +383,23 @@ Schedule your free estimate: 513-572-1200`,
 
   console.log(`Created ${postData.length} demo posts`)
 
-  // Create generation queue entries
+  // Create generation queue entries - Valid UUIDs
   const queueData = [
     {
-      id: 'd3m0-qu3u-1a2b-3c4d-5e6f7a8b9c0d',
+      id: 'd3000000-3000-0000-0000-000000000001',
       postType: 'project_showcase',
       generateForDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
       status: 'pending',
     },
     {
-      id: 'd3m0-qu3u-2b3c-4d5e-6f7a8b9c0d1e',
+      id: 'd3000000-3000-0000-0000-000000000002',
       postType: 'educational',
       generateForDate: oneWeekAgo,
       status: 'completed',
       completedAt: oneWeekAgo,
     },
     {
-      id: 'd3m0-qu3u-3c4d-5e6f-7a8b9c0d1e2f',
+      id: 'd3000000-3000-0000-0000-000000000003',
       postType: 'seasonal',
       generateForDate: threeDaysAgo,
       status: 'failed',

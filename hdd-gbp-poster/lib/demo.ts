@@ -14,15 +14,15 @@ export const isDemoMode = process.env.DEMO_MODE === 'true'
 
 // Demo user credentials (used for auto-login)
 export const DEMO_USER = {
-  id: '550e8400-e29b-41d4-a716-446655440000',
+  id: 'd3000000-0000-0000-0000-000000000002',
   email: 'demo.reviewer@hickorydickorydecks.com',
   name: 'Nathan Ricke',
-  franchiseId: 'd290f1ee-6c54-4b01-90e6-d701748f0851',
+  franchiseId: 'd3000000-0000-0000-0000-000000000001',
   role: 'admin' as const,
 }
 
 export const DEMO_FRANCHISE = {
-  id: 'd290f1ee-6c54-4b01-90e6-d701748f0851',
+  id: 'd3000000-0000-0000-0000-000000000001',
   name: 'Hickory Dickory Decks - Cincinnati',
   slug: 'cincinnati',
 }
