@@ -1,7 +1,7 @@
 import NextAuth, { type Session } from 'next-auth'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import Resend from 'next-auth/providers/resend'
-import prisma from './db'
+import { prisma } from './db'
 import type { SessionUser, UserRole } from '@/types'
 import { isDemoMode, DEMO_SESSION } from './demo'
 

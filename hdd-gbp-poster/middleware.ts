@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { auth } from '@/lib/auth'
 
 // Check for demo mode at edge runtime
 // SECURITY: Demo mode is only allowed in non-production environments
@@ -31,7 +30,11 @@ export async function middleware(request: NextRequest) {
   }
 
   // Production mode: standard auth flow
-  const session = await auth()
+  // We check for session cookies instead of using auth() because Prisma cannot run in Edge Runtime
+  const hasSession = request.cookies.has('authjs.session-token') || 
+                     request.cookies.has('__Secure-authjs.session-token') ||
+                     request.cookies.has('next-auth.session-token') || 
+                     request.cookies.has('__Secure-next-auth.session-token')
 
   // Public paths that don't require authentication
   const publicPaths = ['/login', '/api/auth', '/api/health']
@@ -51,14 +54,14 @@ export async function middleware(request: NextRequest) {
   // Allow public paths
   if (isPublicPath) {
     // Redirect to dashboard if already logged in and trying to access login
-    if (pathname === '/login' && session?.user) {
+    if (pathname === '/login' && hasSession) {
       return NextResponse.redirect(new URL('/', request.url))
     }
     return NextResponse.next()
   }
 
   // Require authentication for all other paths
-  if (!session?.user) {
+  if (!hasSession) {
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('callbackUrl', pathname)
     return NextResponse.redirect(loginUrl)
