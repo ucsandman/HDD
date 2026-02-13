@@ -13,18 +13,16 @@
 export const isDemoMode = process.env.DEMO_MODE === 'true'
 
 // Demo user credentials (used for auto-login)
-// UUIDs are derived from hash of "hdd-demo-user" and "hdd-demo-franchise" for determinism
-// but are not trivially guessable like all-zeros patterns
 export const DEMO_USER = {
-  id: 'd3m0-u53r-8f4e-b1c2-a9d7e6f5c4b3',
+  id: '550e8400-e29b-41d4-a716-446655440000',
   email: 'demo.reviewer@hickorydickorydecks.com',
   name: 'Nathan Ricke',
-  franchiseId: 'd3m0-fr4n-7a2b-c8d9-e1f0a2b3c4d5',
+  franchiseId: 'd290f1ee-6c54-4b01-90e6-d701748f0851',
   role: 'admin' as const,
 }
 
 export const DEMO_FRANCHISE = {
-  id: 'd3m0-fr4n-7a2b-c8d9-e1f0a2b3c4d5',
+  id: 'd290f1ee-6c54-4b01-90e6-d701748f0851',
   name: 'Hickory Dickory Decks - Cincinnati',
   slug: 'cincinnati',
 }
